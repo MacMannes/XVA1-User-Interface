@@ -6,11 +6,12 @@
 
 #include <SPI.h>
 #include <TFT_eSPI.h>
-#include <Rotary.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <splash.h>
+#include "RotaryEncOverMCP.h"
+#include "Rotary.h"
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -35,104 +36,137 @@ static const unsigned char PROGMEM logo_bmp[] =
   B01110000, B01110000,
   B00000000, B00110000 };
 
+/* First I2C MCP23017 GPIO expanders */
+Adafruit_MCP23017 mcp1;  
+
+//Array of pointers of all MCPs (for now, there's only 1)
+Adafruit_MCP23017* allMCPs[] = { &mcp1 };
+constexpr int numMCPs = (int)(sizeof(allMCPs) / sizeof(*allMCPs));
+
+/* function prototypes */
+void rotaryEncoderChanged(bool clockwise, int id);
+
+/* Array of all rotary encoders and their pins */
+RotaryEncOverMCP rotaryEncoders[] = {
+        // outputA,B on GPA7,GPA6, register with callback and ID=1
+        RotaryEncOverMCP(&mcp1, 7, 6, &rotaryEncoderChanged, 0),
+        RotaryEncOverMCP(&mcp1, 1, 0, &rotaryEncoderChanged, 1),
+        RotaryEncOverMCP(&mcp1, 4, 3, &rotaryEncoderChanged, 2)
+};
+constexpr int numEncoders = (int)(sizeof(rotaryEncoders) / sizeof(*rotaryEncoders));
+
+void rotaryEncoderChanged(bool clockwise, int id) {
+    Serial.println("Encoder " + String(id) + ": "
+            + (clockwise ? String("clockwise") : String("counter-clock-wise")));
+    if (id == 0) {
+       handleMainEncoder(clockwise);
+    }
+}
+
+
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-Rotary r = Rotary(2, 1);
 const int MAX = 128;
 const int MIN = 1;
 int currentPatchNumber = MIN;
 String currentPatchName = "";
 byte currentPatchData[512];
 
-
 TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 #define TFT_GREY 0x5AEB // New colour
 
 void setup() {
-  SerialUSB.begin(115200);
+    SerialUSB.begin(115200);
   
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
-     SerialUSB.println(F("SSD1306 allocation failed"));
-     for(;;); // Don't proceed, loop forever
-  }
-
-  display.clearDisplay();
-  display.drawBitmap(
-    (display.width()  - LOGO_WIDTH ) / 2,
-    (display.height() - LOGO_HEIGHT) / 2,
-    logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
-  display.display();
+    mcp1.begin();      // use default address 0
+    //Initialize input encoders (pin mode, interrupt)
+    for(int i=0; i < numEncoders; i++) {
+        rotaryEncoders[i].init();
+    }
+    
+    // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
+       SerialUSB.println(F("SSD1306 allocation failed"));
+       for(;;); // Don't proceed, loop forever
+    }
   
-  r.begin(true);
-
-  Serial1.begin(500000); // XVA1 Serial
-
-  tft.init();
-  tft.setRotation(0);  // 0 & 2 Portrait. 1 & 3 landscape
-  tft.fillScreen(TFT_BLACK);
-
-  tft.setCursor(0, 0, 2);
-  // Set the font colour to be white with a black background, set text size multiplier to 1
-  tft.setTextColor(TFT_WHITE,TFT_BLACK);  
-  tft.setTextSize(1);
-  tft.println("XVA1 Synthesizer");  
+    display.clearDisplay();
+    display.drawBitmap(
+      (display.width()  - LOGO_WIDTH ) / 2,
+      (display.height() - LOGO_HEIGHT) / 2,
+      logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
+    display.display();
+    
+    Serial1.begin(500000); // XVA1 Serial
   
-
-  // while the serial stream is not open, do nothing:
-//  while (!Serial) ; ...     
+    tft.init();
+    tft.setRotation(0);  // 0 & 2 Portrait. 1 & 3 landscape
+    tft.fillScreen(TFT_BLACK);
   
-  SerialUSB.println("\n");
-  SerialUSB.println("===================");
-  SerialUSB.println("XVA1 User Interface");
-  SerialUSB.println("===================\n");
-  SerialUSB.print("value=");
-  SerialUSB.println(currentPatchNumber);
-
-  selectPatchOnSynth(currentPatchNumber);
-  getPatchDataFromSynth();
-  displayPatchInfo();
-
-  // Clear the buffer
-  display.clearDisplay();
-  display.display();
-
-  //oledTest();
-  oledTest("Attack", "64", "Release", "256");
-  delay(500);
-  oledTest("Attack", "1", "Release", "55");
-  delay(500);
-  oledTest("Attack", "2", "Release", "3");
-  delay(500);
-  oledTest("Attack", "64", "Release", "256");  
+    tft.setCursor(0, 0, 2);
+    // Set the font colour to be white with a black background, set text size multiplier to 1
+    tft.setTextColor(TFT_WHITE,TFT_BLACK);  
+    tft.setTextSize(1);
+    tft.println("XVA1 Synthesizer");  
+    
+  
+    // while the serial stream is not open, do nothing:
+  //  while (!Serial) ; ...     
+    
+    SerialUSB.println("\n");
+    SerialUSB.println("===================");
+    SerialUSB.println("XVA1 User Interface");
+    SerialUSB.println("===================\n");
+    SerialUSB.print("value=");
+    SerialUSB.println(currentPatchNumber);
+  
+    selectPatchOnSynth(currentPatchNumber);
+    getPatchDataFromSynth();
+    displayPatchInfo();
+  
+    // Clear the buffer
+    display.clearDisplay();
+    display.display();
+  
+    //oledTest();
+    oledTest("Attack", "64", "Release", "256");
+    delay(500);
+    oledTest("Attack", "1", "Release", "55");
+    delay(500);
+    oledTest("Attack", "2", "Release", "3");
+    delay(500);
+    oledTest("Attack", "64", "Release", "256");  
 }
 
 void loop() {
-  unsigned char result = r.process();
-  int oldValue = currentPatchNumber;
-  
-  if (result) {
-      if (result == DIR_CW) {
-        if (currentPatchNumber < MAX) {
-          currentPatchNumber++;
-        }
-      } else {
-        if (currentPatchNumber > MIN) {
-          currentPatchNumber--;
-        }        
-      }
-      SerialUSB.print(result == DIR_CW ? "Right; value=" : "Left; value=");
-      SerialUSB.println(currentPatchNumber);
+  pollAllMCPs();
+ 
+}
 
-      if (currentPatchNumber != oldValue) {
-         selectPatchOnSynth(currentPatchNumber);
-         getPatchDataFromSynth();
-         displayPatchInfo();
+void handleMainEncoder(bool clockwise) {
+    int oldValue = currentPatchNumber;
+
+    if (clockwise) {
+      if (currentPatchNumber < MAX) {
+        currentPatchNumber++;
       }
-  }
+    } else {
+      if (currentPatchNumber > MIN) {
+        currentPatchNumber--;
+      }        
+    }
+
+    SerialUSB.print("Selecting patch: ");
+    SerialUSB.println(currentPatchNumber);
+
+    if (currentPatchNumber != oldValue) {
+       selectPatchOnSynth(currentPatchNumber);
+       getPatchDataFromSynth();
+       displayPatchInfo();
+    }
 }
 
 void selectPatchOnSynth(int patchNumber) {
@@ -268,4 +302,21 @@ void printHex(uint8_t num) {
 
   sprintf(hexCar, "%02X", num);
   SerialUSB.print(hexCar);
+}
+
+void pollAllMCPs() {
+    //We could also call ".poll()" on each encoder,
+    //however that will cause an I2C transfer
+    //for every encoder.
+    //It's faster to only go through each MCP object,
+    //read it, and then feed it into the encoder as input.
+    for(int j = 0; j < numMCPs; j++) {
+        uint16_t gpioAB = allMCPs[j]->readGPIOAB();
+        for (int i=0; i < numEncoders; i++) {
+            //only feed this in the encoder if this
+            //is coming from the correct MCP
+            if(rotaryEncoders[i].getMCP() == allMCPs[j])
+                rotaryEncoders[i].feedInput(gpioAB);
+        }
+    }
 }
