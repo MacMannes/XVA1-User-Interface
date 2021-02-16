@@ -12,6 +12,7 @@
 #include <splash.h>
 #include "RotaryEncOverMCP.h"
 #include "Rotary.h"
+#include "SynthParameter.h"
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -55,14 +56,6 @@ RotaryEncOverMCP rotaryEncoders[] = {
 };
 constexpr int numEncoders = (int)(sizeof(rotaryEncoders) / sizeof(*rotaryEncoders));
 
-void rotaryEncoderChanged(bool clockwise, int id) {
-    Serial.println("Encoder " + String(id) + ": "
-            + (clockwise ? String("clockwise") : String("counter-clock-wise")));
-    if (id == 0) {
-       handleMainEncoder(clockwise);
-    }
-}
-
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -78,8 +71,52 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 #define TFT_GREY 0x5AEB // New colour
 
+struct SynthParameter param1;
+struct SynthParameter param2;
+
+void rotaryEncoderChanged(bool clockwise, int id) {
+    Serial.println("Encoder " + String(id) + ": "
+            + (clockwise ? String("clockwise") : String("counter-clock-wise")));
+    if (id == 0) {
+       handleMainEncoder(clockwise);
+    }
+    if (id == 1) {
+        handleParameterChange(&param1, clockwise);
+        displayTwinParameters(&param1, &param2);
+    }
+    if (id == 2) {
+        handleParameterChange(&param2, clockwise);
+        displayTwinParameters(&param1, &param2);
+    }    
+}
+
+
 void setup() {
     SerialUSB.begin(115200);
+
+//    strcpy(param1.name, "FilterType");
+//    param1.number = 71;
+//    param1.min = 0;
+//    param1.max = 21;
+
+    strcpy(param1.name, "Sequencer");
+    param1.number = 428;
+    param1.min = 0;
+    param1.max = 1;    
+    strcpy(param2.name, "Cutoff");
+    param2.number = 72;
+    param2.min = 0;
+    param2.max = 255;
+
+//    strcpy(param1.name, "ARP_MODE");
+//    param1.number = 450;
+//    param1.min = 0;
+//    param1.max = 5;    
+//    strcpy(param2.name, "Octaves");
+//    param2.number = 454;
+//    param2.min = 0;
+//    param2.max = 5;
+    
   
     mcp1.begin();      // use default address 0
     //Initialize input encoders (pin mode, interrupt)
@@ -126,19 +163,6 @@ void setup() {
     selectPatchOnSynth(currentPatchNumber);
     getPatchDataFromSynth();
     displayPatchInfo();
-  
-    // Clear the buffer
-    display.clearDisplay();
-    display.display();
-  
-    //oledTest();
-    oledTest("Attack", "64", "Release", "256");
-    delay(500);
-    oledTest("Attack", "1", "Release", "55");
-    delay(500);
-    oledTest("Attack", "2", "Release", "3");
-    delay(500);
-    oledTest("Attack", "64", "Release", "256");  
 }
 
 void loop() {
@@ -238,8 +262,12 @@ void getPatchDataFromSynth() {
     
     Serial1.flush();
 
-    memcpy(rxBuffer, currentPatchData, 512);
+    memcpy(currentPatchData, rxBuffer, 512);
     currentPatchName = patchName;
+
+    for (int i = 0; i < sizeof(rxBuffer); i++){
+      printHex(rxBuffer[i]);
+    }    
 }
 
 void displayPatchInfo() {
@@ -263,7 +291,8 @@ void displayPatchInfo() {
 
   // Reset text padding to 0 otherwise all future rendered strings will use it!
   tft.setTextPadding(0);
-  
+
+  displayTwinParameters(&param1, &param2);
 }
 
 void oledTest(char *title1, char *value1, char *title2, char *value2) {
@@ -318,5 +347,57 @@ void pollAllMCPs() {
             if(rotaryEncoders[i].getMCP() == allMCPs[j])
                 rotaryEncoders[i].feedInput(gpioAB);
         }
+    }
+}
+
+void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
+  char byte1 = currentPatchData[param1->number];
+  char byte2 = currentPatchData[param2->number];
+  
+  char value1[3];
+  sprintf(value1,"%ld", byte1);
+  char value2[3];
+  sprintf(value2,"%ld", byte2);
+
+  oledTest(param1->name, value1, param2->name, value2);
+}
+
+void handleParameterChange(SynthParameter *param, bool clockwise) {
+  int currentValue = currentPatchData[param->number];
+  int newValue = -1;
+
+  if (clockwise) {
+      if (currentValue < param->max) {
+        newValue = currentValue + 1;
+      }
+  } else {
+      if (currentValue > param->min) {
+        newValue = currentValue - 1;
+      }
+  }
+
+  if (newValue >= 0 ) {
+      currentPatchData[param->number] = newValue;
+      SerialUSB.print("New value: ");
+      SerialUSB.println(newValue);
+
+      setParameter(param->number, newValue);
+  }
+  
+}
+
+
+void setParameter(int param, int value) {
+    Serial1.write( 's' ); // 's' = Set Parameter
+
+    if( param > 255 ) {
+        // Parameters above 255 have a two-byte format: b1 = 255, b2 = x-256
+        Serial1.write( 255 );
+        Serial1.write( param - 256  );
+        Serial1.write( value );
+    }
+    else {
+        Serial1.write( param );
+        Serial1.write( value );
     }
 }
