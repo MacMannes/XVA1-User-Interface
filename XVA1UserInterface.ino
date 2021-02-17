@@ -74,20 +74,37 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 struct SynthParameter param1;
 struct SynthParameter param2;
 
+unsigned long lastTransition;
+unsigned long revolutionTime = 0;
+
 void rotaryEncoderChanged(bool clockwise, int id) {
+    unsigned long now = millis();
+    revolutionTime = now - lastTransition;    
+
+    int speed = 1;
+    if (revolutionTime < 50) {
+        speed = 20;
+    } else if (revolutionTime < 125) {
+        speed = 10;
+    } else if (revolutionTime < 250) {
+        speed = 2;
+    } 
+
+    lastTransition = now;
+  
     Serial.println("Encoder " + String(id) + ": "
-            + (clockwise ? String("clockwise") : String("counter-clock-wise")));
+            + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
     if (id == 0) {
        handleMainEncoder(clockwise);
     }
     if (id == 1) {
-        handleParameterChange(&param1, clockwise);
+        handleParameterChange(&param1, clockwise, speed);
         displayTwinParameters(&param1, &param2);
     }
     if (id == 2) {
-        handleParameterChange(&param2, clockwise);
+        handleParameterChange(&param2, clockwise, speed);
         displayTwinParameters(&param1, &param2);
-    }    
+    }
 }
 
 
@@ -166,8 +183,7 @@ void setup() {
 }
 
 void loop() {
-  pollAllMCPs();
- 
+    pollAllMCPs();
 }
 
 void handleMainEncoder(bool clockwise) {
@@ -194,32 +210,32 @@ void handleMainEncoder(bool clockwise) {
 }
 
 void selectPatchOnSynth(int patchNumber) {
-  int synthPatchNumber = patchNumber - 1;
+    int synthPatchNumber = patchNumber - 1;
+    
+    SerialUSB.print("Selecting patch #");
+    SerialUSB.print(synthPatchNumber);
+    SerialUSB.print(" on Synth...");
+    
+    Serial1.write('r'); // 'r' = Read program
+    Serial1.write(synthPatchNumber);
   
-  SerialUSB.print("Selecting patch #");
-  SerialUSB.print(synthPatchNumber);
-  SerialUSB.print(" on Synth...");
   
-  Serial1.write('r'); // 'r' = Read program
-  Serial1.write(synthPatchNumber);
-
-
-  int read_status;
-  int bytesRead = 0;
-  int retry = 0;
-  while (bytesRead == 0 && retry != 100) {
-    if (Serial1.available()) {
-        read_status = Serial1.read();
-        bytesRead++;
-        retry = 0;
-    } else {
-      retry++;
-      delay(10);
-    }
-  }  
-
-  SerialUSB.print("Status=");
-  SerialUSB.println(read_status, DEC);  
+    int read_status;
+    int bytesRead = 0;
+    int retry = 0;
+    while (bytesRead == 0 && retry != 100) {
+      if (Serial1.available()) {
+          read_status = Serial1.read();
+          bytesRead++;
+          retry = 0;
+      } else {
+        retry++;
+        delay(10);
+      }
+    }  
+  
+    SerialUSB.print("Status=");
+    SerialUSB.println(read_status, DEC);  
 
 }
 
@@ -263,58 +279,54 @@ void getPatchDataFromSynth() {
     Serial1.flush();
 
     memcpy(currentPatchData, rxBuffer, 512);
-    currentPatchName = patchName;
-
-    for (int i = 0; i < sizeof(rxBuffer); i++){
-      printHex(rxBuffer[i]);
-    }    
+    currentPatchName = patchName; 
 }
 
 void displayPatchInfo() {
 //  tft.setTextSize(2);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);   
-  tft.drawString("Patch", 0, 30, 1);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);   
+    tft.drawString("Patch", 0, 30, 1);
+    
+    tft.setTextColor(TFT_YELLOW, TFT_BLACK);   
   
-  tft.setTextColor(TFT_YELLOW, TFT_BLACK);   
-
-  // Set the padding to the maximum width that the digits could occupy in font 4
-  // This ensures small numbers obliterate large ones on the screen
-  tft.setTextPadding(tft.textWidth("999", 4) );  
-  // Draw the patch number in font 4
-  tft.drawNumber(currentPatchNumber, 0, 42, 4);
-
-  tft.setTextColor(TFT_RED, TFT_BLACK); 
-
-  tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 2) );  
-  // Draw the patch name in font 1
-  tft.drawString(currentPatchName, 0, 75, 2);
-
-  // Reset text padding to 0 otherwise all future rendered strings will use it!
-  tft.setTextPadding(0);
-
-  displayTwinParameters(&param1, &param2);
+    // Set the padding to the maximum width that the digits could occupy in font 4
+    // This ensures small numbers obliterate large ones on the screen
+    tft.setTextPadding(tft.textWidth("999", 4) );  
+    // Draw the patch number in font 4
+    tft.drawNumber(currentPatchNumber, 0, 42, 4);
+  
+    tft.setTextColor(TFT_RED, TFT_BLACK); 
+  
+    tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 2) );  
+    // Draw the patch name in font 1
+    tft.drawString(currentPatchName, 0, 75, 2);
+  
+    // Reset text padding to 0 otherwise all future rendered strings will use it!
+    tft.setTextPadding(0);
+  
+    displayTwinParameters(&param1, &param2);
 }
 
 void oledTest(char *title1, char *value1, char *title2, char *value2) {
-  display.clearDisplay();  
+    display.clearDisplay();  
+    
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    drawCenteredText(title1, 64, 0);
   
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  drawCenteredText(title1, 64, 0);
-
-  display.setTextSize(2);
-  drawCenteredText(value1, 64, 12);
-
-  display.drawLine(0, 30, display.width() - 1, 30, WHITE);
-
+    display.setTextSize(2);
+    drawCenteredText(value1, 64, 12);
   
-  display.setTextSize(1);
-  drawCenteredText(title2, 64, 34);
-
-  display.setTextSize(2);
-  drawCenteredText(value2, 64, 47);
+    display.drawLine(0, 30, display.width() - 1, 30, WHITE);
   
-  display.display(); 
+    
+    display.setTextSize(1);
+    drawCenteredText(title2, 64, 34);
+  
+    display.setTextSize(2);
+    drawCenteredText(value2, 64, 47);
+    
+    display.display(); 
 }
 
 void drawCenteredText(char *buf, int x, int y)
@@ -327,11 +339,11 @@ void drawCenteredText(char *buf, int x, int y)
 }
 
 void printHex(uint8_t num) {
-  char hexCar[2];
-
-  sprintf(hexCar, "%02X", num);
-  SerialUSB.print(hexCar);
-}
+    char hexCar[2];
+  
+    sprintf(hexCar, "%02X", num);
+    SerialUSB.print(hexCar);
+  }
 
 void pollAllMCPs() {
     //We could also call ".poll()" on each encoder,
@@ -351,53 +363,59 @@ void pollAllMCPs() {
 }
 
 void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
-  char byte1 = currentPatchData[param1->number];
-  char byte2 = currentPatchData[param2->number];
+    char byte1 = currentPatchData[param1->number];
+    char byte2 = currentPatchData[param2->number];
+    
+    char value1[3];
+    sprintf(value1,"%ld", byte1);
+    char value2[3];
+    sprintf(value2,"%ld", byte2);
   
-  char value1[3];
-  sprintf(value1,"%ld", byte1);
-  char value2[3];
-  sprintf(value2,"%ld", byte2);
-
-  oledTest(param1->name, value1, param2->name, value2);
+    oledTest(param1->name, value1, param2->name, value2);
 }
 
-void handleParameterChange(SynthParameter *param, bool clockwise) {
-  int currentValue = currentPatchData[param->number];
-  int newValue = -1;
+void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
+    int currentValue = currentPatchData[param->number];
+    int newValue = -1;
+  
+    if (clockwise) {
+        if (currentValue < param->max) {
+            newValue = currentValue + speed;
+            if  (newValue > param->max) {
+                newValue = param->max;
+            }
+        }
+    } else {
+        if (currentValue > param->min) {
+          newValue = currentValue - speed;
+            if  (newValue < param->min) {
+                newValue = param->min;
+            }
+        }
+    }
 
-  if (clockwise) {
-      if (currentValue < param->max) {
-        newValue = currentValue + 1;
-      }
-  } else {
-      if (currentValue > param->min) {
-        newValue = currentValue - 1;
-      }
-  }
-
-  if (newValue >= 0 ) {
-      currentPatchData[param->number] = newValue;
-      SerialUSB.print("New value: ");
-      SerialUSB.println(newValue);
-
-      setParameter(param->number, newValue);
-  }
+  
+    if (newValue >= 0 && newValue != currentValue) {
+        currentPatchData[param->number] = newValue;
+        SerialUSB.print("New value: ");
+        SerialUSB.println(newValue);
+  
+        setParameter(param->number, newValue);
+    }
   
 }
 
 
 void setParameter(int param, int value) {
-    Serial1.write( 's' ); // 's' = Set Parameter
+    Serial1.write('s'); // 's' = Set Parameter
 
-    if( param > 255 ) {
+    if (param > 255) {
         // Parameters above 255 have a two-byte format: b1 = 255, b2 = x-256
-        Serial1.write( 255 );
-        Serial1.write( param - 256  );
-        Serial1.write( value );
-    }
-    else {
-        Serial1.write( param );
-        Serial1.write( value );
+        Serial1.write(255);
+        Serial1.write(param - 256 );
+        Serial1.write(value);
+    } else {
+        Serial1.write(param);
+        Serial1.write(value);
     }
 }
