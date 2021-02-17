@@ -129,8 +129,8 @@ void setup() {
     param1.number = 428;
     param1.min = 0;
     param1.max = 1;    
-    param1.descriptions[0] = "ON";
-    param1.descriptions[1] = "OFF";
+    param1.descriptions[0] = "OFF";
+    param1.descriptions[1] = "ON";
     
     strcpy(param2.name, "Cutoff");
     param2.number = 72;
@@ -319,28 +319,6 @@ void displayPatchInfo() {
     displayTwinParameters(&param1, &param2);
 }
 
-void displayTwinParameters(char *title1, char *value1, char *title2, char *value2) {
-    display.clearDisplay();  
-    
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    drawCenteredText(title1, 64, 0);
-  
-    display.setTextSize(2);
-    drawCenteredText(value1, 64, 12);
-  
-    display.drawLine(0, 30, display.width() - 1, 30, WHITE);
-  
-    
-    display.setTextSize(1);
-    drawCenteredText(title2, 64, 34);
-  
-    display.setTextSize(2);
-    drawCenteredText(value2, 64, 47);
-    
-    display.display(); 
-}
-
 void drawCenteredText(char *buf, int x, int y)
 {
     int16_t x1, y1;
@@ -392,6 +370,28 @@ void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
     }
   
     displayTwinParameters(param1->name, value1, param2->name, value2);
+}
+
+void displayTwinParameters(char *title1, char *value1, char *title2, char *value2) {
+    display.clearDisplay();  
+    
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    drawCenteredText(title1, 64, 0);
+  
+    display.setTextSize(2);
+    drawCenteredText(value1, 64, 12);
+  
+    display.drawLine(0, 30, display.width() - 1, 30, WHITE);
+  
+    
+    display.setTextSize(1);
+    drawCenteredText(title2, 64, 34);
+  
+    display.setTextSize(2);
+    drawCenteredText(value2, 64, 47);
+    
+    display.display(); 
 }
 
 void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
