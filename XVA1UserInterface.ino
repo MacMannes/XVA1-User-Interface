@@ -115,11 +115,23 @@ void setup() {
 //    param1.number = 71;
 //    param1.min = 0;
 //    param1.max = 21;
+//    param1.descriptions[0] = "Bypass";
+//    param1.descriptions[1] = "1P_LowPass";
+//    param1.descriptions[2] = "2P_LowPass";
+//    param1.descriptions[3] = "3P_LowPass";
+//    param1.descriptions[4] = "4P_LowPass";
+//    param1.descriptions[5] = "1P_HighPass";
+//    param1.descriptions[6] = "2P_HighPass";
+//    param1.descriptions[7] = "3P_HighPass";
+//    param1.descriptions[8] = "4P_HighPass";
 
     strcpy(param1.name, "Sequencer");
     param1.number = 428;
     param1.min = 0;
     param1.max = 1;    
+    param1.descriptions[0] = "ON";
+    param1.descriptions[1] = "OFF";
+    
     strcpy(param2.name, "Cutoff");
     param2.number = 72;
     param2.min = 0;
@@ -157,7 +169,7 @@ void setup() {
     Serial1.begin(500000); // XVA1 Serial
   
     tft.init();
-    tft.setRotation(0);  // 0 & 2 Portrait. 1 & 3 landscape
+    tft.setRotation(0);  // 0 & 2 Portrait. 1 & 3 landscapeooooooo;;
     tft.fillScreen(TFT_BLACK);
   
     tft.setCursor(0, 0, 2);
@@ -307,7 +319,7 @@ void displayPatchInfo() {
     displayTwinParameters(&param1, &param2);
 }
 
-void oledTest(char *title1, char *value1, char *title2, char *value2) {
+void displayTwinParameters(char *title1, char *value1, char *title2, char *value2) {
     display.clearDisplay();  
     
     display.setTextSize(1);
@@ -366,12 +378,20 @@ void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
     char byte1 = currentPatchData[param1->number];
     char byte2 = currentPatchData[param2->number];
     
-    char value1[3];
-    sprintf(value1,"%ld", byte1);
-    char value2[3];
-    sprintf(value2,"%ld", byte2);
+    char value1[20];
+    if (byte1 < sizeof(param1->descriptions) && param1->descriptions[byte1] != nullptr) {
+      strcpy(value1, param1->descriptions[byte1]);    
+    } else {
+      sprintf(value1,"%ld", byte1);
+    }
+    char value2[20];
+    if (byte2 < sizeof(param2->descriptions) && param2->descriptions[byte1] != nullptr) {
+      strcpy(value2, param2->descriptions[byte2]);    
+    } else {
+      sprintf(value2,"%ld", byte2);
+    }
   
-    oledTest(param1->name, value1, param2->name, value2);
+    displayTwinParameters(param1->name, value1, param2->name, value2);
 }
 
 void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {

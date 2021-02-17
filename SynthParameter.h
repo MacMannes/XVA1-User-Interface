@@ -3,4 +3,5 @@ struct SynthParameter {
   int number;
   int min;
   int max;
+  char *descriptions[25];
 };
