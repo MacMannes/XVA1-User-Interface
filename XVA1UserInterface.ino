@@ -125,17 +125,31 @@ void setup() {
 //    param1.descriptions[7] = "3P_HighPass";
 //    param1.descriptions[8] = "4P_HighPass";
 
-    strcpy(param1.name, "Sequencer");
-    param1.number = 428;
+    strcpy(param1.name, "PerfCtl1");
+    param1.type = PERFORMANCE_CTRL;
+    param1.number = 400;
+    param1.number2 = 401;
     param1.min = 0;
-    param1.max = 1;    
-    param1.descriptions[0] = "OFF";
-    param1.descriptions[1] = "ON";
-    
-    strcpy(param2.name, "Cutoff");
-    param2.number = 72;
+    param1.max = 511;
+
+    strcpy(param2.name, "PerfCtl2");
+    param2.type = PERFORMANCE_CTRL;
+    param2.number = 402;
+    param2.number2 = 403;   
     param2.min = 0;
-    param2.max = 255;
+    param2.max = 511;
+
+//    strcpy(param1.name, "Sequencer");
+//    param1.number = 428;
+//    param1.min = 0;
+//    param1.max = 1;    
+//    param1.descriptions[0] = "OFF";
+//    param1.descriptions[1] = "ON";
+    
+//    strcpy(param2.name, "Cutoff");
+//    param2.number = 72;
+//    param2.min = 0;
+//    param2.max = 255;
 
 //    strcpy(param1.name, "ARP_MODE");
 //    param1.number = 450;
@@ -353,23 +367,43 @@ void pollAllMCPs() {
 }
 
 void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
-    char byte1 = currentPatchData[param1->number];
-    char byte2 = currentPatchData[param2->number];
+    int byte1;
+    int byte2;
+
+    if (param1->type == PERFORMANCE_CTRL) {
+      byte msb = currentPatchData[param1->number]; 
+      byte lsb = currentPatchData[param1->number2]; 
+      byte combined = (msb << 7) + lsb;
+
+      byte1 = (int)combined;      
+    } else {
+      byte1 = (int)currentPatchData[param1->number];      
+    }    
+
+    if (param2->type == PERFORMANCE_CTRL) {
+      byte msb = currentPatchData[param2->number]; 
+      byte lsb = currentPatchData[param2->number2]; 
+      byte combined = (msb << 7) + lsb;
+
+      byte2 = (int)combined;      
+    } else {
+      byte2 = (int)currentPatchData[param2->number];      
+    }    
     
-    char value1[20];
-    if (byte1 < sizeof(param1->descriptions) && param1->descriptions[byte1] != nullptr) {
-      strcpy(value1, param1->descriptions[byte1]);    
+    char printValue1[20];
+    if (param1->type != PERFORMANCE_CTRL && byte1 < sizeof(param1->descriptions) && param1->descriptions[byte1] != nullptr) {
+      strcpy(printValue1, param1->descriptions[byte1]);    
     } else {
-      sprintf(value1,"%ld", byte1);
+      sprintf(printValue1,"%ld", byte1);
     }
-    char value2[20];
-    if (byte2 < sizeof(param2->descriptions) && param2->descriptions[byte1] != nullptr) {
-      strcpy(value2, param2->descriptions[byte2]);    
+    char printValue2[20];
+    if (param2->type != PERFORMANCE_CTRL && byte2 < sizeof(param2->descriptions) && param2->descriptions[byte1] != nullptr) {
+      strcpy(printValue2, param2->descriptions[byte2]);    
     } else {
-      sprintf(value2,"%ld", byte2);
+      sprintf(printValue2,"%ld", byte2);
     }
   
-    displayTwinParameters(param1->name, value1, param2->name, value2);
+    displayTwinParameters(param1->name, printValue1, param2->name, printValue2);
 }
 
 void displayTwinParameters(char *title1, char *value1, char *title2, char *value2) {
@@ -395,7 +429,16 @@ void displayTwinParameters(char *title1, char *value1, char *title2, char *value
 }
 
 void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
-    int currentValue = currentPatchData[param->number];
+    int currentValue;
+
+    if (param->type == PERFORMANCE_CTRL) {
+      byte msb = currentPatchData[param->number]; 
+      byte lsb = currentPatchData[param->number2]; 
+      byte combined = (msb << 7) + lsb;
+      currentValue = combined;
+    } else {    
+      currentValue = currentPatchData[param->number];
+    }
     int newValue = -1;
   
     if (clockwise) {
@@ -416,11 +459,22 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
 
   
     if (newValue >= 0 && newValue != currentValue) {
-        currentPatchData[param->number] = newValue;
         SerialUSB.print("New value: ");
         SerialUSB.println(newValue);
-  
-        setParameter(param->number, newValue);
+        if (param->type == PERFORMANCE_CTRL) {
+          byte msb = newValue >> 7;
+          byte lsb = newValue & 127;
+
+          currentPatchData[param->number] = msb;
+          currentPatchData[param->number2] = lsb;
+
+          setParameter(param->number, msb);
+          setParameter(param->number2, lsb);          
+        } else {
+          currentPatchData[param->number] = newValue;
+    
+          setParameter(param->number, newValue);
+        }
     }
   
 }
