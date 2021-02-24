@@ -373,7 +373,7 @@ void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
     if (param1->type == PERFORMANCE_CTRL) {
       byte msb = currentPatchData[param1->number]; 
       byte lsb = currentPatchData[param1->number2]; 
-      byte combined = (msb << 7) + lsb;
+      int combined = (msb << 7) + lsb;
 
       byte1 = (int)combined;      
     } else {
@@ -383,7 +383,7 @@ void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
     if (param2->type == PERFORMANCE_CTRL) {
       byte msb = currentPatchData[param2->number]; 
       byte lsb = currentPatchData[param2->number2]; 
-      byte combined = (msb << 7) + lsb;
+      int combined = (msb << 7) + lsb;
 
       byte2 = (int)combined;      
     } else {
@@ -434,7 +434,7 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
     if (param->type == PERFORMANCE_CTRL) {
       byte msb = currentPatchData[param->number]; 
       byte lsb = currentPatchData[param->number2]; 
-      byte combined = (msb << 7) + lsb;
+      int combined = (msb << 7) + lsb;
       currentValue = combined;
     } else {    
       currentValue = currentPatchData[param->number];
