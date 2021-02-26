@@ -1,5 +1,4 @@
 
-
 /*
     XVA1 User Interface
 */
@@ -14,10 +13,14 @@
 #include "Rotary.h"
 #include "SynthParameter.h"
 
+#define MUX_ADDRESS 0x70 // TCA9548A Encoders address
+
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 #define LOGO_HEIGHT   16
 #define LOGO_WIDTH    16
+
+#define SHIFT_BTN_PIN 8
 
 static const unsigned char PROGMEM logo_bmp[] =
 { B00000000, B11000000,
@@ -56,6 +59,13 @@ RotaryEncOverMCP rotaryEncoders[] = {
 };
 constexpr int numEncoders = (int)(sizeof(rotaryEncoders) / sizeof(*rotaryEncoders));
 
+// Initialize I2C buses using TCA9548A I2C Multiplexer
+void tcaselect(uint8_t i2c_bus) {
+    if (i2c_bus > 7) return;
+    Wire.beginTransmission(MUX_ADDRESS);
+    Wire.write(1 << i2c_bus);
+    Wire.endTransmission(); 
+}
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -73,9 +83,13 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 struct SynthParameter param1;
 struct SynthParameter param2;
+struct SynthParameter param3;
+struct SynthParameter param4;
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
+
+bool shiftButtonPushed = false;
 
 void rotaryEncoderChanged(bool clockwise, int id) {
     unsigned long now = millis();
@@ -97,19 +111,33 @@ void rotaryEncoderChanged(bool clockwise, int id) {
     if (id == 0) {
        handleMainEncoder(clockwise);
     }
-    if (id == 1) {
-        handleParameterChange(&param1, clockwise, speed);
-        displayTwinParameters(&param1, &param2);
-    }
-    if (id == 2) {
-        handleParameterChange(&param2, clockwise, speed);
-        displayTwinParameters(&param1, &param2);
+    if (shiftButtonPushed) {
+      if (id == 1) {
+          handleParameterChange(&param3, clockwise, speed);
+          displayTwinParameters(&param3, &param4, 1);
+      }
+      if (id == 2) {
+          handleParameterChange(&param4, clockwise, speed);
+          displayTwinParameters(&param3, &param4, 1);
+      }
+    } else {
+      if (id == 1) {
+          handleParameterChange(&param1, clockwise, speed);
+          displayTwinParameters(&param1, &param2, 0);
+      }
+      if (id == 2) {
+          handleParameterChange(&param2, clockwise, speed);
+          displayTwinParameters(&param1, &param2, 0);
+      }
     }
 }
 
 
 void setup() {
     SerialUSB.begin(115200);
+
+     //while the serial stream is not open, do nothing:
+//     while (!Serial);   
 
 //    strcpy(param1.name, "FilterType");
 //    param1.number = 71;
@@ -125,31 +153,32 @@ void setup() {
 //    param1.descriptions[7] = "3P_HighPass";
 //    param1.descriptions[8] = "4P_HighPass";
 
-    strcpy(param1.name, "PerfCtl1");
-    param1.type = PERFORMANCE_CTRL;
-    param1.number = 400;
-    param1.number2 = 401;
+
+    strcpy(param1.name, "Sequencer");
+    param1.number = 428;
     param1.min = 0;
-    param1.max = 511;
-
-    strcpy(param2.name, "PerfCtl2");
-    param2.type = PERFORMANCE_CTRL;
-    param2.number = 402;
-    param2.number2 = 403;   
-    param2.min = 0;
-    param2.max = 511;
-
-//    strcpy(param1.name, "Sequencer");
-//    param1.number = 428;
-//    param1.min = 0;
-//    param1.max = 1;    
-//    param1.descriptions[0] = "OFF";
-//    param1.descriptions[1] = "ON";
+    param1.max = 1;    
+    param1.descriptions[0] = "OFF";
+    param1.descriptions[1] = "ON";
     
-//    strcpy(param2.name, "Cutoff");
-//    param2.number = 72;
-//    param2.min = 0;
-//    param2.max = 255;
+    strcpy(param2.name, "Cutoff");
+    param2.number = 72;
+    param2.min = 0;
+    param2.max = 255;
+
+    strcpy(param3.name, "PerfCtl1");
+    param3.type = PERFORMANCE_CTRL;
+    param3.number = 400;
+    param3.number2 = 401;
+    param3.min = 0;
+    param3.max = 511;
+
+    strcpy(param4.name, "PerfCtl2");
+    param4.type = PERFORMANCE_CTRL;
+    param4.number = 402;
+    param4.number2 = 403;   
+    param4.min = 0;
+    param4.max = 511;
 
 //    strcpy(param1.name, "ARP_MODE");
 //    param1.number = 450;
@@ -166,19 +195,9 @@ void setup() {
     for(int i=0; i < numEncoders; i++) {
         rotaryEncoders[i].init();
     }
-    
-    // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
-       SerialUSB.println(F("SSD1306 allocation failed"));
-       for(;;); // Don't proceed, loop forever
-    }
-  
-    display.clearDisplay();
-    display.drawBitmap(
-      (display.width()  - LOGO_WIDTH ) / 2,
-      (display.height() - LOGO_HEIGHT) / 2,
-      logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
-    display.display();
+
+    initOledDisplays();
+    initButtons();
     
     Serial1.begin(500000); // XVA1 Serial
   
@@ -193,8 +212,6 @@ void setup() {
     tft.println("XVA1 Synthesizer");  
     
   
-    // while the serial stream is not open, do nothing:
-  //  while (!Serial) ; ...     
     
     SerialUSB.println("\n");
     SerialUSB.println("===================");
@@ -206,10 +223,45 @@ void setup() {
     selectPatchOnSynth(currentPatchNumber);
     getPatchDataFromSynth();
     displayPatchInfo();
+
 }
 
 void loop() {
     pollAllMCPs();
+    readButtons();    
+}
+
+
+void initOledDisplays() {
+    for (int d = 0; d < 2; d++) {
+      tcaselect(d);
+      // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+      if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
+         SerialUSB.println(F("SSD1306 allocation failed"));
+      }
+      
+    
+      display.clearDisplay();
+      display.drawBitmap(
+        (display.width()  - LOGO_WIDTH ) / 2,
+        (display.height() - LOGO_HEIGHT) / 2,
+        logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
+      display.display();
+    }  
+}
+
+void initButtons() {
+  mcp1.pinMode(SHIFT_BTN_PIN, INPUT);   // Button i/p to GND
+  mcp1.pullUp(SHIFT_BTN_PIN, HIGH);     // Puled high ~100k
+}
+
+void readButtons() {
+    bool shiftButton = mcp1.digitalRead(SHIFT_BTN_PIN) == LOW;
+    if (shiftButton != shiftButtonPushed) {
+      shiftButtonPushed = shiftButton;
+      SerialUSB.print("Shift: ");
+      SerialUSB.println(shiftButtonPushed);
+    }
 }
 
 void handleMainEncoder(bool clockwise) {
@@ -330,7 +382,9 @@ void displayPatchInfo() {
     // Reset text padding to 0 otherwise all future rendered strings will use it!
     tft.setTextPadding(0);
   
-    displayTwinParameters(&param1, &param2);
+    displayTwinParameters(&param1, &param2, 0);
+    displayTwinParameters(&param3, &param4, 1);
+
 }
 
 void drawCenteredText(char *buf, int x, int y)
@@ -366,7 +420,7 @@ void pollAllMCPs() {
     }
 }
 
-void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
+void displayTwinParameters(SynthParameter *param1, SynthParameter *param2, int displayNumber) {  
     int byte1;
     int byte2;
 
@@ -403,10 +457,12 @@ void displayTwinParameters(SynthParameter *param1, SynthParameter *param2) {
       sprintf(printValue2,"%ld", byte2);
     }
   
-    displayTwinParameters(param1->name, printValue1, param2->name, printValue2);
+    displayTwinParameters(param1->name, printValue1, param2->name, printValue2, displayNumber);
 }
 
-void displayTwinParameters(char *title1, char *value1, char *title2, char *value2) {
+void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber) {
+    tcaselect(displayNumber);
+
     display.clearDisplay();  
     
     display.setTextSize(1);
