@@ -13,7 +13,7 @@
 #include "Rotary.h"
 #include "SynthParameter.h"
 
-#define MUX_ADDRESS 0x70 // TCA9548A Encoders address
+#define MUX_ADDRESS 0x70 // TCA9548A Multiplexer address
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -21,24 +21,6 @@
 #define LOGO_WIDTH    16
 
 #define SHIFT_BTN_PIN 8
-
-static const unsigned char PROGMEM logo_bmp[] =
-{ B00000000, B11000000,
-  B00000001, B11000000,
-  B00000001, B11000000,
-  B00000011, B11100000,
-  B11110011, B11100000,
-  B11111110, B11111000,
-  B01111110, B11111111,
-  B00110011, B10011111,
-  B00011111, B11111100,
-  B00001101, B01110000,
-  B00011011, B10100000,
-  B00111111, B11100000,
-  B00111111, B11110000,
-  B01111100, B11110000,
-  B01110000, B01110000,
-  B00000000, B00110000 };
 
 /* First I2C MCP23017 GPIO expanders */
 Adafruit_MCP23017 mcp1;  
@@ -60,7 +42,7 @@ RotaryEncOverMCP rotaryEncoders[] = {
 constexpr int numEncoders = (int)(sizeof(rotaryEncoders) / sizeof(*rotaryEncoders));
 
 // Initialize I2C buses using TCA9548A I2C Multiplexer
-void tcaselect(uint8_t i2c_bus) {
+void selectMultiplexerChannel(uint8_t i2c_bus) {
     if (i2c_bus > 7) return;
     Wire.beginTransmission(MUX_ADDRESS);
     Wire.write(1 << i2c_bus);
@@ -191,7 +173,7 @@ void setup() {
     
   
     mcp1.begin();      // use default address 0
-    //Initialize input encoders (pin mode, interrupt)
+    // Initialize input encoders (pin mode, interrupt)
     for(int i=0; i < numEncoders; i++) {
         rotaryEncoders[i].init();
     }
@@ -234,25 +216,17 @@ void loop() {
 
 void initOledDisplays() {
     for (int d = 0; d < 2; d++) {
-      tcaselect(d);
+      selectMultiplexerChannel(d);
       // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-      if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
-         SerialUSB.println(F("SSD1306 allocation failed"));
-      }
-      
+      display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     
       display.clearDisplay();
-      display.drawBitmap(
-        (display.width()  - LOGO_WIDTH ) / 2,
-        (display.height() - LOGO_HEIGHT) / 2,
-        logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
-      display.display();
     }  
 }
 
 void initButtons() {
   mcp1.pinMode(SHIFT_BTN_PIN, INPUT);   // Button i/p to GND
-  mcp1.pullUp(SHIFT_BTN_PIN, HIGH);     // Puled high ~100k
+  mcp1.pullUp(SHIFT_BTN_PIN, HIGH);     // Pulled high ~100k
 }
 
 void readButtons() {
@@ -461,7 +435,7 @@ void displayTwinParameters(SynthParameter *param1, SynthParameter *param2, int d
 }
 
 void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber) {
-    tcaselect(displayNumber);
+    selectMultiplexerChannel(displayNumber);
 
     display.clearDisplay();  
     
