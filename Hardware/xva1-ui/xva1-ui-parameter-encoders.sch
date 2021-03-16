@@ -649,7 +649,7 @@ F 3 "" H 7900 1600 50  0001 C CNN
 $EndComp
 Text GLabel 8300 1350 2    50   Input ~ 0
 BTN-SC1
-Text GLabel 8300 1450 2    50   Input ~ 0
+Text GLabel 8400 1750 2    50   Input ~ 0
 LED-SC1
 $Comp
 L Switch:SW_Push_LED SW16
@@ -680,7 +680,7 @@ F 3 "" H 9500 1600 50  0001 C CNN
 $EndComp
 Text GLabel 9900 1350 2    50   Input ~ 0
 BTN-SC2
-Text GLabel 9900 1450 2    50   Input ~ 0
+Text GLabel 10000 1750 2    50   Input ~ 0
 LED-SC2
 $Comp
 L Switch:SW_Push_LED SW17
@@ -711,7 +711,7 @@ F 3 "" H 7900 2900 50  0001 C CNN
 $EndComp
 Text GLabel 8300 2650 2    50   Input ~ 0
 BTN-SC3
-Text GLabel 8300 2750 2    50   Input ~ 0
+Text GLabel 8400 3050 2    50   Input ~ 0
 LED-SC3
 $Comp
 L Switch:SW_Push_LED SW18
@@ -742,7 +742,7 @@ F 3 "" H 9500 2900 50  0001 C CNN
 $EndComp
 Text GLabel 9900 2650 2    50   Input ~ 0
 BTN-SC4
-Text GLabel 9900 2750 2    50   Input ~ 0
+Text GLabel 10000 3050 2    50   Input ~ 0
 LED-SC4
 $Comp
 L Switch:SW_Push_LED SW19
@@ -773,7 +773,7 @@ F 3 "" H 7900 4200 50  0001 C CNN
 $EndComp
 Text GLabel 8300 3950 2    50   Input ~ 0
 BTN-SC5
-Text GLabel 8300 4050 2    50   Input ~ 0
+Text GLabel 8400 4350 2    50   Input ~ 0
 LED-SC5
 $Comp
 L Switch:SW_Push_LED SW20
@@ -804,7 +804,7 @@ F 3 "" H 9500 4200 50  0001 C CNN
 $EndComp
 Text GLabel 9900 3950 2    50   Input ~ 0
 BTN-SC6
-Text GLabel 9900 4050 2    50   Input ~ 0
+Text GLabel 10000 4350 2    50   Input ~ 0
 LED-SC6
 $Comp
 L Switch:SW_Push_LED SW21
@@ -835,7 +835,7 @@ F 3 "" H 7900 5500 50  0001 C CNN
 $EndComp
 Text GLabel 8300 5250 2    50   Input ~ 0
 BTN-SC7
-Text GLabel 8300 5350 2    50   Input ~ 0
+Text GLabel 8400 5650 2    50   Input ~ 0
 LED-SC7
 $Comp
 L Switch:SW_Push_LED SW22
@@ -866,7 +866,7 @@ F 3 "" H 9500 5500 50  0001 C CNN
 $EndComp
 Text GLabel 9900 5250 2    50   Input ~ 0
 BTN-SC8
-Text GLabel 9900 5350 2    50   Input ~ 0
+Text GLabel 10000 5650 2    50   Input ~ 0
 LED-SC8
 Wire Notes Line
 	10700 600  7600 600 
@@ -909,4 +909,108 @@ F 3 "~" H 3100 2010 50  0001 C CNN
 	1    3100 1750
 	0    1    1    0   
 $EndComp
+$Comp
+L Device:R R6
+U 1 1 605134BC
+P 8300 1600
+F 0 "R6" H 8370 1646 50  0000 L CNN
+F 1 "470" H 8370 1555 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8230 1600 50  0001 C CNN
+F 3 "~" H 8300 1600 50  0001 C CNN
+	1    8300 1600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8400 1750 8300 1750
+$Comp
+L Device:R R8
+U 1 1 6051B4D8
+P 8300 2900
+F 0 "R8" H 8370 2946 50  0000 L CNN
+F 1 "470" H 8370 2855 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8230 2900 50  0001 C CNN
+F 3 "~" H 8300 2900 50  0001 C CNN
+	1    8300 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8400 3050 8300 3050
+$Comp
+L Device:R R10
+U 1 1 6051D57F
+P 8300 4200
+F 0 "R10" H 8370 4246 50  0000 L CNN
+F 1 "470" H 8370 4155 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8230 4200 50  0001 C CNN
+F 3 "~" H 8300 4200 50  0001 C CNN
+	1    8300 4200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8400 4350 8300 4350
+$Comp
+L Device:R R12
+U 1 1 6051F48A
+P 8300 5500
+F 0 "R12" H 8370 5546 50  0000 L CNN
+F 1 "470" H 8370 5455 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8230 5500 50  0001 C CNN
+F 3 "~" H 8300 5500 50  0001 C CNN
+	1    8300 5500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8400 5650 8300 5650
+$Comp
+L Device:R R13
+U 1 1 60521CBF
+P 9900 5500
+F 0 "R13" H 9970 5546 50  0000 L CNN
+F 1 "470" H 9970 5455 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 9830 5500 50  0001 C CNN
+F 3 "~" H 9900 5500 50  0001 C CNN
+	1    9900 5500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10000 5650 9900 5650
+$Comp
+L Device:R R11
+U 1 1 60523BBB
+P 9900 4200
+F 0 "R11" H 9970 4246 50  0000 L CNN
+F 1 "470" H 9970 4155 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 9830 4200 50  0001 C CNN
+F 3 "~" H 9900 4200 50  0001 C CNN
+	1    9900 4200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10000 4350 9900 4350
+$Comp
+L Device:R R9
+U 1 1 60525C93
+P 9900 2900
+F 0 "R9" H 9970 2946 50  0000 L CNN
+F 1 "470" H 9970 2855 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 9830 2900 50  0001 C CNN
+F 3 "~" H 9900 2900 50  0001 C CNN
+	1    9900 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10000 3050 9900 3050
+$Comp
+L Device:R R7
+U 1 1 605293B0
+P 9900 1600
+F 0 "R7" H 9970 1646 50  0000 L CNN
+F 1 "470" H 9970 1555 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 9830 1600 50  0001 C CNN
+F 3 "~" H 9900 1600 50  0001 C CNN
+	1    9900 1600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10000 1750 9900 1750
 $EndSCHEMATC
