@@ -1,0 +1,912 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 3
+Title "XVA1 / XFM2 User Interface"
+Date "2021-03-07"
+Rev ""
+Comp "MacMannes"
+Comment1 "UNVERIFIED!!!"
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text GLabel 1600 1350 1    50   Input ~ 0
+ENC1-B
+Text GLabel 1800 1350 1    50   Input ~ 0
+ENC1-A
+Wire Wire Line
+	1600 1350 1600 1450
+Wire Wire Line
+	1800 1350 1800 1450
+$Comp
+L power:GND #PWR0121
+U 1 1 604E7EF6
+P 1350 2100
+F 0 "#PWR0121" H 1350 1850 50  0001 C CNN
+F 1 "GND" V 1355 1972 50  0000 R CNN
+F 2 "" H 1350 2100 50  0001 C CNN
+F 3 "" H 1350 2100 50  0001 C CNN
+	1    1350 2100
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0122
+U 1 1 604E7EFC
+P 1350 1400
+F 0 "#PWR0122" H 1350 1150 50  0001 C CNN
+F 1 "GND" V 1355 1272 50  0000 R CNN
+F 2 "" H 1350 1400 50  0001 C CNN
+F 3 "" H 1350 1400 50  0001 C CNN
+	1    1350 1400
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW1
+U 1 1 604E7F02
+P 1700 1750
+F 0 "SW1" V 1654 1980 50  0000 L CNN
+F 1 "Rotary Encoder" V 1745 1980 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 1550 1910 50  0001 C CNN
+F 3 "~" H 1700 2010 50  0001 C CNN
+	1    1700 1750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1700 1450 1700 1400
+Wire Wire Line
+	1700 1400 1350 1400
+Wire Wire Line
+	1600 2050 1600 2100
+Wire Wire Line
+	1600 2100 1350 2100
+Text GLabel 1600 4700 1    50   Input ~ 0
+ENC2-B
+Text GLabel 1800 4700 1    50   Input ~ 0
+ENC2-A
+Wire Wire Line
+	1600 4700 1600 4800
+Wire Wire Line
+	1800 4700 1800 4800
+$Comp
+L power:GND #PWR0124
+U 1 1 604E7F10
+P 1350 5450
+F 0 "#PWR0124" H 1350 5200 50  0001 C CNN
+F 1 "GND" V 1355 5322 50  0000 R CNN
+F 2 "" H 1350 5450 50  0001 C CNN
+F 3 "" H 1350 5450 50  0001 C CNN
+	1    1350 5450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0125
+U 1 1 604E7F16
+P 1350 4750
+F 0 "#PWR0125" H 1350 4500 50  0001 C CNN
+F 1 "GND" V 1355 4622 50  0000 R CNN
+F 2 "" H 1350 4750 50  0001 C CNN
+F 3 "" H 1350 4750 50  0001 C CNN
+	1    1350 4750
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW2
+U 1 1 604E7F1C
+P 1700 5100
+F 0 "SW2" V 1654 5330 50  0000 L CNN
+F 1 "Rotary Encoder" V 1745 5330 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 1550 5260 50  0001 C CNN
+F 3 "~" H 1700 5360 50  0001 C CNN
+	1    1700 5100
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1700 4800 1700 4750
+Wire Wire Line
+	1700 4750 1350 4750
+Wire Wire Line
+	1600 5400 1600 5450
+Wire Wire Line
+	1600 5450 1350 5450
+Text GLabel 3000 4700 1    50   Input ~ 0
+ENC4-B
+Text GLabel 3200 4700 1    50   Input ~ 0
+ENC4-A
+Wire Wire Line
+	3000 4700 3000 4800
+Wire Wire Line
+	3200 4700 3200 4800
+$Comp
+L power:GND #PWR0126
+U 1 1 604E7F2A
+P 2750 5450
+F 0 "#PWR0126" H 2750 5200 50  0001 C CNN
+F 1 "GND" V 2755 5322 50  0000 R CNN
+F 2 "" H 2750 5450 50  0001 C CNN
+F 3 "" H 2750 5450 50  0001 C CNN
+	1    2750 5450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0127
+U 1 1 604E7F30
+P 2750 4750
+F 0 "#PWR0127" H 2750 4500 50  0001 C CNN
+F 1 "GND" V 2755 4622 50  0000 R CNN
+F 2 "" H 2750 4750 50  0001 C CNN
+F 3 "" H 2750 4750 50  0001 C CNN
+	1    2750 4750
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW4
+U 1 1 604E7F36
+P 3100 5100
+F 0 "SW4" V 3054 5330 50  0000 L CNN
+F 1 "Rotary Encoder" V 3145 5330 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 2950 5260 50  0001 C CNN
+F 3 "~" H 3100 5360 50  0001 C CNN
+	1    3100 5100
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3100 4800 3100 4750
+Wire Wire Line
+	3100 4750 2750 4750
+Wire Wire Line
+	3000 5400 3000 5450
+Wire Wire Line
+	3000 5450 2750 5450
+Text GLabel 4500 4700 1    50   Input ~ 0
+ENC6-B
+Text GLabel 4700 4700 1    50   Input ~ 0
+ENC6-A
+Wire Wire Line
+	4500 4700 4500 4800
+Wire Wire Line
+	4700 4700 4700 4800
+$Comp
+L power:GND #PWR0128
+U 1 1 604E7F44
+P 4250 5450
+F 0 "#PWR0128" H 4250 5200 50  0001 C CNN
+F 1 "GND" V 4255 5322 50  0000 R CNN
+F 2 "" H 4250 5450 50  0001 C CNN
+F 3 "" H 4250 5450 50  0001 C CNN
+	1    4250 5450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0129
+U 1 1 604E7F4A
+P 4250 4750
+F 0 "#PWR0129" H 4250 4500 50  0001 C CNN
+F 1 "GND" V 4255 4622 50  0000 R CNN
+F 2 "" H 4250 4750 50  0001 C CNN
+F 3 "" H 4250 4750 50  0001 C CNN
+	1    4250 4750
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW6
+U 1 1 604E7F50
+P 4600 5100
+F 0 "SW6" V 4554 5330 50  0000 L CNN
+F 1 "Rotary Encoder" V 4645 5330 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 4450 5260 50  0001 C CNN
+F 3 "~" H 4600 5360 50  0001 C CNN
+	1    4600 5100
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4600 4800 4600 4750
+Wire Wire Line
+	4600 4750 4250 4750
+Wire Wire Line
+	4500 5400 4500 5450
+Wire Wire Line
+	4500 5450 4250 5450
+Text GLabel 6050 4700 1    50   Input ~ 0
+ENC8-B
+Text GLabel 6250 4700 1    50   Input ~ 0
+ENC8-A
+Wire Wire Line
+	6050 4700 6050 4800
+Wire Wire Line
+	6250 4700 6250 4800
+$Comp
+L power:GND #PWR0130
+U 1 1 604E7F5E
+P 5800 5450
+F 0 "#PWR0130" H 5800 5200 50  0001 C CNN
+F 1 "GND" V 5805 5322 50  0000 R CNN
+F 2 "" H 5800 5450 50  0001 C CNN
+F 3 "" H 5800 5450 50  0001 C CNN
+	1    5800 5450
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0132
+U 1 1 604E7F64
+P 5800 4750
+F 0 "#PWR0132" H 5800 4500 50  0001 C CNN
+F 1 "GND" V 5805 4622 50  0000 R CNN
+F 2 "" H 5800 4750 50  0001 C CNN
+F 3 "" H 5800 4750 50  0001 C CNN
+	1    5800 4750
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW8
+U 1 1 604E7F6A
+P 6150 5100
+F 0 "SW8" V 6104 5330 50  0000 L CNN
+F 1 "Rotary Encoder" V 6195 5330 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 6000 5260 50  0001 C CNN
+F 3 "~" H 6150 5360 50  0001 C CNN
+	1    6150 5100
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6150 4800 6150 4750
+Wire Wire Line
+	6150 4750 5800 4750
+Wire Wire Line
+	6050 5400 6050 5450
+Wire Wire Line
+	6050 5450 5800 5450
+Text GLabel 3000 1350 1    50   Input ~ 0
+ENC3-B
+Text GLabel 3200 1350 1    50   Input ~ 0
+ENC3-A
+Wire Wire Line
+	3000 1350 3000 1450
+Wire Wire Line
+	3200 1350 3200 1450
+$Comp
+L power:GND #PWR0133
+U 1 1 604E7F78
+P 2750 2100
+F 0 "#PWR0133" H 2750 1850 50  0001 C CNN
+F 1 "GND" V 2755 1972 50  0000 R CNN
+F 2 "" H 2750 2100 50  0001 C CNN
+F 3 "" H 2750 2100 50  0001 C CNN
+	1    2750 2100
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0134
+U 1 1 604E7F7E
+P 2750 1400
+F 0 "#PWR0134" H 2750 1150 50  0001 C CNN
+F 1 "GND" V 2755 1272 50  0000 R CNN
+F 2 "" H 2750 1400 50  0001 C CNN
+F 3 "" H 2750 1400 50  0001 C CNN
+	1    2750 1400
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3100 1450 3100 1400
+Wire Wire Line
+	3100 1400 2750 1400
+Wire Wire Line
+	3000 2050 3000 2100
+Wire Wire Line
+	3000 2100 2750 2100
+Text GLabel 4500 1350 1    50   Input ~ 0
+ENC5-B
+Text GLabel 4700 1350 1    50   Input ~ 0
+ENC5-A
+Wire Wire Line
+	4500 1350 4500 1450
+Wire Wire Line
+	4700 1350 4700 1450
+$Comp
+L power:GND #PWR0135
+U 1 1 604E7F92
+P 4250 2100
+F 0 "#PWR0135" H 4250 1850 50  0001 C CNN
+F 1 "GND" V 4255 1972 50  0000 R CNN
+F 2 "" H 4250 2100 50  0001 C CNN
+F 3 "" H 4250 2100 50  0001 C CNN
+	1    4250 2100
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0136
+U 1 1 604E7F98
+P 4250 1400
+F 0 "#PWR0136" H 4250 1150 50  0001 C CNN
+F 1 "GND" V 4255 1272 50  0000 R CNN
+F 2 "" H 4250 1400 50  0001 C CNN
+F 3 "" H 4250 1400 50  0001 C CNN
+	1    4250 1400
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW5
+U 1 1 604E7F9E
+P 4600 1750
+F 0 "SW5" V 4554 1980 50  0000 L CNN
+F 1 "Rotary Encoder" V 4645 1980 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 4450 1910 50  0001 C CNN
+F 3 "~" H 4600 2010 50  0001 C CNN
+	1    4600 1750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4600 1450 4600 1400
+Wire Wire Line
+	4600 1400 4250 1400
+Wire Wire Line
+	4500 2050 4500 2100
+Wire Wire Line
+	4500 2100 4250 2100
+Text GLabel 6050 1350 1    50   Input ~ 0
+ENC7-B
+Text GLabel 6250 1350 1    50   Input ~ 0
+ENC7-A
+Wire Wire Line
+	6050 1350 6050 1450
+Wire Wire Line
+	6250 1350 6250 1450
+$Comp
+L power:GND #PWR0137
+U 1 1 604E7FAC
+P 5800 2100
+F 0 "#PWR0137" H 5800 1850 50  0001 C CNN
+F 1 "GND" V 5805 1972 50  0000 R CNN
+F 2 "" H 5800 2100 50  0001 C CNN
+F 3 "" H 5800 2100 50  0001 C CNN
+	1    5800 2100
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0138
+U 1 1 604E7FB2
+P 5800 1400
+F 0 "#PWR0138" H 5800 1150 50  0001 C CNN
+F 1 "GND" V 5805 1272 50  0000 R CNN
+F 2 "" H 5800 1400 50  0001 C CNN
+F 3 "" H 5800 1400 50  0001 C CNN
+	1    5800 1400
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Rotary_Encoder_Switch SW7
+U 1 1 604E7FB8
+P 6150 1750
+F 0 "SW7" V 6104 1980 50  0000 L CNN
+F 1 "Rotary Encoder" V 6195 1980 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 6000 1910 50  0001 C CNN
+F 3 "~" H 6150 2010 50  0001 C CNN
+	1    6150 1750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6150 1450 6150 1400
+Wire Wire Line
+	6150 1400 5800 1400
+Wire Wire Line
+	6050 2050 6050 2100
+Wire Wire Line
+	6050 2100 5800 2100
+Text GLabel 1800 2050 3    50   Input ~ 0
+ENC1-S
+Text GLabel 3200 2050 3    50   Input ~ 0
+ENC3-S
+Text GLabel 4700 2050 3    50   Input ~ 0
+ENC5-S
+Text GLabel 6250 2050 3    50   Input ~ 0
+ENC7-S
+Text GLabel 6250 5400 3    50   Input ~ 0
+ENC8-S
+Text GLabel 4700 5400 3    50   Input ~ 0
+ENC6-S
+Text GLabel 3200 5400 3    50   Input ~ 0
+ENC4-S
+Text GLabel 1800 5400 3    50   Input ~ 0
+ENC2-S
+$Comp
+L xva1-ui:OLED_SSD1306 DS1
+U 1 1 606076ED
+P 1650 3300
+F 0 "DS1" H 1222 3346 50  0000 R CNN
+F 1 "SSD1306" H 1222 3255 50  0000 R CNN
+F 2 "xva1-ui:SSD1306" H 1300 3700 50  0001 C CNN
+F 3 "" H 1300 3700 50  0001 C CNN
+	1    1650 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0139
+U 1 1 60608AD3
+P 1650 3750
+F 0 "#PWR0139" H 1650 3500 50  0001 C CNN
+F 1 "GND" H 1655 3577 50  0000 C CNN
+F 2 "" H 1650 3750 50  0001 C CNN
+F 3 "" H 1650 3750 50  0001 C CNN
+	1    1650 3750
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0140
+U 1 1 6060F520
+P 1650 2850
+F 0 "#PWR0140" H 1650 2700 50  0001 C CNN
+F 1 "+3.3V" H 1665 3023 50  0000 C CNN
+F 2 "" H 1650 2850 50  0001 C CNN
+F 3 "" H 1650 2850 50  0001 C CNN
+	1    1650 2850
+	1    0    0    -1  
+$EndComp
+Text GLabel 2150 3250 1    50   Input ~ 0
+OLED1-SCL
+Text GLabel 2150 3350 3    50   Input ~ 0
+OLED1-SDA
+$Comp
+L xva1-ui:OLED_SSD1306 DS2
+U 1 1 60615211
+P 3100 3300
+F 0 "DS2" H 2672 3346 50  0000 R CNN
+F 1 "SSD1306" H 2672 3255 50  0000 R CNN
+F 2 "xva1-ui:SSD1306" H 2750 3700 50  0001 C CNN
+F 3 "" H 2750 3700 50  0001 C CNN
+	1    3100 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0141
+U 1 1 60615217
+P 3100 3750
+F 0 "#PWR0141" H 3100 3500 50  0001 C CNN
+F 1 "GND" H 3105 3577 50  0000 C CNN
+F 2 "" H 3100 3750 50  0001 C CNN
+F 3 "" H 3100 3750 50  0001 C CNN
+	1    3100 3750
+	1    0    0    -1  
+$EndComp
+Text GLabel 3600 3350 3    50   Input ~ 0
+OLED2-SDA
+$Comp
+L xva1-ui:OLED_SSD1306 DS3
+U 1 1 60616597
+P 4600 3300
+F 0 "DS3" H 4172 3346 50  0000 R CNN
+F 1 "SSD1306" H 4172 3255 50  0000 R CNN
+F 2 "xva1-ui:SSD1306" H 4250 3700 50  0001 C CNN
+F 3 "" H 4250 3700 50  0001 C CNN
+	1    4600 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0142
+U 1 1 6061659D
+P 4600 3750
+F 0 "#PWR0142" H 4600 3500 50  0001 C CNN
+F 1 "GND" H 4605 3577 50  0000 C CNN
+F 2 "" H 4600 3750 50  0001 C CNN
+F 3 "" H 4600 3750 50  0001 C CNN
+	1    4600 3750
+	1    0    0    -1  
+$EndComp
+Text GLabel 5100 3350 3    50   Input ~ 0
+OLED3-SDA
+$Comp
+L power:GND #PWR0143
+U 1 1 60617DDF
+P 6150 3750
+F 0 "#PWR0143" H 6150 3500 50  0001 C CNN
+F 1 "GND" H 6155 3577 50  0000 C CNN
+F 2 "" H 6150 3750 50  0001 C CNN
+F 3 "" H 6150 3750 50  0001 C CNN
+	1    6150 3750
+	1    0    0    -1  
+$EndComp
+Text GLabel 6650 3350 3    50   Input ~ 0
+OLED4-SDA
+$Comp
+L power:+3.3V #PWR0144
+U 1 1 60618C25
+P 3100 2850
+F 0 "#PWR0144" H 3100 2700 50  0001 C CNN
+F 1 "+3.3V" H 3115 3023 50  0000 C CNN
+F 2 "" H 3100 2850 50  0001 C CNN
+F 3 "" H 3100 2850 50  0001 C CNN
+	1    3100 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0145
+U 1 1 6061985A
+P 4600 2850
+F 0 "#PWR0145" H 4600 2700 50  0001 C CNN
+F 1 "+3.3V" H 4615 3023 50  0000 C CNN
+F 2 "" H 4600 2850 50  0001 C CNN
+F 3 "" H 4600 2850 50  0001 C CNN
+	1    4600 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0146
+U 1 1 6061A60E
+P 6150 2850
+F 0 "#PWR0146" H 6150 2700 50  0001 C CNN
+F 1 "+3.3V" H 6165 3023 50  0000 C CNN
+F 2 "" H 6150 2850 50  0001 C CNN
+F 3 "" H 6150 2850 50  0001 C CNN
+	1    6150 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L xva1-ui:OLED_SSD1306 DS4
+U 1 1 60617DD9
+P 6150 3300
+F 0 "DS4" H 5722 3346 50  0000 R CNN
+F 1 "SSD1306" H 5722 3255 50  0000 R CNN
+F 2 "xva1-ui:SSD1306" H 5800 3700 50  0001 C CNN
+F 3 "" H 5800 3700 50  0001 C CNN
+	1    6150 3300
+	1    0    0    -1  
+$EndComp
+Text GLabel 3600 3250 1    50   Input ~ 0
+OLED2-SCL
+Text GLabel 5100 3250 1    50   Input ~ 0
+OLED3-SCL
+Text GLabel 6650 3250 1    50   Input ~ 0
+OLED4-SCL
+$Comp
+L Switch:SW_Push_LED SW13
+U 1 1 60715D9F
+P 2350 7100
+F 0 "SW13" H 2350 7485 50  0000 C CNN
+F 1 "SW_Push_LED" H 2350 7394 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 2350 7400 50  0001 C CNN
+F 3 "~" H 2350 7400 50  0001 C CNN
+	1    2350 7100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2150 7000 2150 7100
+Connection ~ 2150 7100
+Wire Wire Line
+	2150 7100 2150 7250
+$Comp
+L power:GND #PWR0147
+U 1 1 607181AE
+P 2150 7250
+F 0 "#PWR0147" H 2150 7000 50  0001 C CNN
+F 1 "GND" H 2155 7077 50  0000 C CNN
+F 2 "" H 2150 7250 50  0001 C CNN
+F 3 "" H 2150 7250 50  0001 C CNN
+	1    2150 7250
+	1    0    0    -1  
+$EndComp
+Text GLabel 2550 7000 2    50   Input ~ 0
+BTN-UP
+Text GLabel 2550 7100 2    50   Input ~ 0
+LED-UP
+$Comp
+L Switch:SW_Push_LED SW14
+U 1 1 60723742
+P 4050 7050
+F 0 "SW14" H 4050 7435 50  0000 C CNN
+F 1 "SW_Push_LED" H 4050 7344 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 4050 7350 50  0001 C CNN
+F 3 "~" H 4050 7350 50  0001 C CNN
+	1    4050 7050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3850 6950 3850 7050
+Connection ~ 3850 7050
+Wire Wire Line
+	3850 7050 3850 7200
+$Comp
+L power:GND #PWR0148
+U 1 1 6072374B
+P 3850 7200
+F 0 "#PWR0148" H 3850 6950 50  0001 C CNN
+F 1 "GND" H 3855 7027 50  0000 C CNN
+F 2 "" H 3850 7200 50  0001 C CNN
+F 3 "" H 3850 7200 50  0001 C CNN
+	1    3850 7200
+	1    0    0    -1  
+$EndComp
+Text GLabel 4250 6950 2    50   Input ~ 0
+BTN-DWN
+Text GLabel 4250 7050 2    50   Input ~ 0
+LED-DWN
+$Comp
+L Switch:SW_Push_LED SW15
+U 1 1 60725D7C
+P 8100 1450
+F 0 "SW15" H 8100 1835 50  0000 C CNN
+F 1 "SW_Push_LED" H 8100 1744 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 8100 1750 50  0001 C CNN
+F 3 "~" H 8100 1750 50  0001 C CNN
+	1    8100 1450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 1350 7900 1450
+Connection ~ 7900 1450
+Wire Wire Line
+	7900 1450 7900 1600
+$Comp
+L power:GND #PWR0149
+U 1 1 60725D85
+P 7900 1600
+F 0 "#PWR0149" H 7900 1350 50  0001 C CNN
+F 1 "GND" H 7905 1427 50  0000 C CNN
+F 2 "" H 7900 1600 50  0001 C CNN
+F 3 "" H 7900 1600 50  0001 C CNN
+	1    7900 1600
+	1    0    0    -1  
+$EndComp
+Text GLabel 8300 1350 2    50   Input ~ 0
+BTN-SC1
+Text GLabel 8300 1450 2    50   Input ~ 0
+LED-SC1
+$Comp
+L Switch:SW_Push_LED SW16
+U 1 1 60727DDA
+P 9700 1450
+F 0 "SW16" H 9700 1835 50  0000 C CNN
+F 1 "SW_Push_LED" H 9700 1744 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 9700 1750 50  0001 C CNN
+F 3 "~" H 9700 1750 50  0001 C CNN
+	1    9700 1450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9500 1350 9500 1450
+Connection ~ 9500 1450
+Wire Wire Line
+	9500 1450 9500 1600
+$Comp
+L power:GND #PWR0150
+U 1 1 60727DE3
+P 9500 1600
+F 0 "#PWR0150" H 9500 1350 50  0001 C CNN
+F 1 "GND" H 9505 1427 50  0000 C CNN
+F 2 "" H 9500 1600 50  0001 C CNN
+F 3 "" H 9500 1600 50  0001 C CNN
+	1    9500 1600
+	1    0    0    -1  
+$EndComp
+Text GLabel 9900 1350 2    50   Input ~ 0
+BTN-SC2
+Text GLabel 9900 1450 2    50   Input ~ 0
+LED-SC2
+$Comp
+L Switch:SW_Push_LED SW17
+U 1 1 60729B65
+P 8100 2750
+F 0 "SW17" H 8100 3135 50  0000 C CNN
+F 1 "SW_Push_LED" H 8100 3044 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 8100 3050 50  0001 C CNN
+F 3 "~" H 8100 3050 50  0001 C CNN
+	1    8100 2750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 2650 7900 2750
+Connection ~ 7900 2750
+Wire Wire Line
+	7900 2750 7900 2900
+$Comp
+L power:GND #PWR0151
+U 1 1 60729B6E
+P 7900 2900
+F 0 "#PWR0151" H 7900 2650 50  0001 C CNN
+F 1 "GND" H 7905 2727 50  0000 C CNN
+F 2 "" H 7900 2900 50  0001 C CNN
+F 3 "" H 7900 2900 50  0001 C CNN
+	1    7900 2900
+	1    0    0    -1  
+$EndComp
+Text GLabel 8300 2650 2    50   Input ~ 0
+BTN-SC3
+Text GLabel 8300 2750 2    50   Input ~ 0
+LED-SC3
+$Comp
+L Switch:SW_Push_LED SW18
+U 1 1 60729B76
+P 9700 2750
+F 0 "SW18" H 9700 3135 50  0000 C CNN
+F 1 "SW_Push_LED" H 9700 3044 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 9700 3050 50  0001 C CNN
+F 3 "~" H 9700 3050 50  0001 C CNN
+	1    9700 2750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9500 2650 9500 2750
+Connection ~ 9500 2750
+Wire Wire Line
+	9500 2750 9500 2900
+$Comp
+L power:GND #PWR0152
+U 1 1 60729B7F
+P 9500 2900
+F 0 "#PWR0152" H 9500 2650 50  0001 C CNN
+F 1 "GND" H 9505 2727 50  0000 C CNN
+F 2 "" H 9500 2900 50  0001 C CNN
+F 3 "" H 9500 2900 50  0001 C CNN
+	1    9500 2900
+	1    0    0    -1  
+$EndComp
+Text GLabel 9900 2650 2    50   Input ~ 0
+BTN-SC4
+Text GLabel 9900 2750 2    50   Input ~ 0
+LED-SC4
+$Comp
+L Switch:SW_Push_LED SW19
+U 1 1 60731C1D
+P 8100 4050
+F 0 "SW19" H 8100 4435 50  0000 C CNN
+F 1 "SW_Push_LED" H 8100 4344 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 8100 4350 50  0001 C CNN
+F 3 "~" H 8100 4350 50  0001 C CNN
+	1    8100 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 3950 7900 4050
+Connection ~ 7900 4050
+Wire Wire Line
+	7900 4050 7900 4200
+$Comp
+L power:GND #PWR0153
+U 1 1 60731C26
+P 7900 4200
+F 0 "#PWR0153" H 7900 3950 50  0001 C CNN
+F 1 "GND" H 7905 4027 50  0000 C CNN
+F 2 "" H 7900 4200 50  0001 C CNN
+F 3 "" H 7900 4200 50  0001 C CNN
+	1    7900 4200
+	1    0    0    -1  
+$EndComp
+Text GLabel 8300 3950 2    50   Input ~ 0
+BTN-SC5
+Text GLabel 8300 4050 2    50   Input ~ 0
+LED-SC5
+$Comp
+L Switch:SW_Push_LED SW20
+U 1 1 60731C2E
+P 9700 4050
+F 0 "SW20" H 9700 4435 50  0000 C CNN
+F 1 "SW_Push_LED" H 9700 4344 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 9700 4350 50  0001 C CNN
+F 3 "~" H 9700 4350 50  0001 C CNN
+	1    9700 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9500 3950 9500 4050
+Connection ~ 9500 4050
+Wire Wire Line
+	9500 4050 9500 4200
+$Comp
+L power:GND #PWR0154
+U 1 1 60731C37
+P 9500 4200
+F 0 "#PWR0154" H 9500 3950 50  0001 C CNN
+F 1 "GND" H 9505 4027 50  0000 C CNN
+F 2 "" H 9500 4200 50  0001 C CNN
+F 3 "" H 9500 4200 50  0001 C CNN
+	1    9500 4200
+	1    0    0    -1  
+$EndComp
+Text GLabel 9900 3950 2    50   Input ~ 0
+BTN-SC6
+Text GLabel 9900 4050 2    50   Input ~ 0
+LED-SC6
+$Comp
+L Switch:SW_Push_LED SW21
+U 1 1 60731C3F
+P 8100 5350
+F 0 "SW21" H 8100 5735 50  0000 C CNN
+F 1 "SW_Push_LED" H 8100 5644 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 8100 5650 50  0001 C CNN
+F 3 "~" H 8100 5650 50  0001 C CNN
+	1    8100 5350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 5250 7900 5350
+Connection ~ 7900 5350
+Wire Wire Line
+	7900 5350 7900 5500
+$Comp
+L power:GND #PWR0155
+U 1 1 60731C48
+P 7900 5500
+F 0 "#PWR0155" H 7900 5250 50  0001 C CNN
+F 1 "GND" H 7905 5327 50  0000 C CNN
+F 2 "" H 7900 5500 50  0001 C CNN
+F 3 "" H 7900 5500 50  0001 C CNN
+	1    7900 5500
+	1    0    0    -1  
+$EndComp
+Text GLabel 8300 5250 2    50   Input ~ 0
+BTN-SC7
+Text GLabel 8300 5350 2    50   Input ~ 0
+LED-SC7
+$Comp
+L Switch:SW_Push_LED SW22
+U 1 1 60731C50
+P 9700 5350
+F 0 "SW22" H 9700 5735 50  0000 C CNN
+F 1 "SW_Push_LED" H 9700 5644 50  0000 C CNN
+F 2 "xva1-ui:SW_PUSH_LED-12mm" H 9700 5650 50  0001 C CNN
+F 3 "~" H 9700 5650 50  0001 C CNN
+	1    9700 5350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9500 5250 9500 5350
+Connection ~ 9500 5350
+Wire Wire Line
+	9500 5350 9500 5500
+$Comp
+L power:GND #PWR0156
+U 1 1 60731C59
+P 9500 5500
+F 0 "#PWR0156" H 9500 5250 50  0001 C CNN
+F 1 "GND" H 9505 5327 50  0000 C CNN
+F 2 "" H 9500 5500 50  0001 C CNN
+F 3 "" H 9500 5500 50  0001 C CNN
+	1    9500 5500
+	1    0    0    -1  
+$EndComp
+Text GLabel 9900 5250 2    50   Input ~ 0
+BTN-SC8
+Text GLabel 9900 5350 2    50   Input ~ 0
+LED-SC8
+Wire Notes Line
+	10700 600  7600 600 
+Text Notes 9650 750  2    50   ~ 0
+Shortcut Buttons with LEDs
+Wire Notes Line
+	850  600  7100 600 
+Wire Notes Line
+	7100 600  7100 6100
+Wire Notes Line
+	7100 6100 850  6100
+Wire Notes Line
+	850  6100 850  600 
+Text Notes 4400 750  2    50   ~ 0
+Parameter Encoders with displays
+Wire Notes Line
+	1800 7650 5100 7650
+Wire Notes Line
+	5100 7650 5100 6250
+Wire Notes Line
+	5100 6250 1800 6250
+Wire Notes Line
+	1800 6250 1800 7650
+Text Notes 3900 6400 2    50   ~ 0
+Up / Down Buttons with LEDs
+Wire Notes Line
+	7600 6100 10700 6100
+Wire Notes Line
+	7600 600  7600 6100
+Wire Notes Line
+	10700 600  10700 6100
+$Comp
+L Device:Rotary_Encoder_Switch SW3
+U 1 1 604E7F84
+P 3100 1750
+F 0 "SW3" V 3054 1980 50  0000 L CNN
+F 1 "Rotary Encoder" V 3145 1980 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 2950 1910 50  0001 C CNN
+F 3 "~" H 3100 2010 50  0001 C CNN
+	1    3100 1750
+	0    1    1    0   
+$EndComp
+$EndSCHEMATC

@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+.DS_Store
+
+*.bck
+
+*.kicad_pcb-bak
+
+*.sch-bak
+
+Hardware/xva1-ui/fp-info-cache

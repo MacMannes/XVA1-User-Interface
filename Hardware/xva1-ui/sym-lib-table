@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name Seeeduino_XIAO)(type Legacy)(uri "/Users/andre/Downloads/Seeeduino XIAO KICAD/Seeeduino XIAO.lib")(options "")(descr ""))
+  (lib (name xva1-ui)(type Legacy)(uri ${KIPRJMOD}/xva1-ui.lib)(options "")(descr ""))
+)

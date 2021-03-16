@@ -1,0 +1,797 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 3
+Title "XVA1 / XFM2 User Interface"
+Date "2021-03-07"
+Rev ""
+Comp "MacMannes"
+Comment1 "UNVERIFIED!!!"
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text Label 800  1400 0    50   ~ 0
+SDA
+Text Label 800  1500 0    50   ~ 0
+SCL
+Text Label 8000 2250 0    50   ~ 0
+SDA
+Text Label 8000 2400 0    50   ~ 0
+SCL
+Text GLabel 2500 1900 2    50   Input ~ 0
+ENC1-A
+Text GLabel 2500 1800 2    50   Input ~ 0
+ENC1-B
+NoConn ~ 1100 2000
+NoConn ~ 1100 2100
+$Comp
+L power:+3.3V #PWR0104
+U 1 1 6041326D
+P 1100 2300
+F 0 "#PWR0104" H 1100 2150 50  0001 C CNN
+F 1 "+3.3V" V 1115 2428 50  0000 L CNN
+F 2 "" H 1100 2300 50  0001 C CNN
+F 3 "" H 1100 2300 50  0001 C CNN
+	1    1100 2300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+3.3V #PWR0105
+U 1 1 604145A2
+P 10450 1950
+F 0 "#PWR0105" H 10450 1800 50  0001 C CNN
+F 1 "+3.3V" V 10465 2078 50  0000 L CNN
+F 2 "" H 10450 1950 50  0001 C CNN
+F 3 "" H 10450 1950 50  0001 C CNN
+	1    10450 1950
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0106
+U 1 1 60415B79
+P 10450 1800
+F 0 "#PWR0106" H 10450 1550 50  0001 C CNN
+F 1 "GND" V 10455 1672 50  0000 R CNN
+F 2 "" H 10450 1800 50  0001 C CNN
+F 3 "" H 10450 1800 50  0001 C CNN
+	1    10450 1800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+5V #PWR0107
+U 1 1 60416D15
+P 10450 1650
+F 0 "#PWR0107" H 10450 1500 50  0001 C CNN
+F 1 "+5V" V 10465 1778 50  0000 L CNN
+F 2 "" H 10450 1650 50  0001 C CNN
+F 3 "" H 10450 1650 50  0001 C CNN
+	1    10450 1650
+	0    1    1    0   
+$EndComp
+Text GLabel 8800 2550 0    50   Input ~ 0
+XIAO-TX
+Text GLabel 2500 2500 2    50   Input ~ 0
+ENC2-A
+Text GLabel 2500 1600 2    50   Input ~ 0
+ENC3-A
+Text GLabel 2500 2800 2    50   Input ~ 0
+ENC4-A
+Text GLabel 5050 2300 2    50   Input ~ 0
+ENC6-A
+Text GLabel 5050 1800 2    50   Input ~ 0
+ENC7-A
+Text GLabel 5050 2600 2    50   Input ~ 0
+ENC8-A
+Text GLabel 2500 2600 2    50   Input ~ 0
+ENC2-B
+Text GLabel 2500 1500 2    50   Input ~ 0
+ENC3-B
+Text GLabel 2500 2900 2    50   Input ~ 0
+ENC4-B
+Text GLabel 5050 2400 2    50   Input ~ 0
+ENC6-B
+Text GLabel 5050 1700 2    50   Input ~ 0
+ENC7-B
+Text GLabel 5050 2700 2    50   Input ~ 0
+ENC8-B
+Entry Wire Line
+	700  1400 800  1500
+Entry Wire Line
+	700  1300 800  1400
+Entry Wire Line
+	7900 2300 8000 2400
+Entry Wire Line
+	7900 2150 8000 2250
+Wire Wire Line
+	1100 2800 1000 2800
+Wire Wire Line
+	1100 2900 1000 2900
+Wire Wire Line
+	1100 3000 1000 3000
+$Comp
+L power:+3.3V #PWR0101
+U 1 1 6048E1A7
+P 1800 1100
+F 0 "#PWR0101" H 1800 950 50  0001 C CNN
+F 1 "+3.3V" V 1815 1228 50  0000 L CNN
+F 2 "" H 1800 1100 50  0001 C CNN
+F 3 "" H 1800 1100 50  0001 C CNN
+	1    1800 1100
+	0    1    1    0   
+$EndComp
+$Comp
+L Interface_Expansion:MCP23017_SP U2
+U 1 1 6005D8E3
+P 1800 2200
+F 0 "U2" H 1800 3481 50  0000 C CNN
+F 1 "MCP23017" H 1800 3390 50  0000 C CNN
+F 2 "Package_DIP:DIP-28_W7.62mm" H 2000 1200 50  0001 L CNN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001952C.pdf" H 2000 1100 50  0001 L CNN
+	1    1800 2200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1800 3300 1800 3200
+$Comp
+L power:GND #PWR0102
+U 1 1 604BC468
+P 1800 3300
+F 0 "#PWR0102" H 1800 3050 50  0001 C CNN
+F 1 "GND" H 1805 3127 50  0000 C CNN
+F 2 "" H 1800 3300 50  0001 C CNN
+F 3 "" H 1800 3300 50  0001 C CNN
+	1    1800 3300
+	1    0    0    -1  
+$EndComp
+Connection ~ 1800 3300
+Wire Wire Line
+	1800 3300 1000 3300
+$Sheet
+S 0    8750 2100 1200
+U 604DD2C4
+F0 "Parameter Encoders " 50
+F1 "xva1-ui-parameter-encoders.sch" 50
+$EndSheet
+$Comp
+L xva1-ui:TCA9548A_BREAKOUT U5
+U 1 1 604ED0F2
+P 1500 5100
+F 0 "U5" H 1500 6181 50  0000 C CNN
+F 1 "TCA9548A" H 1500 6090 50  0000 C CNN
+F 2 "xva1-ui:TCA9548A_BREAKOUT" H 1500 4100 50  0001 C CNN
+F 3 "" H 1550 5350 50  0001 C CNN
+	1    1500 5100
+	1    0    0    -1  
+$EndComp
+NoConn ~ 1100 4900
+NoConn ~ 1100 5400
+NoConn ~ 1100 5500
+NoConn ~ 1100 5600
+Entry Wire Line
+	700  4300 800  4400
+Entry Wire Line
+	700  4400 800  4500
+Wire Wire Line
+	1100 4400 800  4400
+Wire Wire Line
+	800  4500 1100 4500
+Text Label 800  4400 0    50   ~ 0
+SCL
+Text Label 800  4500 0    50   ~ 0
+SDA
+Text GLabel 1900 4400 2    50   Input ~ 0
+OLED1-SCL
+Text GLabel 1900 4600 2    50   Input ~ 0
+OLED2-SCL
+Text GLabel 1900 4800 2    50   Input ~ 0
+OLED3-SCL
+Text GLabel 1900 5000 2    50   Input ~ 0
+OLED4-SCL
+Text GLabel 1900 4500 2    50   Input ~ 0
+OLED1-SDA
+Text GLabel 1900 4700 2    50   Input ~ 0
+OLED2-SDA
+Text GLabel 1900 4900 2    50   Input ~ 0
+OLED3-SDA
+Text GLabel 1900 5100 2    50   Input ~ 0
+OLED4-SDA
+NoConn ~ 1900 5200
+NoConn ~ 1900 5300
+NoConn ~ 1900 5400
+NoConn ~ 1900 5500
+NoConn ~ 1900 5600
+NoConn ~ 1900 5700
+NoConn ~ 1900 5800
+NoConn ~ 1900 5900
+$Comp
+L power:GND #PWR0103
+U 1 1 604F8901
+P 1500 6100
+F 0 "#PWR0103" H 1500 5850 50  0001 C CNN
+F 1 "GND" H 1505 5927 50  0000 C CNN
+F 2 "" H 1500 6100 50  0001 C CNN
+F 3 "" H 1500 6100 50  0001 C CNN
+	1    1500 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0108
+U 1 1 604F967F
+P 1500 4200
+F 0 "#PWR0108" H 1500 4050 50  0001 C CNN
+F 1 "+3.3V" V 1515 4328 50  0000 L CNN
+F 2 "" H 1500 4200 50  0001 C CNN
+F 3 "" H 1500 4200 50  0001 C CNN
+	1    1500 4200
+	0    1    1    0   
+$EndComp
+Text Notes 7900 800  2    50   ~ 0
+I2C Bus
+$Sheet
+S 2600 8750 1800 1200
+U 60431802
+F0 "Synth" 50
+F1 "xva1-xfm2-synth.sch" 50
+$EndSheet
+Connection ~ 5750 850 
+Connection ~ 6700 3300
+Connection ~ 5950 3000
+Wire Wire Line
+	5950 3300 6700 3300
+Wire Wire Line
+	5950 3000 5950 3300
+Wire Wire Line
+	5950 3000 6000 3000
+Wire Wire Line
+	5950 2800 5950 3000
+Wire Wire Line
+	6000 2800 5950 2800
+Connection ~ 5850 2300
+Wire Wire Line
+	5850 2900 6000 2900
+Wire Wire Line
+	5850 2300 5850 2900
+$Comp
+L Interface_Expansion:MCP23017_SP U4
+U 1 1 604706A2
+P 6700 2200
+F 0 "U4" H 6700 3481 50  0000 C CNN
+F 1 "MCP23017" H 6700 3390 50  0000 C CNN
+F 2 "Package_DIP:DIP-28_W7.62mm" H 6900 1200 50  0001 L CNN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001952C.pdf" H 6900 1100 50  0001 L CNN
+	1    6700 2200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6000 2300 5850 2300
+Connection ~ 4350 3300
+Connection ~ 3600 2900
+Wire Wire Line
+	3600 3300 4350 3300
+Wire Wire Line
+	3600 2900 3600 3300
+Wire Wire Line
+	3600 2900 3650 2900
+Wire Wire Line
+	3600 2800 3600 2900
+Wire Wire Line
+	3650 2800 3600 2800
+Connection ~ 3500 2300
+Wire Wire Line
+	3650 2300 3500 2300
+Wire Wire Line
+	3500 3000 3500 2300
+Wire Wire Line
+	3500 3000 3650 3000
+$Comp
+L power:GND #PWR0109
+U 1 1 60499D06
+P 6700 3300
+F 0 "#PWR0109" H 6700 3050 50  0001 C CNN
+F 1 "GND" H 6705 3127 50  0000 C CNN
+F 2 "" H 6700 3300 50  0001 C CNN
+F 3 "" H 6700 3300 50  0001 C CNN
+	1    6700 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0110
+U 1 1 604988AD
+P 4350 3300
+F 0 "#PWR0110" H 4350 3050 50  0001 C CNN
+F 1 "GND" H 4355 3127 50  0000 C CNN
+F 2 "" H 4350 3300 50  0001 C CNN
+F 3 "" H 4350 3300 50  0001 C CNN
+	1    4350 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0111
+U 1 1 60490E4C
+P 6700 1100
+F 0 "#PWR0111" H 6700 950 50  0001 C CNN
+F 1 "+3.3V" V 6715 1228 50  0000 L CNN
+F 2 "" H 6700 1100 50  0001 C CNN
+F 3 "" H 6700 1100 50  0001 C CNN
+	1    6700 1100
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5850 1500 6000 1500
+$Comp
+L power:+3.3V #PWR0112
+U 1 1 6048EEAA
+P 4350 1100
+F 0 "#PWR0112" H 4350 950 50  0001 C CNN
+F 1 "+3.3V" V 4365 1228 50  0000 L CNN
+F 2 "" H 4350 1100 50  0001 C CNN
+F 3 "" H 4350 1100 50  0001 C CNN
+	1    4350 1100
+	0    1    1    0   
+$EndComp
+NoConn ~ 6000 2100
+NoConn ~ 6000 2000
+Text Label 5850 1500 0    50   ~ 0
+SCL
+Text Label 5850 1400 0    50   ~ 0
+SDA
+Entry Wire Line
+	5750 1400 5850 1500
+Entry Wire Line
+	5750 1300 5850 1400
+Wire Wire Line
+	6000 1400 5850 1400
+Text GLabel 5050 2800 2    50   Input ~ 0
+ENC8-S
+Text GLabel 5050 1600 2    50   Input ~ 0
+ENC7-S
+Text GLabel 5050 2500 2    50   Input ~ 0
+ENC6-S
+Text GLabel 5050 1900 2    50   Input ~ 0
+ENC5-S
+Text GLabel 2500 3000 2    50   Input ~ 0
+ENC4-S
+Text GLabel 2500 2700 2    50   Input ~ 0
+ENC2-S
+NoConn ~ 3650 2100
+NoConn ~ 3650 2000
+Text Label 3500 1500 0    50   ~ 0
+SCL
+Text Label 3500 1400 0    50   ~ 0
+SDA
+Entry Wire Line
+	3400 1400 3500 1500
+Entry Wire Line
+	3400 1300 3500 1400
+Wire Wire Line
+	3500 1500 3650 1500
+Wire Wire Line
+	3650 1400 3500 1400
+Text GLabel 2500 1700 2    50   Input ~ 0
+ENC1-S
+$Comp
+L power:+3.3V #PWR0123
+U 1 1 6044DB8B
+P 3500 2300
+F 0 "#PWR0123" H 3500 2150 50  0001 C CNN
+F 1 "+3.3V" V 3515 2428 50  0000 L CNN
+F 2 "" H 3500 2300 50  0001 C CNN
+F 3 "" H 3500 2300 50  0001 C CNN
+	1    3500 2300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Interface_Expansion:MCP23017_SP U3
+U 1 1 6044CEA8
+P 4350 2200
+F 0 "U3" H 4350 3481 50  0000 C CNN
+F 1 "MCP23017" H 4350 3390 50  0000 C CNN
+F 2 "Package_DIP:DIP-28_W7.62mm" H 4550 1200 50  0001 L CNN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001952C.pdf" H 4550 1100 50  0001 L CNN
+	1    4350 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Seeeduino_XIAO:SeeeduinoXIAO U1
+U 1 1 604048D5
+P 9650 2100
+F 0 "U1" H 9550 3200 50  0000 C CNN
+F 1 "Seeeduino XIAO" H 9550 3050 50  0000 C CNN
+F 2 "xva1-ui:Seeduino_XIAO_Through-Hole" H 9300 2300 50  0001 C CNN
+F 3 "" H 9300 2300 50  0001 C CNN
+	1    9650 2100
+	1    0    0    -1  
+$EndComp
+Wire Bus Line
+	5750 850  7900 850 
+$Comp
+L xva1-ui:TFT_ST7789 DS0
+U 1 1 6062FCFF
+P 9950 4300
+F 0 "DS0" H 9950 4981 50  0000 C CNN
+F 1 "TFT_ST7789" H 9950 4890 50  0000 C CNN
+F 2 "xva1-ui:TFT_IPS-240_240" H 9600 4800 50  0001 C CNN
+F 3 "" H 9600 4800 50  0001 C CNN
+	1    9950 4300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0113
+U 1 1 606332EC
+P 9950 4850
+F 0 "#PWR0113" H 9950 4600 50  0001 C CNN
+F 1 "GND" H 9955 4677 50  0000 C CNN
+F 2 "" H 9950 4850 50  0001 C CNN
+F 3 "" H 9950 4850 50  0001 C CNN
+	1    9950 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9300 3800 9300 4350
+Wire Wire Line
+	9450 4350 9300 4350
+Wire Wire Line
+	8200 1650 8200 4250
+Wire Wire Line
+	10450 4300 11000 4300
+Wire Wire Line
+	11000 4300 11000 2100
+Wire Wire Line
+	10900 2250 10900 4200
+Wire Wire Line
+	10900 4200 10450 4200
+Text GLabel 10450 2550 2    50   Input ~ 0
+XIAO-RX
+$Comp
+L Device:Rotary_Encoder_Switch SW?
+U 1 1 60646A12
+P 9950 5700
+AR Path="/604DD2C4/60646A12" Ref="SW?"  Part="1" 
+AR Path="/60646A12" Ref="SW0"  Part="1" 
+F 0 "SW0" V 9904 5930 50  0000 L CNN
+F 1 "Rotary Encoder" V 9995 5930 50  0000 L CNN
+F 2 "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm_CircularMountingHoles" H 9800 5860 50  0001 C CNN
+F 3 "~" H 9950 5960 50  0001 C CNN
+	1    9950 5700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	10050 5400 10050 5150
+Wire Wire Line
+	9850 5300 9850 5400
+$Comp
+L power:GND #PWR0114
+U 1 1 60649D18
+P 9950 5400
+F 0 "#PWR0114" H 9950 5150 50  0001 C CNN
+F 1 "GND" H 9955 5227 50  0000 C CNN
+F 2 "" H 9950 5400 50  0001 C CNN
+F 3 "" H 9950 5400 50  0001 C CNN
+	1    9950 5400
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0115
+U 1 1 6064A3CF
+P 9850 6200
+F 0 "#PWR0115" H 9850 5950 50  0001 C CNN
+F 1 "GND" H 9855 6027 50  0000 C CNN
+F 2 "" H 9850 6200 50  0001 C CNN
+F 3 "" H 9850 6200 50  0001 C CNN
+	1    9850 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9850 6000 9850 6200
+Wire Wire Line
+	10050 6000 10050 6100
+$Comp
+L power:+3.3V #PWR0131
+U 1 1 604767E8
+P 5850 2300
+F 0 "#PWR0131" H 5850 2150 50  0001 C CNN
+F 1 "+3.3V" V 5865 2428 50  0000 L CNN
+F 2 "" H 5850 2300 50  0001 C CNN
+F 3 "" H 5850 2300 50  0001 C CNN
+	1    5850 2300
+	0    -1   -1   0   
+$EndComp
+Entry Wire Line
+	3000 2150 3100 2250
+Entry Wire Line
+	3000 2050 3100 2150
+Entry Wire Line
+	3000 2400 3100 2500
+Text Label 2550 2150 0    50   ~ 0
+BTN-MENU
+Text Label 2550 2050 0    50   ~ 0
+BTN-SAVE
+Text Label 2550 2300 0    50   ~ 0
+BTN-ESC
+Text Label 2550 2400 0    50   ~ 0
+BTN-SHIFT
+Entry Wire Line
+	6000 4050 6100 4150
+Wire Wire Line
+	6250 4150 6250 5650
+Entry Wire Line
+	6150 4050 6250 4150
+Entry Wire Line
+	7100 4050 7200 4150
+Entry Wire Line
+	7250 4050 7350 4150
+Text Label 6100 4150 3    50   ~ 0
+BTN-MENU
+Text Label 6250 4150 3    50   ~ 0
+BTN-ESC
+Text Label 7200 4150 3    50   ~ 0
+BTN-SAVE
+Text Label 7350 4150 3    50   ~ 0
+BTN-SHIFT
+Wire Wire Line
+	2500 2150 3000 2150
+Wire Wire Line
+	2500 2050 3000 2050
+Wire Wire Line
+	2500 2400 3000 2400
+Text GLabel 5050 1500 2    50   Input ~ 0
+BTN-UP
+Text GLabel 5050 2900 2    50   Input ~ 0
+BTN-DWN
+Text GLabel 5050 1400 2    50   Input ~ 0
+LED-UP
+Text GLabel 5050 3000 2    50   Input ~ 0
+LED-DWN
+Text GLabel 7400 2100 2    50   Input ~ 0
+BTN-SC1
+Text GLabel 7400 1900 2    50   Input ~ 0
+BTN-SC2
+Text GLabel 7400 1700 2    50   Input ~ 0
+BTN-SC3
+Text GLabel 7400 1500 2    50   Input ~ 0
+BTN-SC4
+Text GLabel 7400 2300 2    50   Input ~ 0
+BTN-SC5
+Text GLabel 7400 2500 2    50   Input ~ 0
+BTN-SC6
+Text GLabel 7400 2700 2    50   Input ~ 0
+BTN-SC7
+Text GLabel 7400 2900 2    50   Input ~ 0
+BTN-SC8
+Text GLabel 7400 2000 2    50   Input ~ 0
+LED-SC1
+Text GLabel 7400 1800 2    50   Input ~ 0
+LED-SC2
+Text GLabel 7400 1600 2    50   Input ~ 0
+LED-SC3
+Text GLabel 7400 1400 2    50   Input ~ 0
+LED-SC4
+Text GLabel 7400 2400 2    50   Input ~ 0
+LED-SC5
+Text GLabel 7400 2600 2    50   Input ~ 0
+LED-SC6
+Text GLabel 7400 2800 2    50   Input ~ 0
+LED-SC7
+Text GLabel 7400 3000 2    50   Input ~ 0
+LED-SC8
+Wire Wire Line
+	7350 4150 7350 5650
+$Comp
+L power:GND #PWR0118
+U 1 1 607443CF
+P 6800 5650
+F 0 "#PWR0118" H 6800 5400 50  0001 C CNN
+F 1 "GND" H 6805 5477 50  0000 C CNN
+F 2 "" H 6800 5650 50  0001 C CNN
+F 3 "" H 6800 5650 50  0001 C CNN
+	1    6800 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0119
+U 1 1 60746FD8
+P 6800 5000
+F 0 "#PWR0119" H 6800 4750 50  0001 C CNN
+F 1 "GND" H 6805 4827 50  0000 C CNN
+F 2 "" H 6800 5000 50  0001 C CNN
+F 3 "" H 6800 5000 50  0001 C CNN
+	1    6800 5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1000 2800 1000 2900
+Wire Wire Line
+	800  1400 1100 1400
+Wire Wire Line
+	800  1500 1100 1500
+Connection ~ 1000 2900
+Wire Wire Line
+	1000 2900 1000 3000
+Connection ~ 1000 3000
+Wire Wire Line
+	1000 3000 1000 3300
+Wire Wire Line
+	8800 2400 8000 2400
+Wire Wire Line
+	8200 1650 8800 1650
+Wire Wire Line
+	10450 2250 10900 2250
+Wire Wire Line
+	10450 2100 11000 2100
+Wire Wire Line
+	8200 4250 9450 4250
+Entry Wire Line
+	8350 1900 8450 1800
+Entry Wire Line
+	8350 2050 8450 1950
+Entry Wire Line
+	8350 2200 8450 2100
+Wire Wire Line
+	8450 1800 8800 1800
+Wire Wire Line
+	8800 1950 8450 1950
+Wire Wire Line
+	8800 2100 8450 2100
+Entry Wire Line
+	8350 5050 8450 5150
+Entry Wire Line
+	8350 5200 8450 5300
+Entry Wire Line
+	8350 6000 8450 6100
+Wire Wire Line
+	10050 5150 8450 5150
+Wire Wire Line
+	9850 5300 8450 5300
+Wire Wire Line
+	10050 6100 8450 6100
+Text Label 8500 1800 0    50   ~ 0
+ENC-A
+Text Label 8500 1950 0    50   ~ 0
+ENC-B
+Text Label 8500 2100 0    50   ~ 0
+ENC-S
+Text Label 8450 5150 0    50   ~ 0
+ENC-A
+Text Label 8450 5300 0    50   ~ 0
+ENC-B
+Text Label 8450 6100 0    50   ~ 0
+ENC-S
+Text Notes 6650 4000 2    50   ~ 0
+Buttons
+Text Notes 8450 2850 3    50   ~ 0
+Encoder
+Wire Wire Line
+	8000 2250 8800 2250
+Wire Wire Line
+	11100 4400 11100 2400
+Wire Wire Line
+	10450 4400 11100 4400
+Wire Wire Line
+	10450 2400 11100 2400
+Wire Wire Line
+	9950 3800 9300 3800
+Connection ~ 9300 4350
+Wire Wire Line
+	9300 4350 9200 4350
+$Comp
+L power:+3.3V #PWR0120
+U 1 1 60631D65
+P 9200 4350
+F 0 "#PWR0120" H 9200 4200 50  0001 C CNN
+F 1 "+3.3V" V 9215 4478 50  0000 L CNN
+F 2 "" H 9200 4350 50  0001 C CNN
+F 3 "" H 9200 4350 50  0001 C CNN
+	1    9200 4350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	7200 4150 7200 5000
+$Comp
+L Switch:SW_Push SW9
+U 1 1 608A1EFA
+P 5900 5000
+F 0 "SW9" H 5900 5285 50  0000 C CNN
+F 1 "SW_Push" H 5900 5194 50  0000 C CNN
+F 2 "Button_Switch_THT:SW_PUSH-12mm" H 5900 5200 50  0001 C CNN
+F 3 "~" H 5900 5200 50  0001 C CNN
+	1    5900 5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6100 4150 6100 5000
+$Comp
+L power:GND #PWR0117
+U 1 1 60743885
+P 5700 5650
+F 0 "#PWR0117" H 5700 5400 50  0001 C CNN
+F 1 "GND" H 5705 5477 50  0000 C CNN
+F 2 "" H 5700 5650 50  0001 C CNN
+F 3 "" H 5700 5650 50  0001 C CNN
+	1    5700 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW10
+U 1 1 608B3683
+P 7000 5000
+F 0 "SW10" H 7000 5285 50  0000 C CNN
+F 1 "SW_Push" H 7000 5194 50  0000 C CNN
+F 2 "Button_Switch_THT:SW_PUSH-12mm" H 7000 5200 50  0001 C CNN
+F 3 "~" H 7000 5200 50  0001 C CNN
+	1    7000 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW11
+U 1 1 608B4117
+P 5900 5650
+F 0 "SW11" H 5900 5935 50  0000 C CNN
+F 1 "SW_Push" H 5900 5844 50  0000 C CNN
+F 2 "Button_Switch_THT:SW_PUSH-12mm" H 5900 5850 50  0001 C CNN
+F 3 "~" H 5900 5850 50  0001 C CNN
+	1    5900 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW12
+U 1 1 608B5638
+P 7000 5650
+F 0 "SW12" H 7000 5935 50  0000 C CNN
+F 1 "SW_Push" H 7000 5844 50  0000 C CNN
+F 2 "Button_Switch_THT:SW_PUSH-12mm" H 7000 5850 50  0001 C CNN
+F 3 "~" H 7000 5850 50  0001 C CNN
+	1    7000 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0116
+U 1 1 608BAA11
+P 5700 5000
+F 0 "#PWR0116" H 5700 4750 50  0001 C CNN
+F 1 "GND" H 5705 4827 50  0000 C CNN
+F 2 "" H 5700 5000 50  0001 C CNN
+F 3 "" H 5700 5000 50  0001 C CNN
+	1    5700 5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7350 5650 7200 5650
+Wire Wire Line
+	6250 5650 6100 5650
+Wire Wire Line
+	2500 2300 3000 2300
+Entry Wire Line
+	3000 2300 3100 2400
+Wire Bus Line
+	700  850  3400 850 
+Text GLabel 5050 2000 2    50   Input ~ 0
+ENC5-B
+Text GLabel 5050 2100 2    50   Input ~ 0
+ENC5-A
+Wire Wire Line
+	2500 2100 2500 2150
+Wire Wire Line
+	2500 2000 2500 2050
+Text GLabel 2500 1400 2    50   Input ~ 0
+ENC3-S
+Connection ~ 3400 850 
+Wire Bus Line
+	3400 850  5750 850 
+Wire Bus Line
+	3400 850  3400 1400
+Wire Bus Line
+	5750 850  5750 1400
+Wire Bus Line
+	7900 850  7900 2300
+Wire Bus Line
+	8350 1900 8350 6000
+Wire Bus Line
+	3100 4050 7250 4050
+Wire Bus Line
+	700  850  700  4400
+Wire Bus Line
+	3100 2150 3100 4050
+$EndSCHEMATC
