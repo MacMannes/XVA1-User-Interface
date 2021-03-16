@@ -21,6 +21,15 @@
 #define LOGO_WIDTH    16
 
 #define SHIFT_BTN_PIN 8
+#define SHORTCUT_BTN1_PIN 9
+#define SHORTCUT_LED1_PIN 10
+
+#define ROTARY_BTN1_PIN 2
+#define ROTARY_BTN2_PIN 5
+
+int allButtons[] = { SHIFT_BTN_PIN, SHORTCUT_BTN1_PIN, ROTARY_BTN1_PIN, ROTARY_BTN2_PIN};
+constexpr int numButtons = (int)(sizeof(allButtons) / sizeof(*allButtons));
+
 
 /* First I2C MCP23017 GPIO expanders */
 Adafruit_MCP23017 mcp1;  
@@ -72,6 +81,8 @@ unsigned long lastTransition;
 unsigned long revolutionTime = 0;
 
 bool shiftButtonPushed = false;
+int shortcutButtonState = HIGH;
+bool shortcut1Active = false;
 
 void rotaryEncoderChanged(bool clockwise, int id) {
     unsigned long now = millis();
@@ -225,8 +236,18 @@ void initOledDisplays() {
 }
 
 void initButtons() {
-  mcp1.pinMode(SHIFT_BTN_PIN, INPUT);   // Button i/p to GND
-  mcp1.pullUp(SHIFT_BTN_PIN, HIGH);     // Pulled high ~100k
+  for (int i = 0; i < numButtons; i++) {
+      int pin = allButtons[i];
+      mcp1.pinMode(pin, INPUT);   // Button i/p to GND
+      mcp1.pullUp(pin, HIGH);     // Pulled high ~100k    
+  }
+  
+//  mcp1.pinMode(SHIFT_BTN_PIN, INPUT);   // Button i/p to GND
+//  mcp1.pullUp(SHIFT_BTN_PIN, HIGH);     // Pulled high ~100k
+
+
+  mcp1.pinMode(SHORTCUT_LED1_PIN, OUTPUT);   // LED from Shortcut button 1
+  
 }
 
 void readButtons() {
@@ -236,6 +257,21 @@ void readButtons() {
       SerialUSB.print("Shift: ");
       SerialUSB.println(shiftButtonPushed);
     }
+    
+
+    int shortcutButton1 = mcp1.digitalRead(SHORTCUT_BTN1_PIN);
+    if (shortcutButton1 != shortcutButtonState) {
+      shortcutButtonState = shortcutButton1;
+      SerialUSB.print("Shortcut 1: ");
+      SerialUSB.println(shortcutButton1 == LOW);
+
+      if (shortcutButton1 == HIGH) {
+        // Button released, toggle LED        
+        shortcut1Active = !shortcut1Active;
+        mcp1.digitalWrite(SHORTCUT_LED1_PIN, shortcut1Active ? HIGH : LOW);
+      }
+    }
+    
 }
 
 void handleMainEncoder(bool clockwise) {
