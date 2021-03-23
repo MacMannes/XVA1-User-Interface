@@ -1,0 +1,95 @@
+# !!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE
+# https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+#
+# If you need to override existing CMake configuration or add extra,
+# please create `CMakeListsUser.txt` in the root of project.
+# The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
+
+
+
+set(CMAKE_CONFIGURATION_TYPES "seeed_xiao" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
+
+set(CLION_SVD_FILE_PATH "$ENV{HOME}/.platformio/platforms/atmelsam/misc/svd/ATSAMD21G18A.svd" CACHE FILEPATH "Peripheral Registers Definitions File" FORCE)
+
+SET(CMAKE_C_COMPILER "$ENV{HOME}/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc")
+SET(CMAKE_CXX_COMPILER "$ENV{HOME}/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-g++")
+SET(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions -std=gnu++11 -fno-threadsafe-statics -Os -ffunction-sections -fdata-sections -Wall -mcpu=cortex-m0plus -mthumb -nostdlib --param max-inline-insns-single=500 -Wno-expansion-to-defined")
+SET(CMAKE_C_FLAGS "-std=gnu11 -Os -ffunction-sections -fdata-sections -Wall -mcpu=cortex-m0plus -mthumb -nostdlib --param max-inline-insns-single=500 -Wno-expansion-to-defined")
+
+SET(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
+
+if (CMAKE_BUILD_TYPE MATCHES "seeed_xiao")
+    add_definitions(-D'PLATFORMIO=50101')
+    add_definitions(-D'ARDUINO_SAMD_ZERO')
+    add_definitions(-D'__SAMD21__')
+    add_definitions(-D'__SAMD21G18A__')
+    add_definitions(-D'ARM_MATH_CM0PLUS')
+    add_definitions(-D'SEEED_XIAO_M0')
+    add_definitions(-D'USER_SETUP_LOADED=1')
+    add_definitions(-D'SST7789_DRIVER=1')
+    add_definitions(-D'TFT_WIDTH=240')
+    add_definitions(-D'TFT_HEIGHT=240')
+    add_definitions(-D'TFT_DC=9')
+    add_definitions(-D'TFT_RESET=0')
+    add_definitions(-D'ARDUINO=10805')
+    add_definitions(-D'F_CPU=48000000L')
+    add_definitions(-D'USBCON')
+    add_definitions(-D'USB_VID=0x2886')
+    add_definitions(-D'USB_PID=0x802F')
+    add_definitions(-D'USB_PRODUCT=\"Seeeduino XIAO\"')
+    add_definitions(-D'USB_MANUFACTURER=\"Seeed\"')
+    add_definitions(-D'ARDUINO_ARCH_SAMD')
+    add_definitions(-D'USB_CONFIG_POWER=100')
+
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/include")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/src")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit ST7735 and ST7789 Library")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/lib/RotaryEncOverMCP")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/TFT_eSPI")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit SSD1306")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit GFX Library")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit BusIO")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/Wire")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/SPI")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/Adafruit_ZeroDMA")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/Adafruit_ZeroDMA/utility")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-cmsis/CMSIS/Core/Include")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-cmsis-atmel/CMSIS/Device/ATMEL")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/cores/arduino")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-cmsis/CMSIS/DSP/Include")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/variants/XIAO_m0")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit seesaw Library")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/SD")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/EnergySaving/src")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/FlashStorage/src")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/HID")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/I2S/src")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/LoRaWan")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/Seeed_Arduino_FreeRTOS/src")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/Seeed_Arduino_LCD")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/SoftwareSerial")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/TimerTC3")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/TimerTCC0")
+    include_directories("$ENV{HOME}/.platformio/packages/framework-arduino-samd-seeed/libraries/USBHost/src")
+    include_directories("$ENV{HOME}/.platformio/packages/toolchain-gccarmnoneeabi/arm-none-eabi/include/c++/7.2.1")
+    include_directories("$ENV{HOME}/.platformio/packages/toolchain-gccarmnoneeabi/arm-none-eabi/include/c++/7.2.1/arm-none-eabi")
+    include_directories("$ENV{HOME}/.platformio/packages/toolchain-gccarmnoneeabi/lib/gcc/arm-none-eabi/7.2.1/include")
+    include_directories("$ENV{HOME}/.platformio/packages/toolchain-gccarmnoneeabi/lib/gcc/arm-none-eabi/7.2.1/include-fixed")
+    include_directories("$ENV{HOME}/.platformio/packages/toolchain-gccarmnoneeabi/arm-none-eabi/include")
+
+    FILE(GLOB_RECURSE EXTRA_LIB_SOURCES
+        ${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/*.*
+    )
+endif()
+
+
+FILE(GLOB_RECURSE SRC_LIST
+    ${CMAKE_CURRENT_LIST_DIR}/src/*.*
+    ${CMAKE_CURRENT_LIST_DIR}/lib/*.*
+)
+
+list(APPEND SRC_LIST ${EXTRA_LIB_SOURCES})
