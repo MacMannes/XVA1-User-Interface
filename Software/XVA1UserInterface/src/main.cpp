@@ -2,13 +2,13 @@
 
 #include <TFT_eSPI.h>
 #include <Wire.h>
-#include <Adafruit_ST7789.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_I2CDevice.h>
 
 #include "SynthParameter.h"
 #include "../lib/RotaryEncOverMCP/Adafruit_MCP23017.h"
 #include "../lib/RotaryEncOverMCP/RotaryEncOverMCP.h"
+#include "LEDButton.h"
 
 #define MUX_ADDRESS 0x70 // TCA9548A Multiplexer address
 
@@ -24,7 +24,7 @@
 #define ROTARY_BTN1_PIN 2
 #define ROTARY_BTN2_PIN 5
 
-int allButtons[] = { SHIFT_BTN_PIN, SHORTCUT_BTN1_PIN, ROTARY_BTN1_PIN, ROTARY_BTN2_PIN};
+int allButtons[] = { SHIFT_BTN_PIN, ROTARY_BTN1_PIN, ROTARY_BTN2_PIN};
 constexpr int numButtons = (int)(sizeof(allButtons) / sizeof(*allButtons));
 
 
@@ -36,12 +36,13 @@ Adafruit_MCP23017* allMCPs[] = { &mcp1 };
 constexpr int numMCPs = (int)(sizeof(allMCPs) / sizeof(*allMCPs));
 
 /* function prototypes */
+void shortcutButtonChanged(LEDButton *btn, bool released);
 void rotaryEncoderChanged(bool clockwise, int id);
 void handleMainEncoder(bool clockwise);
-void handleParameterChange(SynthParameter *pParameter, bool clockwise, int speed);
-void displayTwinParameters(SynthParameter *pParameter, SynthParameter *pParameter1, int i);
+void handleParameterChange(SynthParameter *parameter, bool clockwise, int speed);
+void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber);
 void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber);
-void initOledDisplays();
+void initOLEDDisplays();
 void pollAllMCPs();
 void readButtons();
 void selectPatchOnSynth(int number);
@@ -60,6 +61,8 @@ RotaryEncOverMCP rotaryEncoders[] = {
         RotaryEncOverMCP(&mcp1, 4, 3, &rotaryEncoderChanged, 2)
 };
 constexpr int numEncoders = (int)(sizeof(rotaryEncoders) / sizeof(*rotaryEncoders));
+
+LEDButton shortcutButton1 = LEDButton(&mcp1, SHORTCUT_BTN1_PIN, SHORTCUT_LED1_PIN, 1, &shortcutButtonChanged);
 
 // Initialize I2C buses using TCA9548A I2C Multiplexer
 void selectMultiplexerChannel(uint8_t i2c_bus) {
@@ -93,7 +96,6 @@ unsigned long lastTransition;
 unsigned long revolutionTime = 0;
 
 bool shiftButtonPushed = false;
-int shortcutButtonState = HIGH;
 bool shortcut1Active = false;
 
 void rotaryEncoderChanged(bool clockwise, int id) {
@@ -202,7 +204,7 @@ void setup() {
         rotaryEncoders[i].init();
     }
 
-    initOledDisplays();
+    initOLEDDisplays();
     initButtons();
 
     Serial1.begin(500000); // XVA1 Serial
@@ -240,7 +242,7 @@ void loop() {
 }
 
 
-void initOledDisplays() {
+void initOLEDDisplays() {
     for (int d = 0; d < 2; d++) {
         selectMultiplexerChannel(d);
         // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
@@ -257,11 +259,8 @@ void initButtons() {
         mcp1.pullUp(pin, HIGH);     // Pulled high ~100k
     }
 
-//  mcp1.pinMode(SHIFT_BTN_PIN, INPUT);   // Button i/p to GND
-//  mcp1.pullUp(SHIFT_BTN_PIN, HIGH);     // Pulled high ~100k
-
-
-    mcp1.pinMode(SHORTCUT_LED1_PIN, OUTPUT);   // LED from Shortcut button 1
+    // TODO: Put all ledButtons in an array
+    shortcutButton1.begin();
 
 }
 
@@ -273,20 +272,9 @@ void readButtons() {
         SerialUSB.println(shiftButtonPushed);
     }
 
-
-    int shortcutButton1 = mcp1.digitalRead(SHORTCUT_BTN1_PIN);
-    if (shortcutButton1 != shortcutButtonState) {
-        shortcutButtonState = shortcutButton1;
-        SerialUSB.print("Shortcut 1: ");
-        SerialUSB.println(shortcutButton1 == LOW);
-
-        if (shortcutButton1 == HIGH) {
-            // Button released, toggle LED
-            shortcut1Active = !shortcut1Active;
-            mcp1.digitalWrite(SHORTCUT_LED1_PIN, shortcut1Active ? HIGH : LOW);
-        }
-    }
-
+    // TODO: handle this like RotaryOverMCP with feed() method:
+    uint8_t shortcut1State = mcp1.digitalRead(SHORTCUT_BTN1_PIN);
+    shortcutButton1.process(shortcut1State);
 }
 
 void handleMainEncoder(bool clockwise) {
@@ -445,44 +433,44 @@ void pollAllMCPs() {
     }
 }
 
-void displayTwinParameters(SynthParameter *param1, SynthParameter *param2, int displayNumber) {
+void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber) {
     int byte1;
     int byte2;
 
-    if (param1->type == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[param1->number];
-        byte lsb = currentPatchData[param1->number2];
+    if (parameter1->type == PERFORMANCE_CTRL) {
+        byte msb = currentPatchData[parameter1->number];
+        byte lsb = currentPatchData[parameter1->number2];
         int combined = (msb << 7) + lsb;
 
         byte1 = (int)combined;
     } else {
-        byte1 = (int)currentPatchData[param1->number];
+        byte1 = (int)currentPatchData[parameter1->number];
     }
 
-    if (param2->type == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[param2->number];
-        byte lsb = currentPatchData[param2->number2];
+    if (parameter2->type == PERFORMANCE_CTRL) {
+        byte msb = currentPatchData[parameter2->number];
+        byte lsb = currentPatchData[parameter2->number2];
         int combined = (msb << 7) + lsb;
 
         byte2 = (int)combined;
     } else {
-        byte2 = (int)currentPatchData[param2->number];
+        byte2 = (int)currentPatchData[parameter2->number];
     }
 
     char printValue1[20];
-    if (param1->type != PERFORMANCE_CTRL && byte1 < sizeof(param1->descriptions) && param1->descriptions[byte1] != nullptr) {
-        strcpy(printValue1, param1->descriptions[byte1]);
+    if (parameter1->type != PERFORMANCE_CTRL && byte1 < sizeof(parameter1->descriptions) && parameter1->descriptions[byte1] != nullptr) {
+        strcpy(printValue1, parameter1->descriptions[byte1]);
     } else {
         sprintf(printValue1,"%ld", byte1);
     }
     char printValue2[20];
-    if (param2->type != PERFORMANCE_CTRL && byte2 < sizeof(param2->descriptions) && param2->descriptions[byte1] != nullptr) {
-        strcpy(printValue2, param2->descriptions[byte2]);
+    if (parameter2->type != PERFORMANCE_CTRL && byte2 < sizeof(parameter2->descriptions) && parameter2->descriptions[byte1] != nullptr) {
+        strcpy(printValue2, parameter2->descriptions[byte2]);
     } else {
         sprintf(printValue2,"%ld", byte2);
     }
 
-    displayTwinParameters(param1->name, printValue1, param2->name, printValue2, displayNumber);
+    displayTwinParameters(parameter1->name, printValue1, parameter2->name, printValue2, displayNumber);
 }
 
 void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber) {
@@ -571,5 +559,18 @@ void setParameter(int param, int value) {
     } else {
         Serial1.write(param);
         Serial1.write(value);
+    }
+}
+
+void shortcutButtonChanged(LEDButton *btn, bool released) {
+    SerialUSB.print("Shortcut ");
+    SerialUSB.print(btn->id);
+    SerialUSB.print(": ");
+    SerialUSB.println(!released);
+
+    // Toggle LED when released
+    if (released) {
+        shortcut1Active = !shortcut1Active;
+        btn->setLED(shortcut1Active);
     }
 }
