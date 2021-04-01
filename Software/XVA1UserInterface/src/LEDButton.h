@@ -19,10 +19,17 @@ public:
 
     void begin();
 
+    void feedInput(uint16_t gpioAB);
+
     void process(int pinState);
 
     void setLED(bool on);
 
+    bool getLED() const;
+
+    void toggleLED();
+
+    Adafruit_MCP23017 *getMcp() const;
 
 private:
     Adafruit_MCP23017 *mcp = nullptr;      // Pointer the I2C GPIO expander it's connected to
@@ -32,6 +39,7 @@ private:
 
     int currentState;
     int lastButtonState;
+    bool ledState;
 
     unsigned long lastDebounceTime = 0;     // The last time the output pin was toggled
     unsigned long debounceDelay = 10;       // The debounce time

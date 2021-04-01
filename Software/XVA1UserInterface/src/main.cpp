@@ -17,22 +17,22 @@
 #define LOGO_HEIGHT   16
 #define LOGO_WIDTH    16
 
-#define SHIFT_BTN_PIN 8
-#define SHORTCUT_BTN1_PIN 9
-#define SHORTCUT_LED1_PIN 10
+#define SHIFT_BTN_PIN 1
 
-#define ROTARY_BTN1_PIN 2
-#define ROTARY_BTN2_PIN 5
+#define ROTARY_BTN1_PIN 11
+#define ROTARY_BTN2_PIN 4
 
 int allButtons[] = { SHIFT_BTN_PIN, ROTARY_BTN1_PIN, ROTARY_BTN2_PIN};
 constexpr int numButtons = (int)(sizeof(allButtons) / sizeof(*allButtons));
 
 
-/* First I2C MCP23017 GPIO expanders */
+/* I2C MCP23017 GPIO expanders */
 Adafruit_MCP23017 mcp1;
+Adafruit_MCP23017 mcp2;
+Adafruit_MCP23017 mcp3;
 
 //Array of pointers of all MCPs (for now, there's only 1)
-Adafruit_MCP23017* allMCPs[] = { &mcp1 };
+Adafruit_MCP23017* allMCPs[] = { &mcp1, &mcp2, &mcp3 };
 constexpr int numMCPs = (int)(sizeof(allMCPs) / sizeof(*allMCPs));
 
 /* function prototypes */
@@ -56,13 +56,25 @@ void setParameter(int number, int value);
 /* Array of all rotary encoders and their pins */
 RotaryEncOverMCP rotaryEncoders[] = {
         // outputA,B on GPA7,GPA6, register with callback and ID=1
-        RotaryEncOverMCP(&mcp1, 7, 6, &rotaryEncoderChanged, 0),
-        RotaryEncOverMCP(&mcp1, 1, 0, &rotaryEncoderChanged, 1),
-        RotaryEncOverMCP(&mcp1, 4, 3, &rotaryEncoderChanged, 2)
+        RotaryEncOverMCP(&mcp1, 10, 9, &rotaryEncoderChanged, 0),
+        RotaryEncOverMCP(&mcp1, 13, 12, &rotaryEncoderChanged, 1),
+        RotaryEncOverMCP(&mcp1, 2, 3, &rotaryEncoderChanged, 2)
 };
 constexpr int numEncoders = (int)(sizeof(rotaryEncoders) / sizeof(*rotaryEncoders));
 
-LEDButton shortcutButton1 = LEDButton(&mcp1, SHORTCUT_BTN1_PIN, SHORTCUT_LED1_PIN, 1, &shortcutButtonChanged);
+LEDButton shortcutButton1 = LEDButton(&mcp3, 15, 14, 1, &shortcutButtonChanged);
+LEDButton shortcutButton2 = LEDButton(&mcp3, 13, 12, 2, &shortcutButtonChanged);
+LEDButton shortcutButton3 = LEDButton(&mcp3, 11, 10, 3, &shortcutButtonChanged);
+LEDButton shortcutButton4 = LEDButton(&mcp3, 9, 8, 4, &shortcutButtonChanged);
+LEDButton shortcutButton5 = LEDButton(&mcp3, 0, 1, 5, &shortcutButtonChanged);
+LEDButton shortcutButton6 = LEDButton(&mcp3, 2, 3, 6, &shortcutButtonChanged);
+LEDButton shortcutButton7 = LEDButton(&mcp3, 4, 5, 7, &shortcutButtonChanged);
+LEDButton shortcutButton8 = LEDButton(&mcp3, 6, 7, 8, &shortcutButtonChanged);
+
+LEDButton shortcutButtons[] = {
+        shortcutButton1, shortcutButton2, shortcutButton3, shortcutButton4,
+        shortcutButton5, shortcutButton6, shortcutButton7, shortcutButton8
+};
 
 // Initialize I2C buses using TCA9548A I2C Multiplexer
 void selectMultiplexerChannel(uint8_t i2c_bus) {
@@ -95,8 +107,9 @@ struct SynthParameter param4;
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
 
+int activeShortcut = 0;
+
 bool shiftButtonPushed = false;
-bool shortcut1Active = false;
 
 void rotaryEncoderChanged(bool clockwise, int id) {
     unsigned long now = millis();
@@ -145,7 +158,12 @@ void setup() {
     SerialUSB.begin(115200);
 
     //while the serial stream is not open, do nothing:
-//     while (!Serial);
+//     while (!SerialUSB);
+
+    SerialUSB.println("\n");
+    SerialUSB.println("===================");
+    SerialUSB.println("XVA1 User Interface");
+    SerialUSB.println("===================\n");
 
 //    strcpy(param1.name, "FilterType");
 //    param1.number = 71;
@@ -198,13 +216,21 @@ void setup() {
 //    param2.max = 5;
 
 
-    mcp1.begin();      // use default address 0
+    SerialUSB.println("Initializing MCP23017 #1");
+    mcp1.begin(0);
+    SerialUSB.println("Initializing MCP23017 #2");
+    mcp2.begin(1);
+    SerialUSB.println("Initializing MCP23017 #3");
+    mcp3.begin(2);
+    SerialUSB.println("Initializing MCP23017 #1-3 done");
     // Initialize input encoders (pin mode, interrupt)
     for (int i=0; i < numEncoders; i++) {
         rotaryEncoders[i].init();
     }
 
+    SerialUSB.println("Initializing OLED displays");
     initOLEDDisplays();
+    SerialUSB.println("Initializing Buttons");
     initButtons();
 
     Serial1.begin(500000); // XVA1 Serial
@@ -219,14 +245,6 @@ void setup() {
     tft.setTextSize(1);
     tft.println("XVA1 Synthesizer");
 
-
-
-    SerialUSB.println("\n");
-    SerialUSB.println("===================");
-    SerialUSB.println("XVA1 User Interface");
-    SerialUSB.println("===================\n");
-    SerialUSB.print("value=");
-    SerialUSB.println(currentPatchNumber);
 
     selectPatchOnSynth(currentPatchNumber);
     getPatchDataFromSynth();
@@ -259,9 +277,9 @@ void initButtons() {
         mcp1.pullUp(pin, HIGH);     // Pulled high ~100k
     }
 
-    // TODO: Put all ledButtons in an array
-    shortcutButton1.begin();
-
+    for (auto & shortcutButton : shortcutButtons) {
+        shortcutButton.begin();
+    }
 }
 
 void readButtons() {
@@ -271,10 +289,6 @@ void readButtons() {
         SerialUSB.print("Shift: ");
         SerialUSB.println(shiftButtonPushed);
     }
-
-    // TODO: handle this like RotaryOverMCP with feed() method:
-    uint8_t shortcut1State = mcp1.digitalRead(SHORTCUT_BTN1_PIN);
-    shortcutButton1.process(shortcut1State);
 }
 
 void handleMainEncoder(bool clockwise) {
@@ -430,6 +444,12 @@ void pollAllMCPs() {
             if(rotaryEncoders[i].getMCP() == allMCPs[j])
                 rotaryEncoders[i].feedInput(gpioAB);
         }
+
+        for (auto & shortcutButton : shortcutButtons) {
+            if (shortcutButton.getMcp() == allMCPs[j]) {
+                shortcutButton.feedInput(gpioAB);
+            }
+        }
     }
 }
 
@@ -563,14 +583,14 @@ void setParameter(int param, int value) {
 }
 
 void shortcutButtonChanged(LEDButton *btn, bool released) {
-    SerialUSB.print("Shortcut ");
-    SerialUSB.print(btn->id);
-    SerialUSB.print(": ");
-    SerialUSB.println(!released);
+    activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
 
-    // Toggle LED when released
     if (released) {
-        shortcut1Active = !shortcut1Active;
-        btn->setLED(shortcut1Active);
+        SerialUSB.println(!released);
+        SerialUSB.print("Active Shortcut: ");
+        SerialUSB.println(activeShortcut);
+        for (auto & shortcutButton : shortcutButtons) {
+            shortcutButton.setLED(shortcutButton.id == btn->id);
+        }
     }
 }

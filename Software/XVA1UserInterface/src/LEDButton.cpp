@@ -17,6 +17,7 @@ LEDButton::LEDButton(Adafruit_MCP23017 *mcp, uint8_t buttonPin, uint8_t ledPin, 
     this->actionFunc = actionFunc;
     currentState = HIGH;
     lastButtonState = HIGH;
+    ledState = false;
 }
 
 void LEDButton::begin() {
@@ -26,11 +27,16 @@ void LEDButton::begin() {
     mcp->pinMode(ledPin, OUTPUT);
     mcp->digitalWrite(ledPin, LOW);
     currentState = mcp->digitalRead(buttonPin);
-
 }
 
-void LEDButton::setLED(bool on) {
-    mcp->digitalWrite(ledPin, on ? HIGH : LOW);
+void LEDButton::setLED(bool onOrOff) {
+    ledState = onOrOff;
+    mcp->digitalWrite(ledPin, onOrOff ? HIGH : LOW);
+}
+
+void LEDButton::feedInput(uint16_t gpioAB) {
+    uint8_t pinState = bitRead(gpioAB, buttonPin);
+    process(pinState);
 }
 
 void LEDButton::process(int pinState) {
@@ -60,5 +66,19 @@ void LEDButton::process(int pinState) {
 
     lastButtonState = pinState;
 }
+
+bool LEDButton::getLED() const {
+    return ledState;
+}
+
+void LEDButton::toggleLED() {
+    ledState = !ledState;
+    mcp->digitalWrite(ledPin, ledState ? HIGH : LOW);
+}
+
+Adafruit_MCP23017 *LEDButton::getMcp() const {
+    return mcp;
+}
+
 
 
