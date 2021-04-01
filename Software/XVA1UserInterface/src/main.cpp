@@ -22,8 +22,8 @@
 #define ROTARY_BTN1_PIN 11
 #define ROTARY_BTN2_PIN 4
 
-int allButtons[] = { SHIFT_BTN_PIN, ROTARY_BTN1_PIN, ROTARY_BTN2_PIN};
-constexpr int numButtons = (int)(sizeof(allButtons) / sizeof(*allButtons));
+int allButtons[] = {SHIFT_BTN_PIN, ROTARY_BTN1_PIN, ROTARY_BTN2_PIN};
+constexpr int numButtons = (int) (sizeof(allButtons) / sizeof(*allButtons));
 
 
 /* I2C MCP23017 GPIO expanders */
@@ -32,25 +32,37 @@ Adafruit_MCP23017 mcp2;
 Adafruit_MCP23017 mcp3;
 
 //Array of pointers of all MCPs (for now, there's only 1)
-Adafruit_MCP23017* allMCPs[] = { &mcp1, &mcp2, &mcp3 };
-constexpr int numMCPs = (int)(sizeof(allMCPs) / sizeof(*allMCPs));
+Adafruit_MCP23017 *allMCPs[] = {&mcp1, &mcp2, &mcp3};
+constexpr int numMCPs = (int) (sizeof(allMCPs) / sizeof(*allMCPs));
 
 /* function prototypes */
 void shortcutButtonChanged(LEDButton *btn, bool released);
-void rotaryEncoderChanged(bool clockwise, int id);
-void handleMainEncoder(bool clockwise);
-void handleParameterChange(SynthParameter *parameter, bool clockwise, int speed);
-void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber);
-void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber);
-void initOLEDDisplays();
-void pollAllMCPs();
-void readButtons();
-void selectPatchOnSynth(int number);
-void getPatchDataFromSynth();
-void displayPatchInfo();
-void initButtons();
-void setParameter(int number, int value);
 
+void rotaryEncoderChanged(bool clockwise, int id);
+
+void handleMainEncoder(bool clockwise);
+
+void handleParameterChange(SynthParameter *parameter, bool clockwise, int speed);
+
+void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber);
+
+void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber);
+
+void initOLEDDisplays();
+
+void pollAllMCPs();
+
+void readButtons();
+
+void selectPatchOnSynth(int number);
+
+void getPatchDataFromSynth();
+
+void displayPatchInfo();
+
+void initButtons();
+
+void setParameter(int number, int value);
 
 
 /* Array of all rotary encoders and their pins */
@@ -60,7 +72,6 @@ RotaryEncOverMCP rotaryEncoders[] = {
         RotaryEncOverMCP(&mcp1, 13, 12, &rotaryEncoderChanged, 1),
         RotaryEncOverMCP(&mcp1, 2, 3, &rotaryEncoderChanged, 2)
 };
-constexpr int numEncoders = (int)(sizeof(rotaryEncoders) / sizeof(*rotaryEncoders));
 
 LEDButton shortcutButton1 = LEDButton(&mcp3, 15, 14, 1, &shortcutButtonChanged);
 LEDButton shortcutButton2 = LEDButton(&mcp3, 13, 12, 2, &shortcutButtonChanged);
@@ -153,7 +164,6 @@ void rotaryEncoderChanged(bool clockwise, int id) {
 }
 
 
-
 void setup() {
     SerialUSB.begin(115200);
 
@@ -223,9 +233,10 @@ void setup() {
     SerialUSB.println("Initializing MCP23017 #3");
     mcp3.begin(2);
     SerialUSB.println("Initializing MCP23017 #1-3 done");
+    
     // Initialize input encoders (pin mode, interrupt)
-    for (int i=0; i < numEncoders; i++) {
-        rotaryEncoders[i].init();
+    for (auto &rotaryEncoder : rotaryEncoders) {
+        rotaryEncoder.init();
     }
 
     SerialUSB.println("Initializing OLED displays");
@@ -241,7 +252,7 @@ void setup() {
 
     tft.setCursor(0, 0, 2);
     // Set the font colour to be white with a black background, set text size multiplier to 1
-    tft.setTextColor(TFT_WHITE,TFT_BLACK);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
     tft.setTextSize(1);
     tft.println("XVA1 Synthesizer");
 
@@ -253,7 +264,6 @@ void setup() {
 }
 
 
-
 void loop() {
     pollAllMCPs();
     readButtons();
@@ -261,12 +271,13 @@ void loop() {
 
 
 void initOLEDDisplays() {
-    for (int d = 0; d < 2; d++) {
+    for (int d = 0; d < 4; d++) {
         selectMultiplexerChannel(d);
         // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
         display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
         display.clearDisplay();
+        display.display();
     }
 }
 
@@ -277,7 +288,7 @@ void initButtons() {
         mcp1.pullUp(pin, HIGH);     // Pulled high ~100k
     }
 
-    for (auto & shortcutButton : shortcutButtons) {
+    for (auto &shortcutButton : shortcutButtons) {
         shortcutButton.begin();
     }
 }
@@ -373,8 +384,8 @@ void getPatchDataFromSynth() {
 
     String patchName = "";
 
-    for (int i=480; i<505; i++){
-        patchName += (char)rxBuffer[i];
+    for (int i = 480; i < 505; i++) {
+        patchName += (char) rxBuffer[i];
     }
 
     SerialUSB.print("Patch name: ");
@@ -396,13 +407,13 @@ void displayPatchInfo() {
 
     // Set the padding to the maximum width that the digits could occupy in font 4
     // This ensures small numbers obliterate large ones on the screen
-    tft.setTextPadding(tft.textWidth("999", 4) );
+    tft.setTextPadding(tft.textWidth("999", 4));
     // Draw the patch number in font 4
     tft.drawNumber(currentPatchNumber, 0, 42, 4);
 
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
 
-    tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 2) );
+    tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 2));
     // Draw the patch name in font 1
     tft.drawString(currentPatchName, 0, 75, 2);
 
@@ -414,8 +425,7 @@ void displayPatchInfo() {
 
 }
 
-void drawCenteredText(char *buf, int x, int y)
-{
+void drawCenteredText(char *buf, int x, int y) {
     int16_t x1, y1;
     uint16_t w, h;
     display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); //calc width of new string
@@ -431,22 +441,20 @@ void printHex(uint8_t num) {
 }
 
 void pollAllMCPs() {
-    //We could also call ".poll()" on each encoder,
-    //however that will cause an I2C transfer
-    //for every encoder.
-    //It's faster to only go through each MCP object,
-    //read it, and then feed it into the encoder as input.
-    for(int j = 0; j < numMCPs; j++) {
-        uint16_t gpioAB = allMCPs[j]->readGPIOAB();
-        for (int i=0; i < numEncoders; i++) {
-            //only feed this in the encoder if this
-            //is coming from the correct MCP
-            if(rotaryEncoders[i].getMCP() == allMCPs[j])
-                rotaryEncoders[i].feedInput(gpioAB);
+    // Read all MCPs and feed the input to each encoder and shortcut button.
+    // This is more efficient than reading one pin state at a time
+    for (auto &mcp : allMCPs) {
+        uint16_t gpioAB = mcp->readGPIOAB();
+
+        for (auto &rotaryEncoder : rotaryEncoders) {
+            // Only feed this in the encoder if this is coming from the correct MCP
+            if (rotaryEncoder.getMCP() == mcp) {
+                rotaryEncoder.feedInput(gpioAB);
+            }
         }
 
-        for (auto & shortcutButton : shortcutButtons) {
-            if (shortcutButton.getMcp() == allMCPs[j]) {
+        for (auto &shortcutButton : shortcutButtons) {
+            if (shortcutButton.getMcp() == mcp) {
                 shortcutButton.feedInput(gpioAB);
             }
         }
@@ -462,9 +470,9 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
         byte lsb = currentPatchData[parameter1->number2];
         int combined = (msb << 7) + lsb;
 
-        byte1 = (int)combined;
+        byte1 = (int) combined;
     } else {
-        byte1 = (int)currentPatchData[parameter1->number];
+        byte1 = (int) currentPatchData[parameter1->number];
     }
 
     if (parameter2->type == PERFORMANCE_CTRL) {
@@ -472,22 +480,24 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
         byte lsb = currentPatchData[parameter2->number2];
         int combined = (msb << 7) + lsb;
 
-        byte2 = (int)combined;
+        byte2 = (int) combined;
     } else {
-        byte2 = (int)currentPatchData[parameter2->number];
+        byte2 = (int) currentPatchData[parameter2->number];
     }
 
     char printValue1[20];
-    if (parameter1->type != PERFORMANCE_CTRL && byte1 < sizeof(parameter1->descriptions) && parameter1->descriptions[byte1] != nullptr) {
+    if (parameter1->type != PERFORMANCE_CTRL && byte1 < sizeof(parameter1->descriptions) &&
+        parameter1->descriptions[byte1] != nullptr) {
         strcpy(printValue1, parameter1->descriptions[byte1]);
     } else {
-        sprintf(printValue1,"%ld", byte1);
+        sprintf(printValue1, "%d", byte1);
     }
     char printValue2[20];
-    if (parameter2->type != PERFORMANCE_CTRL && byte2 < sizeof(parameter2->descriptions) && parameter2->descriptions[byte1] != nullptr) {
+    if (parameter2->type != PERFORMANCE_CTRL && byte2 < sizeof(parameter2->descriptions) &&
+        parameter2->descriptions[byte1] != nullptr) {
         strcpy(printValue2, parameter2->descriptions[byte2]);
     } else {
-        sprintf(printValue2,"%ld", byte2);
+        sprintf(printValue2, "%d", byte2);
     }
 
     displayTwinParameters(parameter1->name, printValue1, parameter2->name, printValue2, displayNumber);
@@ -533,14 +543,14 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
     if (clockwise) {
         if (currentValue < param->max) {
             newValue = currentValue + speed;
-            if  (newValue > param->max) {
+            if (newValue > param->max) {
                 newValue = param->max;
             }
         }
     } else {
         if (currentValue > param->min) {
             newValue = currentValue - speed;
-            if  (newValue < param->min) {
+            if (newValue < param->min) {
                 newValue = param->min;
             }
         }
@@ -574,7 +584,7 @@ void setParameter(int param, int value) {
     if (param > 255) {
         // Parameters above 255 have a two-byte format: b1 = 255, b2 = x-256
         Serial1.write(255);
-        Serial1.write(param - 256 );
+        Serial1.write(param - 256);
         Serial1.write(value);
     } else {
         Serial1.write(param);
@@ -589,7 +599,7 @@ void shortcutButtonChanged(LEDButton *btn, bool released) {
         SerialUSB.println(!released);
         SerialUSB.print("Active Shortcut: ");
         SerialUSB.println(activeShortcut);
-        for (auto & shortcutButton : shortcutButtons) {
+        for (auto &shortcutButton : shortcutButtons) {
             shortcutButton.setLED(shortcutButton.id == btn->id);
         }
     }
