@@ -67,6 +67,7 @@ void initButtons();
 
 void setParameter(int number, int value);
 
+Rotary mainRotaryEncoder = Rotary(2, 1);
 
 /* Array of all rotary encoders and their pins */
 RotaryEncOverMCP rotaryEncoders[] = {
@@ -168,9 +169,6 @@ void rotaryEncoderChanged(bool clockwise, int id) {
 
     Serial.println("Encoder " + String(id) + ": "
                    + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
-    if (id == 0) {
-        handleMainEncoder(clockwise);
-    }
     if (shiftButtonPushed) {
         if (id == 1) {
             handleParameterChange(&param3, clockwise, speed);
@@ -290,10 +288,16 @@ void setup() {
     getPatchDataFromSynth();
     displayPatchInfo();
 
+    mainRotaryEncoder.begin(true);
 }
 
 
 void loop() {
+    unsigned char result = mainRotaryEncoder.process();
+    if (result) {
+        handleMainEncoder(result == DIR_CW);
+    }
+
     pollAllMCPs();
 }
 
