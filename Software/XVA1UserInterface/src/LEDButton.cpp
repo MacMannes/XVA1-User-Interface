@@ -1,70 +1,24 @@
 //
-// Created by André Mathlener on 24/03/2021.
+// Created by André Mathlener on 02/04/2021.
 //
 
 #include "LEDButton.h"
-#include <wiring_constants.h>
-#include <Arduino.h>
 
-/*
- * Constructor
- */
-LEDButton::LEDButton(Adafruit_MCP23017 *mcp, uint8_t buttonPin, uint8_t ledPin, int id, onActionFunction actionFunc) {
-    this->mcp = mcp;
+LEDButton::LEDButton(Adafruit_MCP23017 *mcp, uint8_t buttonPin, uint8_t ledPin, int id, onActionFunction actionFunc)
+        : Button(mcp, buttonPin, id, actionFunc) {
     this->ledPin = ledPin;
-    this->buttonPin = buttonPin;
-    this->id = id;
-    this->actionFunc = actionFunc;
-    currentState = HIGH;
-    lastButtonState = HIGH;
-    ledState = false;
 }
 
 void LEDButton::begin() {
-    mcp->pinMode(buttonPin, INPUT);
-    mcp->pullUp(buttonPin, HIGH);     // Pulled high ~100k
+    Button::begin();
 
     mcp->pinMode(ledPin, OUTPUT);
     mcp->digitalWrite(ledPin, LOW);
-    currentState = mcp->digitalRead(buttonPin);
 }
 
 void LEDButton::setLED(bool onOrOff) {
     ledState = onOrOff;
     mcp->digitalWrite(ledPin, onOrOff ? HIGH : LOW);
-}
-
-void LEDButton::feedInput(uint16_t gpioAB) {
-    uint8_t pinState = bitRead(gpioAB, buttonPin);
-    process(pinState);
-}
-
-void LEDButton::process(int pinState) {
-    if (pinState != lastButtonState) {
-        // If the switch changed, due to noise or pressing:
-        lastDebounceTime = millis();
-    }
-
-    unsigned long time = millis() - lastDebounceTime;
-
-    if (time > debounceDelay) {
-        // whatever the reading is at, it's been there for longer than the debounce
-        // delay, so take it as the actual current state
-
-        if (pinState != currentState) {
-            // The button state has been changed:
-            currentState = pinState;
-            bool released = pinState == HIGH;
-
-            // Call action function if registered
-            if (actionFunc) {
-                actionFunc(this, released);
-            }
-        }
-
-    }
-
-    lastButtonState = pinState;
 }
 
 bool LEDButton::getLED() const {
@@ -75,10 +29,3 @@ void LEDButton::toggleLED() {
     ledState = !ledState;
     mcp->digitalWrite(ledPin, ledState ? HIGH : LOW);
 }
-
-Adafruit_MCP23017 *LEDButton::getMcp() const {
-    return mcp;
-}
-
-
-
