@@ -18,13 +18,14 @@
 #define LOGO_HEIGHT   16
 #define LOGO_WIDTH    16
 
-#define MENU_BUTTON     1
-#define SAVE_BUTTON     2
-#define ESC_BUTTON      3
-#define SHIFT_BUTTON    4
+#define MAIN_ROTARY_BUTTON  0
+#define MENU_BUTTON         1
+#define SAVE_BUTTON         2
+#define ESC_BUTTON          3
+#define SHIFT_BUTTON        4
 
-#define ROTARY_BTN1_PIN 11
-#define ROTARY_BTN2_PIN 4
+#define UP_BUTTON           1
+#define DOWN_BUTTON         2
 
 /* I2C MCP23017 GPIO expanders */
 Adafruit_MCP23017 mcp1;
@@ -35,11 +36,15 @@ Adafruit_MCP23017 mcp3;
 Adafruit_MCP23017 *allMCPs[] = {&mcp1, &mcp2, &mcp3};
 
 /* function prototypes */
+void mainRotaryButtonChanged(bool released);
+
 void mainButtonChanged(Button *btn, bool released);
 
 void shortcutButtonChanged(Button *btn, bool released);
 
 void rotaryButtonChanged(Button *btn, bool released);
+
+void upOrDownButtonChanged(Button *btn, bool released);
 
 void rotaryEncoderChanged(bool clockwise, int id);
 
@@ -109,12 +114,16 @@ Button rotaryButton6 = Button(&mcp2, 2, 6, &rotaryButtonChanged);
 Button rotaryButton7 = Button(&mcp2, 10, 7, &rotaryButtonChanged);
 Button rotaryButton8 = Button(&mcp2, 5, 8, &rotaryButtonChanged);
 
+LEDButton upButton = LEDButton(&mcp2, 9, 8, 1, &upOrDownButtonChanged);
+LEDButton downButton = LEDButton(&mcp2, 6, 7, 2, &upOrDownButtonChanged);
+
 Button *allButtons[] = {
         &menuButton, &saveButton, &escButton, &shiftButton,
         &shortcutButton1, &shortcutButton2, &shortcutButton3, &shortcutButton4,
         &shortcutButton5, &shortcutButton6, &shortcutButton7, &shortcutButton8,
         &rotaryButton1, &rotaryButton2, &rotaryButton3, &rotaryButton4,
-        &rotaryButton5, &rotaryButton6, &rotaryButton7, &rotaryButton8
+        &rotaryButton5, &rotaryButton6, &rotaryButton7, &rotaryButton8,
+        &upButton, &downButton
 };
 
 // Initialize I2C buses using TCA9548A I2C Multiplexer
@@ -151,6 +160,7 @@ unsigned long revolutionTime = 0;
 int activeShortcut = 0;
 
 bool shiftButtonPushed = false;
+bool mainRotaryButtonPushed = false;
 
 void rotaryEncoderChanged(bool clockwise, int id) {
     unsigned long now = millis();
@@ -298,6 +308,7 @@ void loop() {
         handleMainEncoder(result == DIR_CW);
     }
 
+    readButtons();
     pollAllMCPs();
 }
 
@@ -316,6 +327,16 @@ void initOLEDDisplays() {
 void initButtons() {
     for (auto &button : allButtons) {
         button->begin();
+    }
+
+    pinMode(3, INPUT_PULLUP);
+}
+
+void readButtons() {
+    bool mainRotaryButtonState = (digitalRead(3) == LOW);
+    if (mainRotaryButtonState != mainRotaryButtonPushed) {
+        mainRotaryButtonPushed = mainRotaryButtonState;
+        mainRotaryButtonChanged(!mainRotaryButtonPushed);
     }
 }
 
@@ -617,7 +638,7 @@ void shortcutButtonChanged(Button *btn, bool released) {
 
     activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
 
-    if (released) {
+    if (!released) {
         SerialUSB.print("Active Shortcut: ");
         SerialUSB.println(activeShortcut);
         for (auto &shortcutButton : shortcutButtons) {
@@ -643,7 +664,8 @@ void mainButtonChanged(Button *btn, bool released) {
                     shortcutButton->setLED(false);
                 }
             }
-            break;
+            upButton.setLED(false);
+            downButton.setLED(false);
     }
 }
 
@@ -652,4 +674,20 @@ void rotaryButtonChanged(Button *btn, bool released) {
     SerialUSB.print(btn->id);
     SerialUSB.print(" ");
     SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+}
+
+void upOrDownButtonChanged(Button *btn, bool released) {
+    SerialUSB.print((btn->id == UP_BUTTON) ? "Up" : "Down");
+    SerialUSB.print("-button");
+    SerialUSB.print(" ");
+    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+
+    upButton.setLED(btn->id == DOWN_BUTTON);
+    downButton.setLED(btn->id == UP_BUTTON);
+}
+
+void mainRotaryButtonChanged(bool released) {
+    SerialUSB.print("MAIN-Rotary-button ");
+    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+
 }
