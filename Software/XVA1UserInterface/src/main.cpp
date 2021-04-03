@@ -613,7 +613,7 @@ void shortcutButtonChanged(Button *btn, bool released) {
     SerialUSB.print("Shortcut-button #");
     SerialUSB.print(btn->id);
     SerialUSB.print(" ");
-    SerialUSB.println((released) ? "PRESSED" : "RELEASED");
+    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
 
     activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
 
@@ -630,7 +630,7 @@ void mainButtonChanged(Button *btn, bool released) {
     SerialUSB.print("Main-button #");
     SerialUSB.print(btn->id);
     SerialUSB.print(" ");
-    SerialUSB.println((released) ? "PRESSED" : "RELEASED");
+    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
 
     switch (btn->id) {
         case SHIFT_BUTTON:
@@ -651,5 +651,5 @@ void rotaryButtonChanged(Button *btn, bool released) {
     SerialUSB.print("Rotary-button #");
     SerialUSB.print(btn->id);
     SerialUSB.print(" ");
-    SerialUSB.println((released) ? "PRESSED" : "RELEASED");
+    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
 }
