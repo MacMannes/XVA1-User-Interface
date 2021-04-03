@@ -90,7 +90,7 @@ void Rotary::begin(bool pullup) {
 }
 
 unsigned char Rotary::process() {
-	return process(digitalRead(pin2), digitalRead(pin1));
+	return process(digitalRead(pin1), digitalRead(pin2));
 }
 
 unsigned char Rotary::process(unsigned char pin1State, unsigned char pin2State) {

@@ -67,7 +67,7 @@ void initButtons();
 
 void setParameter(int number, int value);
 
-Rotary mainRotaryEncoder = Rotary(2, 1);
+Rotary mainRotaryEncoder = Rotary(1, 2);
 
 /* Array of all rotary encoders and their pins */
 RotaryEncOverMCP rotaryEncoders[] = {
