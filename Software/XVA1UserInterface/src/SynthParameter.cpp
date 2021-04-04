@@ -8,10 +8,6 @@ SynthParameter::SynthParameter(std::string name) {
     this->name = name;
 }
 
-char *const *SynthParameter::getDescriptions() {
-    return descriptions;
-}
-
 ParameterType SynthParameter::getType() const {
     return type;
 }
@@ -35,4 +31,9 @@ int SynthParameter::getMin() const {
 int SynthParameter::getMax() const {
     return max;
 }
+
+const std::vector<std::string> &SynthParameter::getDescriptions() const {
+    return descriptions;
+}
+
 

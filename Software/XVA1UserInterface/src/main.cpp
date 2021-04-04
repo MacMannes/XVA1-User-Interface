@@ -153,6 +153,7 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 SynthParameter param1 = SynthParameterBuilder("Sequencer")
         .number(428)
         .max(1)
+        .descriptions({ "OFF", "ON" })
         .build();
 SynthParameter param2 = SynthParameterBuilder("Cutoff")
         .number(72)
@@ -510,19 +511,17 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
     }
 
     char printValue1[20];
-//    if (parameter1->getType() != PERFORMANCE_CTRL && byte1 < sizeof(parameter1->getDescriptions()) &&
-//        parameter1->getDescriptions()[byte1] != nullptr) {
-//        strcpy(printValue1, parameter1->getDescriptions()[byte1]);
-//    } else {
+    if (byte1 < sizeof(parameter1->getDescriptions().size())) {
+        strcpy(printValue1, parameter1->getDescriptions()[byte1].c_str());
+    } else {
         sprintf(printValue1, "%d", byte1);
-//    }
+    }
     char printValue2[20];
-//    if (parameter2->getType() != PERFORMANCE_CTRL && byte2 < sizeof(parameter2->getDescriptions()) &&
-//        parameter2->getDescriptions()[byte1] != nullptr) {
-//        strcpy(printValue2, parameter2->getDescriptions()[byte2]);
-//    } else {
+    if (byte2 < sizeof(parameter2->getDescriptions()).size()) {
+        strcpy(printValue2, parameter2->getDescriptions()[byte2].c_str());
+    } else {
         sprintf(printValue2, "%d", byte2);
-//    }
+    }
 
 
     displayTwinParameters(parameter1->getName().c_str(), printValue1, parameter2->getName().c_str(), printValue2, displayNumber);

@@ -2,6 +2,7 @@
 // Created by André Mathlener on 04/04/2021.
 //
 
+#include <vector>
 #include "SynthParameterBuilder.h"
 
 SynthParameter SynthParameterBuilder::build() {
@@ -30,6 +31,11 @@ SynthParameterBuilder &SynthParameterBuilder::min(int min) {
 
 SynthParameterBuilder &SynthParameterBuilder::max(int max) {
     synthParameter.max = max;
+    return *this;
+}
+
+SynthParameterBuilder &SynthParameterBuilder::descriptions(std::vector<std::string> descriptions) {
+    synthParameter.descriptions = descriptions;
     return *this;
 }
 

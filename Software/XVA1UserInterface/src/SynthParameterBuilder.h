@@ -20,6 +20,7 @@ public:
     SynthParameterBuilder &number(int number);
     SynthParameterBuilder &number2(int number2);
     SynthParameterBuilder &performanceControlType(int paramNumber1, int paramNumber2);
+    SynthParameterBuilder &descriptions(std::vector<std::string>);
 
     SynthParameter build();
 };

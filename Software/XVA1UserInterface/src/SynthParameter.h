@@ -8,6 +8,7 @@
 
 #include <string>
 #include <utility>
+#include <vector>
 #include "ParameterType.h"
 
 class SynthParameter {
@@ -17,7 +18,7 @@ class SynthParameter {
     int number2 = -1;
     int min = 0;
     int max = 255;
-    char *descriptions[25] = {};
+    std::vector<std::string> descriptions;
 
 public:
     explicit SynthParameter(std::string name);
@@ -36,7 +37,7 @@ public:
 
     int getMax() const;
 
-    char *const *getDescriptions() ;
+    const std::vector<std::string> &getDescriptions() const;
 };
 
 
