@@ -5,11 +5,6 @@
 #include "SynthParameter.h"
 
 SynthParameter::SynthParameter(std::string name) {
-    this->type = NUMERIC;
-    this->min = 0;
-    this->max = 255;
-    this->number = -1;
-    this->number = -2;
     this->name = name;
 }
 
