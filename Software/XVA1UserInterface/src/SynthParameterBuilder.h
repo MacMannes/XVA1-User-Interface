@@ -21,7 +21,7 @@ public:
     SynthParameterBuilder &number2(int number2);
     SynthParameterBuilder &performanceControlType(int paramNumber1, int paramNumber2);
 
-    SynthParameter create();
+    SynthParameter build();
 };
 
 

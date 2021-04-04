@@ -153,16 +153,16 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 SynthParameter param1 = SynthParameterBuilder("Sequencer")
         .number(428)
         .max(1)
-        .create();
+        .build();
 SynthParameter param2 = SynthParameterBuilder("Cutoff")
         .number(72)
-        .create();
+        .build();
 SynthParameter param3 = SynthParameterBuilder("PerfCtl1")
         .performanceControlType(400, 401)
-        .create();
+        .build();
 SynthParameter param4 = SynthParameterBuilder("PerfCtl2")
         .performanceControlType(402, 403)
-        .create();
+        .build();
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;

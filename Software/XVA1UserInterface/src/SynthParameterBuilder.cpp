@@ -4,8 +4,8 @@
 
 #include "SynthParameterBuilder.h"
 
-SynthParameter SynthParameterBuilder::create() {
-    return synthParameter;
+SynthParameter SynthParameterBuilder::build() {
+    return std::move(synthParameter);
 }
 
 SynthParameterBuilder &SynthParameterBuilder::type(ParameterType type) {
