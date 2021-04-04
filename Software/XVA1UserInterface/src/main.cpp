@@ -10,6 +10,7 @@
 #include "../lib/RotaryEncOverMCP/RotaryEncOverMCP.h"
 #include "Button.h"
 #include "LEDButton.h"
+#include "SynthParameterBuilder.h"
 
 #define MUX_ADDRESS 0x70 // TCA9548A Multiplexer address
 
@@ -54,7 +55,7 @@ void handleParameterChange(SynthParameter *parameter, bool clockwise, int speed)
 
 void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber);
 
-void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber);
+void displayTwinParameters(const char *title1, char *value1, const char *title2, char *value2, int displayNumber);
 
 void initOLEDDisplays();
 
@@ -149,10 +150,19 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 #define TFT_GREY 0x5AEB // New colour
 
-struct SynthParameter param1;
-struct SynthParameter param2;
-struct SynthParameter param3;
-struct SynthParameter param4;
+SynthParameter param1 = SynthParameterBuilder("Sequencer")
+        .number(428)
+        .max(1)
+        .create();
+SynthParameter param2 = SynthParameterBuilder("Cutoff")
+        .number(72)
+        .create();
+SynthParameter param3 = SynthParameterBuilder("PerfCtl1")
+        .performanceControlType(400, 401)
+        .create();
+SynthParameter param4 = SynthParameterBuilder("PerfCtl2")
+        .performanceControlType(402, 403)
+        .create();
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
@@ -227,31 +237,7 @@ void setup() {
 //    param1.descriptions[8] = "4P_HighPass";
 
 
-    strcpy(param1.name, "Sequencer");
-    param1.number = 428;
-    param1.min = 0;
-    param1.max = 1;
-    param1.descriptions[0] = "OFF";
-    param1.descriptions[1] = "ON";
 
-    strcpy(param2.name, "Cutoff");
-    param2.number = 72;
-    param2.min = 0;
-    param2.max = 255;
-
-    strcpy(param3.name, "PerfCtl1");
-    param3.type = PERFORMANCE_CTRL;
-    param3.number = 400;
-    param3.number2 = 401;
-    param3.min = 0;
-    param3.max = 511;
-
-    strcpy(param4.name, "PerfCtl2");
-    param4.type = PERFORMANCE_CTRL;
-    param4.number = 402;
-    param4.number2 = 403;
-    param4.min = 0;
-    param4.max = 511;
 
 //    strcpy(param1.name, "ARP_MODE");
 //    param1.number = 450;
@@ -463,7 +449,7 @@ void displayPatchInfo() {
 
 }
 
-void drawCenteredText(char *buf, int x, int y) {
+void drawCenteredText(const char *buf, int x, int y) {
     int16_t x1, y1;
     uint16_t w, h;
     display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); //calc width of new string
@@ -503,45 +489,46 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
     int byte1;
     int byte2;
 
-    if (parameter1->type == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[parameter1->number];
-        byte lsb = currentPatchData[parameter1->number2];
+    if (parameter1->getType() == PERFORMANCE_CTRL) {
+        byte msb = currentPatchData[parameter1->getNumber()];
+        byte lsb = currentPatchData[parameter1->getNumber2()];
         int combined = (msb << 7) + lsb;
 
         byte1 = (int) combined;
     } else {
-        byte1 = (int) currentPatchData[parameter1->number];
+        byte1 = (int) currentPatchData[parameter1->getNumber()];
     }
 
-    if (parameter2->type == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[parameter2->number];
-        byte lsb = currentPatchData[parameter2->number2];
+    if (parameter2->getType() == PERFORMANCE_CTRL) {
+        byte msb = currentPatchData[parameter2->getNumber()];
+        byte lsb = currentPatchData[parameter2->getNumber2()];
         int combined = (msb << 7) + lsb;
 
         byte2 = (int) combined;
     } else {
-        byte2 = (int) currentPatchData[parameter2->number];
+        byte2 = (int) currentPatchData[parameter2->getNumber()];
     }
 
     char printValue1[20];
-    if (parameter1->type != PERFORMANCE_CTRL && byte1 < sizeof(parameter1->descriptions) &&
-        parameter1->descriptions[byte1] != nullptr) {
-        strcpy(printValue1, parameter1->descriptions[byte1]);
-    } else {
+//    if (parameter1->getType() != PERFORMANCE_CTRL && byte1 < sizeof(parameter1->getDescriptions()) &&
+//        parameter1->getDescriptions()[byte1] != nullptr) {
+//        strcpy(printValue1, parameter1->getDescriptions()[byte1]);
+//    } else {
         sprintf(printValue1, "%d", byte1);
-    }
+//    }
     char printValue2[20];
-    if (parameter2->type != PERFORMANCE_CTRL && byte2 < sizeof(parameter2->descriptions) &&
-        parameter2->descriptions[byte1] != nullptr) {
-        strcpy(printValue2, parameter2->descriptions[byte2]);
-    } else {
+//    if (parameter2->getType() != PERFORMANCE_CTRL && byte2 < sizeof(parameter2->getDescriptions()) &&
+//        parameter2->getDescriptions()[byte1] != nullptr) {
+//        strcpy(printValue2, parameter2->getDescriptions()[byte2]);
+//    } else {
         sprintf(printValue2, "%d", byte2);
-    }
+//    }
 
-    displayTwinParameters(parameter1->name, printValue1, parameter2->name, printValue2, displayNumber);
+
+    displayTwinParameters(parameter1->getName().c_str(), printValue1, parameter2->getName().c_str(), printValue2, displayNumber);
 }
 
-void displayTwinParameters(char *title1, char *value1, char *title2, char *value2, int displayNumber) {
+void displayTwinParameters(const char *title1, char *value1, const char *title2, char *value2, int displayNumber) {
     selectMultiplexerChannel(displayNumber);
 
     display.clearDisplay();
@@ -568,28 +555,28 @@ void displayTwinParameters(char *title1, char *value1, char *title2, char *value
 void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
     int currentValue;
 
-    if (param->type == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[param->number];
-        byte lsb = currentPatchData[param->number2];
+    if (param->getType() == PERFORMANCE_CTRL) {
+        byte msb = currentPatchData[param->getNumber()];
+        byte lsb = currentPatchData[param->getNumber2()];
         int combined = (msb << 7) + lsb;
         currentValue = combined;
     } else {
-        currentValue = currentPatchData[param->number];
+        currentValue = currentPatchData[param->getNumber()];
     }
     int newValue = -1;
 
     if (clockwise) {
-        if (currentValue < param->max) {
+        if (currentValue < param->getMax()) {
             newValue = currentValue + speed;
-            if (newValue > param->max) {
-                newValue = param->max;
+            if (newValue > param->getMax()) {
+                newValue = param->getMax();
             }
         }
     } else {
-        if (currentValue > param->min) {
+        if (currentValue > param->getMin()) {
             newValue = currentValue - speed;
-            if (newValue < param->min) {
-                newValue = param->min;
+            if (newValue < param->getMin()) {
+                newValue = param->getMin();
             }
         }
     }
@@ -598,19 +585,19 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
     if (newValue >= 0 && newValue != currentValue) {
         SerialUSB.print("New value: ");
         SerialUSB.println(newValue);
-        if (param->type == PERFORMANCE_CTRL) {
+        if (param->getType() == PERFORMANCE_CTRL) {
             int msb = newValue >> 7;
             int lsb = newValue & 127;
 
-            currentPatchData[param->number] = msb;
-            currentPatchData[param->number2] = lsb;
+            currentPatchData[param->getNumber()] = msb;
+            currentPatchData[param->getNumber2()] = lsb;
 
-            setParameter(param->number, msb);
-            setParameter(param->number2, lsb);
+            setParameter(param->getNumber(), msb);
+            setParameter(param->getNumber2(), lsb);
         } else {
-            currentPatchData[param->number] = newValue;
+            currentPatchData[param->getNumber()] = newValue;
 
-            setParameter(param->number, newValue);
+            setParameter(param->getNumber(), newValue);
         }
     }
 
