@@ -360,13 +360,13 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
     }
 
     char printValue1[20];
-    if (byte1 < sizeof(parameter1->getDescriptions().size())) {
+    if (byte1 < parameter1->getDescriptions().size()) {
         strcpy(printValue1, parameter1->getDescriptions()[byte1].c_str());
     } else {
         sprintf(printValue1, "%d", byte1);
     }
     char printValue2[20];
-    if (byte2 < sizeof(parameter2->getDescriptions()).size()) {
+    if (byte2 < parameter2->getDescriptions().size()) {
         strcpy(printValue2, parameter2->getDescriptions()[byte2].c_str());
     } else {
         sprintf(printValue2, "%d", byte2);
