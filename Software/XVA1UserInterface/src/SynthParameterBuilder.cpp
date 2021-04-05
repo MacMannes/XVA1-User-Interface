@@ -24,6 +24,11 @@ SynthParameterBuilder &SynthParameterBuilder::numbers(std::vector<int> numbers) 
     return *this;
 }
 
+SynthParameterBuilder &SynthParameterBuilder::bitNumber(int bitNumber) {
+    synthParameter.bitNumber = bitNumber;
+    return *this;
+}
+
 SynthParameterBuilder &SynthParameterBuilder::min(int min) {
     synthParameter.min = min;
     return *this;

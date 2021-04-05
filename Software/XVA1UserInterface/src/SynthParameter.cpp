@@ -20,8 +20,8 @@ int SynthParameter::getNumber() const {
     return numbers[0];
 }
 
-int SynthParameter::getNumber2() const {
-    return numbers[1];
+int SynthParameter::getBitNumber() const {
+    return bitNumber;
 }
 
 int SynthParameter::getNumber(int index) {

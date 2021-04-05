@@ -340,8 +340,8 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
     int byte2;
 
     if (parameter1->getType() == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[parameter1->getNumber()];
-        byte lsb = currentPatchData[parameter1->getNumber2()];
+        byte msb = currentPatchData[parameter1->getNumber(0)];
+        byte lsb = currentPatchData[parameter1->getNumber(1)];
         int combined = (msb << 7) + lsb;
 
         byte1 = (int) combined;
@@ -350,8 +350,8 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
     }
 
     if (parameter2->getType() == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[parameter2->getNumber()];
-        byte lsb = currentPatchData[parameter2->getNumber2()];
+        byte msb = currentPatchData[parameter2->getNumber(0)];
+        byte lsb = currentPatchData[parameter2->getNumber(1)];
         int combined = (msb << 7) + lsb;
 
         byte2 = (int) combined;
@@ -404,8 +404,8 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
     int currentValue;
 
     if (param->getType() == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[param->getNumber()];
-        byte lsb = currentPatchData[param->getNumber2()];
+        byte msb = currentPatchData[param->getNumber(0)];
+        byte lsb = currentPatchData[param->getNumber(1)];
         int combined = (msb << 7) + lsb;
         currentValue = combined;
     } else {
@@ -437,11 +437,11 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
             int msb = newValue >> 7;
             int lsb = newValue & 127;
 
-            currentPatchData[param->getNumber()] = msb;
-            currentPatchData[param->getNumber2()] = lsb;
+            currentPatchData[param->getNumber(0)] = msb;
+            currentPatchData[param->getNumber(1)] = lsb;
 
-            setParameter(param->getNumber(), msb);
-            setParameter(param->getNumber2(), lsb);
+            setParameter(param->getNumber(0), msb);
+            setParameter(param->getNumber(1), lsb);
         } else {
             currentPatchData[param->getNumber()] = newValue;
 
