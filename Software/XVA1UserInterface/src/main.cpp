@@ -6,135 +6,17 @@
 #include <Adafruit_I2CDevice.h>
 
 #include "SynthParameter.h"
-#include "../lib/RotaryEncOverMCP/Adafruit_MCP23017.h"
-#include "../lib/RotaryEncOverMCP/RotaryEncOverMCP.h"
 #include "Button.h"
 #include "LEDButton.h"
 #include "SynthParameterBuilder.h"
 #include "XVA1SynthParameters.h"
-
-#define MUX_ADDRESS 0x70 // TCA9548A Multiplexer address
+#include "Hardware.h"
+#include "main.h"
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 #define LOGO_HEIGHT   16
 #define LOGO_WIDTH    16
-
-#define MAIN_ROTARY_BUTTON  0
-#define MENU_BUTTON         1
-#define SAVE_BUTTON         2
-#define ESC_BUTTON          3
-#define SHIFT_BUTTON        4
-
-#define UP_BUTTON           1
-#define DOWN_BUTTON         2
-
-/* I2C MCP23017 GPIO expanders */
-Adafruit_MCP23017 mcp1;
-Adafruit_MCP23017 mcp2;
-Adafruit_MCP23017 mcp3;
-
-//Array of pointers of all MCPs (for now, there's only 1)
-Adafruit_MCP23017 *allMCPs[] = {&mcp1, &mcp2, &mcp3};
-
-/* function prototypes */
-void mainRotaryButtonChanged(bool released);
-
-void mainButtonChanged(Button *btn, bool released);
-
-void shortcutButtonChanged(Button *btn, bool released);
-
-void rotaryButtonChanged(Button *btn, bool released);
-
-void upOrDownButtonChanged(Button *btn, bool released);
-
-void rotaryEncoderChanged(bool clockwise, int id);
-
-void handleMainEncoder(bool clockwise);
-
-void handleParameterChange(SynthParameter *parameter, bool clockwise, int speed);
-
-void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber);
-
-void displayTwinParameters(const char *title1, char *value1, const char *title2, char *value2, int displayNumber);
-
-void initOLEDDisplays();
-
-void pollAllMCPs();
-
-void readButtons();
-
-void selectPatchOnSynth(int number);
-
-void getPatchDataFromSynth();
-
-void displayPatchInfo();
-
-void initButtons();
-
-void setParameter(int number, int value);
-
-Rotary mainRotaryEncoder = Rotary(1, 2);
-
-/* Array of all rotary encoders and their pins */
-RotaryEncOverMCP rotaryEncoders[] = {
-        // outputA,B on GPA7,GPA6, register with callback and ID=1
-        RotaryEncOverMCP(&mcp1, 10, 9, &rotaryEncoderChanged, 0),
-        RotaryEncOverMCP(&mcp1, 13, 12, &rotaryEncoderChanged, 1),
-        RotaryEncOverMCP(&mcp1, 2, 3, &rotaryEncoderChanged, 2)
-};
-
-Button menuButton = Button(&mcp1, 15, MENU_BUTTON, &mainButtonChanged);
-Button saveButton = Button(&mcp1, 14, SAVE_BUTTON, &mainButtonChanged);
-Button escButton = Button(&mcp1, 0, ESC_BUTTON, &mainButtonChanged);
-Button shiftButton = Button(&mcp1, 1, SHIFT_BUTTON, &mainButtonChanged);
-
-Button *mainButtons[] = {
-        &menuButton, &saveButton, &escButton, &shiftButton,
-};
-
-LEDButton shortcutButton1 = LEDButton(&mcp3, 15, 14, 1, &shortcutButtonChanged);
-LEDButton shortcutButton2 = LEDButton(&mcp3, 13, 12, 2, &shortcutButtonChanged);
-LEDButton shortcutButton3 = LEDButton(&mcp3, 11, 10, 3, &shortcutButtonChanged);
-LEDButton shortcutButton4 = LEDButton(&mcp3, 9, 8, 4, &shortcutButtonChanged);
-LEDButton shortcutButton5 = LEDButton(&mcp3, 0, 1, 5, &shortcutButtonChanged);
-LEDButton shortcutButton6 = LEDButton(&mcp3, 2, 3, 6, &shortcutButtonChanged);
-LEDButton shortcutButton7 = LEDButton(&mcp3, 4, 5, 7, &shortcutButtonChanged);
-LEDButton shortcutButton8 = LEDButton(&mcp3, 6, 7, 8, &shortcutButtonChanged);
-
-LEDButton *shortcutButtons[] = {
-        &shortcutButton1, &shortcutButton2, &shortcutButton3, &shortcutButton4,
-        &shortcutButton5, &shortcutButton6, &shortcutButton7, &shortcutButton8
-};
-
-Button rotaryButton1 = Button(&mcp1, 11, 1, &rotaryButtonChanged);
-Button rotaryButton2 = Button(&mcp1, 4, 2, &rotaryButtonChanged);
-Button rotaryButton3 = Button(&mcp1, 8, 3, &rotaryButtonChanged);
-Button rotaryButton4 = Button(&mcp1, 7, 4, &rotaryButtonChanged);
-Button rotaryButton5 = Button(&mcp2, 13, 5, &rotaryButtonChanged);
-Button rotaryButton6 = Button(&mcp2, 2, 6, &rotaryButtonChanged);
-Button rotaryButton7 = Button(&mcp2, 10, 7, &rotaryButtonChanged);
-Button rotaryButton8 = Button(&mcp2, 5, 8, &rotaryButtonChanged);
-
-LEDButton upButton = LEDButton(&mcp2, 9, 8, 1, &upOrDownButtonChanged);
-LEDButton downButton = LEDButton(&mcp2, 6, 7, 2, &upOrDownButtonChanged);
-
-Button *allButtons[] = {
-        &menuButton, &saveButton, &escButton, &shiftButton,
-        &shortcutButton1, &shortcutButton2, &shortcutButton3, &shortcutButton4,
-        &shortcutButton5, &shortcutButton6, &shortcutButton7, &shortcutButton8,
-        &rotaryButton1, &rotaryButton2, &rotaryButton3, &rotaryButton4,
-        &rotaryButton5, &rotaryButton6, &rotaryButton7, &rotaryButton8,
-        &upButton, &downButton
-};
-
-// Initialize I2C buses using TCA9548A I2C Multiplexer
-void selectMultiplexerChannel(uint8_t i2c_bus) {
-    if (i2c_bus > 7) return;
-    Wire.beginTransmission(MUX_ADDRESS);
-    Wire.write(1 << i2c_bus);
-    Wire.endTransmission();
-}
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -160,45 +42,6 @@ int activeShortcut = 0;
 bool shiftButtonPushed = false;
 bool mainRotaryButtonPushed = false;
 
-void rotaryEncoderChanged(bool clockwise, int id) {
-    unsigned long now = millis();
-    revolutionTime = now - lastTransition;
-
-    int speed = 1;
-    if (revolutionTime < 50) {
-        speed = 20;
-    } else if (revolutionTime < 125) {
-        speed = 10;
-    } else if (revolutionTime < 250) {
-        speed = 2;
-    }
-
-    lastTransition = now;
-
-    Serial.println("Encoder " + String(id) + ": "
-                   + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
-    if (shiftButtonPushed) {
-        if (id == 1) {
-            handleParameterChange(&param3, clockwise, speed);
-            displayTwinParameters(&param3, &param4, 1);
-        }
-        if (id == 2) {
-            handleParameterChange(&param4, clockwise, speed);
-            displayTwinParameters(&param3, &param4, 1);
-        }
-    } else {
-        if (id == 1) {
-            handleParameterChange(&param1, clockwise, speed);
-            displayTwinParameters(&param1, &param2, 0);
-        }
-        if (id == 2) {
-            handleParameterChange(&param2, clockwise, speed);
-            displayTwinParameters(&param1, &param2, 0);
-        }
-    }
-}
-
-
 void setup() {
     SerialUSB.begin(115200);
 
@@ -209,33 +52,6 @@ void setup() {
     SerialUSB.println("===================");
     SerialUSB.println("XVA1 User Interface");
     SerialUSB.println("===================\n");
-
-//    strcpy(param1.name, "FilterType");
-//    param1.number = 71;
-//    param1.min = 0;
-//    param1.max = 21;
-//    param1.descriptions[0] = "Bypass";
-//    param1.descriptions[1] = "1P_LowPass";
-//    param1.descriptions[2] = "2P_LowPass";
-//    param1.descriptions[3] = "3P_LowPass";
-//    param1.descriptions[4] = "4P_LowPass";
-//    param1.descriptions[5] = "1P_HighPass";
-//    param1.descriptions[6] = "2P_HighPass";
-//    param1.descriptions[7] = "3P_HighPass";
-//    param1.descriptions[8] = "4P_HighPass";
-
-
-
-
-//    strcpy(param1.name, "ARP_MODE");
-//    param1.number = 450;
-//    param1.min = 0;
-//    param1.max = 5;
-//    strcpy(param2.name, "Octaves");
-//    param2.number = 454;
-//    param2.min = 0;
-//    param2.max = 5;
-
 
     SerialUSB.println("Initializing MCP23017 #1");
     mcp1.begin(0);
@@ -286,6 +102,52 @@ void loop() {
     pollAllMCPs();
 }
 
+void rotaryEncoderChanged(bool clockwise, int id) {
+    unsigned long now = millis();
+    revolutionTime = now - lastTransition;
+
+    int speed = 1;
+    if (revolutionTime < 50) {
+        speed = 20;
+    } else if (revolutionTime < 125) {
+        speed = 10;
+    } else if (revolutionTime < 250) {
+        speed = 2;
+    }
+
+    lastTransition = now;
+
+    Serial.println("Encoder " + String(id) + ": "
+                   + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
+    if (shiftButtonPushed) {
+        if (id == 1) {
+            handleParameterChange(&param3, clockwise, speed);
+            displayTwinParameters(&param3, &param4, 1);
+        }
+        if (id == 2) {
+            handleParameterChange(&param4, clockwise, speed);
+            displayTwinParameters(&param3, &param4, 1);
+        }
+    } else {
+        if (id == 1) {
+            handleParameterChange(&param1, clockwise, speed);
+            displayTwinParameters(&param1, &param2, 0);
+        }
+        if (id == 2) {
+            handleParameterChange(&param2, clockwise, speed);
+            displayTwinParameters(&param1, &param2, 0);
+        }
+    }
+}
+
+
+// Initialize I2C buses using TCA9548A I2C Multiplexer
+void selectMultiplexerChannel(uint8_t i2c_bus) {
+    if (i2c_bus > 7) return;
+    Wire.beginTransmission(MUX_ADDRESS);
+    Wire.write(1 << i2c_bus);
+    Wire.endTransmission();
+}
 
 void initOLEDDisplays() {
     for (int d = 0; d < 4; d++) {
