@@ -17,11 +17,15 @@ const std::string &SynthParameter::getName() const {
 }
 
 int SynthParameter::getNumber() const {
-    return number;
+    return numbers[0];
 }
 
 int SynthParameter::getNumber2() const {
-    return number2;
+    return numbers[1];
+}
+
+int SynthParameter::getNumber(int index) {
+    return numbers[index];
 }
 
 int SynthParameter::getMin() const {

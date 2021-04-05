@@ -11,6 +11,7 @@
 #include "Button.h"
 #include "LEDButton.h"
 #include "SynthParameterBuilder.h"
+#include "XVA1SynthParameters.h"
 
 #define MUX_ADDRESS 0x70 // TCA9548A Multiplexer address
 
@@ -150,20 +151,6 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 #define TFT_GREY 0x5AEB // New colour
 
-SynthParameter param1 = SynthParameterBuilder("Sequencer")
-        .number(428)
-        .max(1)
-        .descriptions({ "OFF", "ON" })
-        .build();
-SynthParameter param2 = SynthParameterBuilder("Cutoff")
-        .number(72)
-        .build();
-SynthParameter param3 = SynthParameterBuilder("PerfCtl1")
-        .performanceControlType(400, 401)
-        .build();
-SynthParameter param4 = SynthParameterBuilder("PerfCtl2")
-        .performanceControlType(402, 403)
-        .build();
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;

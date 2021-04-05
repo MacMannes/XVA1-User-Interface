@@ -14,8 +14,9 @@
 class SynthParameter {
     ParameterType type = NUMERIC;
     std::string name;
-    int number = -1;
-    int number2 = -1;
+    // This will contain one or more parameter numbers (4 for XVA1 oscillators, 8 for XFM2 operators, 2 for Performance controls),
+    // or a parameter number and a bit-number in case of a bitwise parameter
+    std::vector<int> numbers;
     int min = 0;
     int max = 255;
     std::vector<std::string> descriptions;
@@ -32,6 +33,8 @@ public:
     int getNumber() const;
 
     int getNumber2() const;
+
+    int getNumber(int index);
 
     int getMin() const;
 

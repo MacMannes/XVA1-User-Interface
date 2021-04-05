@@ -15,12 +15,12 @@ SynthParameterBuilder &SynthParameterBuilder::type(ParameterType type) {
 }
 
 SynthParameterBuilder &SynthParameterBuilder::number(int number) {
-    synthParameter.number = number;
+    synthParameter.numbers = { number };
     return *this;
 }
 
-SynthParameterBuilder &SynthParameterBuilder::number2(int number2) {
-    synthParameter.number2 = number2;
+SynthParameterBuilder &SynthParameterBuilder::numbers(std::vector<int> numbers) {
+    synthParameter.numbers = numbers;
     return *this;
 }
 
@@ -41,7 +41,6 @@ SynthParameterBuilder &SynthParameterBuilder::descriptions(std::vector<std::stri
 
 SynthParameterBuilder &SynthParameterBuilder::performanceControlType(int paramNumber1, int paramNumber2) {
     synthParameter.type = PERFORMANCE_CTRL;
-    synthParameter.number = paramNumber1;
-    synthParameter.number2 = paramNumber2;
+    synthParameter.numbers = { paramNumber1, paramNumber2 };
     return *this;
 }

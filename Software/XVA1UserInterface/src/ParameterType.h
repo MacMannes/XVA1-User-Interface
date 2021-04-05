@@ -1,5 +1,6 @@
 enum ParameterType {
   NUMERIC,
-  BITWYSE,
+  BITWISE,
+  MIDI_NOTE,
   PERFORMANCE_CTRL  
 };
