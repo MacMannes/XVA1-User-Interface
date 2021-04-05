@@ -24,7 +24,7 @@ int SynthParameter::getBitNumber() const {
     return bitNumber;
 }
 
-int SynthParameter::getNumber(int index) {
+int SynthParameter::getNumber(int index) const {
     return numbers[index];
 }
 

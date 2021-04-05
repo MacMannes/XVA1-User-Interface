@@ -32,7 +32,7 @@ public:
 
     int getNumber() const;
 
-    int getNumber(int index);
+    int getNumber(int index) const;
 
     int getBitNumber() const;
 
