@@ -479,6 +479,35 @@ void shortcutButtonChanged(Button *btn, bool released) {
         for (auto &shortcutButton : shortcutButtons) {
             shortcutButton->setLED(shortcutButton->id == btn->id);
         }
+
+        //TODO: Remove temporary debug information
+        if (activeShortcut == 5) {
+            SerialUSB.print("Section name: ");
+            SerialUSB.println(oscillatorSection.getName().c_str());
+
+            SerialUSB.print("Number of subsections: ");
+            SerialUSB.println(oscillatorSection.getNumberOfPages());
+
+            for (auto &title : oscillatorSection.getSubSectionTitles()) {
+                SerialUSB.print(" - ");
+                SerialUSB.println(title.c_str());
+            }
+
+            SerialUSB.print("Number of parameters: ");
+            SerialUSB.println(oscillatorSection.getParameters().size());
+            SerialUSB.print("Number of pages: ");
+            SerialUSB.println(oscillatorSection.getNumberOfPages());
+
+            SerialUSB.println("Parameters:");
+
+            for (auto &parameter : oscillatorSection.getParameters()) {
+                SerialUSB.print(" - ");
+                SerialUSB.print(parameter.getName().c_str());
+                SerialUSB.print(" (");
+                SerialUSB.print(parameter.getNumber(0));
+                SerialUSB.println(")");
+            }
+        }
     }
 }
 
