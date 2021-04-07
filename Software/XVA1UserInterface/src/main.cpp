@@ -27,6 +27,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 #define TFT_GREY 0x5AEB // New colour
+#define MY_ORANGE 0xFBA0 // New colour
 
 Synthesizer synthesizer;
 
@@ -73,10 +74,11 @@ void setup() {
     tft.setRotation(0);  // 0 & 2 Portrait. 1 & 3 landscapeooooooo;;
     tft.fillScreen(TFT_BLACK);
 
-    tft.setCursor(0, 0, 2);
+    tft.setCursor(0, 0, 1);
     // Set the font colour to be white with a black background, set text size multiplier to 1
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.setTextSize(1);
+
+    tft.setTextColor(MY_ORANGE, TFT_BLACK);
+    tft.setTextSize(2);
     tft.println("XVA1 Synthesizer");
 
     synthesizer.selectPatch(1);
@@ -198,21 +200,21 @@ void displayPatchInfo() {
 
 //  tft.setTextSize(2);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.drawString("Patch", 0, 30, 1);
+    tft.drawString("Patch", 0, 40, 1);
 
-    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+    tft.setTextColor(MY_ORANGE, TFT_BLACK);
 
     // Set the padding to the maximum width that the digits could occupy in font 4
     // This ensures small numbers obliterate large ones on the screen
     tft.setTextPadding(tft.textWidth("999", 4));
     // Draw the patch number in font 4
-    tft.drawNumber(currentPatchNumber, 0, 42, 4);
+    tft.drawNumber(currentPatchNumber, 0, 65, 4);
 
-    tft.setTextColor(TFT_CYAN, TFT_BLACK);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
 
-    tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 2));
+    tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 1));
     // Draw the patch name in font 1
-    tft.drawString(synthesizer.getPatchName().c_str(), 0, 75, 2);
+    tft.drawString(synthesizer.getPatchName().c_str(), 0, 120, 1);
 
     // Reset text padding to 0 otherwise all future rendered strings will use it!
     tft.setTextPadding(0);
