@@ -12,6 +12,7 @@
 #include "XVA1SynthParameters.h"
 #include "Hardware.h"
 #include "main.h"
+#include "Synthesizer.h"
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -23,16 +24,11 @@
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-const int MAX = 128;
-const int MIN = 1;
-int currentPatchNumber = MIN;
-String currentPatchName = "";
-byte currentPatchData[512];
-
 TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 #define TFT_GREY 0x5AEB // New colour
 
+Synthesizer synthesizer;
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
@@ -83,9 +79,7 @@ void setup() {
     tft.setTextSize(1);
     tft.println("XVA1 Synthesizer");
 
-
-    selectPatchOnSynth(currentPatchNumber);
-    getPatchDataFromSynth();
+    synthesizer.selectPatch(1);
     displayPatchInfo();
 
     mainRotaryEncoder.begin(true);
@@ -177,14 +171,15 @@ void readButtons() {
 }
 
 void handleMainEncoder(bool clockwise) {
+    int currentPatchNumber = synthesizer.getPatchNumber();
     int oldValue = currentPatchNumber;
 
     if (clockwise) {
-        if (currentPatchNumber < MAX) {
+        if (currentPatchNumber < 128) {
             currentPatchNumber++;
         }
     } else {
-        if (currentPatchNumber > MIN) {
+        if (currentPatchNumber > 1) {
             currentPatchNumber--;
         }
     }
@@ -193,86 +188,14 @@ void handleMainEncoder(bool clockwise) {
     SerialUSB.println(currentPatchNumber);
 
     if (currentPatchNumber != oldValue) {
-        selectPatchOnSynth(currentPatchNumber);
-        getPatchDataFromSynth();
+        synthesizer.selectPatch(currentPatchNumber);
         displayPatchInfo();
     }
 }
 
-void selectPatchOnSynth(int patchNumber) {
-    int synthPatchNumber = patchNumber - 1;
-
-    SerialUSB.print("Selecting patch #");
-    SerialUSB.print(synthPatchNumber);
-    SerialUSB.print(" on Synth...");
-
-    Serial1.write('r'); // 'r' = Read program
-    Serial1.write(synthPatchNumber);
-
-
-    int read_status;
-    int bytesRead = 0;
-    int retry = 0;
-    while (bytesRead == 0 && retry != 100) {
-        if (Serial1.available()) {
-            read_status = Serial1.read();
-            bytesRead++;
-            retry = 0;
-        } else {
-            retry++;
-            delay(10);
-        }
-    }
-
-    SerialUSB.print("Status=");
-    SerialUSB.println(read_status, DEC);
-
-}
-
-void getPatchDataFromSynth() {
-
-    Serial1.write('d'); // 'd' = Display program
-
-    SerialUSB.println("Reading patch data from Synth...");
-
-    byte rxBuffer[512];
-    int bytesRead = 0;
-    int retry = 0;
-    while (bytesRead != 512 && retry != 100) {
-        if (Serial1.available()) {
-            byte b = Serial1.read();
-            rxBuffer[bytesRead] = b;
-            bytesRead++;
-            retry = 0;
-        } else {
-            retry++;
-            delay(10);
-        }
-    }
-
-//    for (int i = 0; i < sizeof(rxBuffer); i++){
-//      printHex(rxBuffer[i]);
-//    }
-
-    SerialUSB.println();
-
-    String patchName = "";
-
-    for (int i = 480; i < 505; i++) {
-        patchName += (char) rxBuffer[i];
-    }
-
-    SerialUSB.print("Patch name: ");
-    SerialUSB.println(patchName);
-    SerialUSB.println();
-
-    Serial1.flush();
-
-    memcpy(currentPatchData, rxBuffer, 512);
-    currentPatchName = patchName;
-}
-
 void displayPatchInfo() {
+    int currentPatchNumber = synthesizer.getPatchNumber();
+
 //  tft.setTextSize(2);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
     tft.drawString("Patch", 0, 30, 1);
@@ -289,7 +212,7 @@ void displayPatchInfo() {
 
     tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 2));
     // Draw the patch name in font 1
-    tft.drawString(currentPatchName, 0, 75, 2);
+    tft.drawString(synthesizer.getPatchName().c_str(), 0, 75, 2);
 
     // Reset text padding to 0 otherwise all future rendered strings will use it!
     tft.setTextPadding(0);
@@ -336,6 +259,7 @@ void pollAllMCPs() {
 }
 
 void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber) {
+    auto currentPatchData = synthesizer.getPatchData();
     int byte1;
     int byte2;
 
@@ -404,12 +328,12 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
     int currentValue;
 
     if (param->getType() == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[param->getNumber(0)];
-        byte lsb = currentPatchData[param->getNumber(1)];
+        byte msb = synthesizer.getParameter(param->getNumber(0));
+        byte lsb = synthesizer.getParameter(param->getNumber(1));
         int combined = (msb << 7) + lsb;
         currentValue = combined;
     } else {
-        currentValue = currentPatchData[param->getNumber()];
+        currentValue = synthesizer.getParameter(param->getNumber());
     }
     int newValue = -1;
 
@@ -437,32 +361,13 @@ void handleParameterChange(SynthParameter *param, bool clockwise, int speed) {
             int msb = newValue >> 7;
             int lsb = newValue & 127;
 
-            currentPatchData[param->getNumber(0)] = msb;
-            currentPatchData[param->getNumber(1)] = lsb;
-
-            setParameter(param->getNumber(0), msb);
-            setParameter(param->getNumber(1), lsb);
+            synthesizer.setParameter(param->getNumber(0), msb);
+            synthesizer.setParameter(param->getNumber(1), lsb);
         } else {
-            currentPatchData[param->getNumber()] = newValue;
-
-            setParameter(param->getNumber(), newValue);
+            synthesizer.setParameter(param->getNumber(), newValue);
         }
     }
 
-}
-
-void setParameter(int param, int value) {
-    Serial1.write('s'); // 's' = Set Parameter
-
-    if (param > 255) {
-        // Parameters above 255 have a two-byte format: b1 = 255, b2 = x-256
-        Serial1.write(255);
-        Serial1.write(param - 256);
-        Serial1.write(value);
-    } else {
-        Serial1.write(param);
-        Serial1.write(value);
-    }
 }
 
 void shortcutButtonChanged(Button *btn, bool released) {

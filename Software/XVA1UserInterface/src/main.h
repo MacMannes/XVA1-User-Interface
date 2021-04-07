@@ -21,14 +21,8 @@ void pollAllMCPs();
 
 void readButtons();
 
-void selectPatchOnSynth(int number);
-
-void getPatchDataFromSynth();
-
 void displayPatchInfo();
 
 void initButtons();
-
-void setParameter(int number, int value);
 
 #endif //XVA1USERINTERFACE_MAIN_H
