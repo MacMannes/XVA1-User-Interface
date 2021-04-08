@@ -9,6 +9,8 @@
 #include <RotaryEncOverMCP.h>
 #include "Button.h"
 #include "Multiplexer.h"
+#include "Synthesizer.h"
+#include "ParameterController.h"
 
 #define MAIN_ROTARY_BUTTON  0
 #define MENU_BUTTON         1
@@ -137,5 +139,8 @@ Button *allButtons[] = {
         &rotaryButton5, &rotaryButton6, &rotaryButton7, &rotaryButton8,
         &upButton, &downButton
 };
+
+Synthesizer synthesizer;
+ParameterController parameterController = ParameterController(&synthesizer, &multiplexer, &tft, &display, &upButton, &downButton);
 
 #endif //XVA1USERINTERFACE_HARDWARE_H

@@ -12,10 +12,6 @@
 #include "XVA1SynthParameters.h"
 #include "Hardware.h"
 #include "main.h"
-#include "Synthesizer.h"
-
-
-Synthesizer synthesizer;
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
@@ -365,31 +361,9 @@ void shortcutButtonChanged(Button *btn, bool released) {
 
         //TODO: Remove temporary debug information
         if (activeShortcut == 5) {
-            SerialUSB.print("Section name: ");
-            SerialUSB.println(oscillatorSection.getName().c_str());
-
-            SerialUSB.print("Number of subsections: ");
-            SerialUSB.println(oscillatorSection.getNumberOfPages());
-
-            for (auto &title : oscillatorSection.getSubSectionTitles()) {
-                SerialUSB.print(" - ");
-                SerialUSB.println(title.c_str());
-            }
-
-            SerialUSB.print("Number of parameters: ");
-            SerialUSB.println(oscillatorSection.getParameters().size());
-            SerialUSB.print("Number of pages: ");
-            SerialUSB.println(oscillatorSection.getNumberOfPages());
-
-            SerialUSB.println("Parameters:");
-
-            for (auto &parameter : oscillatorSection.getParameters()) {
-                SerialUSB.print(" - ");
-                SerialUSB.print(parameter.getName().c_str());
-                SerialUSB.print(" (");
-                SerialUSB.print(parameter.getNumber(0));
-                SerialUSB.println(")");
-            }
+            parameterController.setSection(&oscillatorSection);
+        } else {
+            parameterController.setSection(nullptr);
         }
     }
 }
@@ -411,8 +385,7 @@ void mainButtonChanged(Button *btn, bool released) {
                     shortcutButton->setLED(false);
                 }
             }
-            upButton.setLED(false);
-            downButton.setLED(false);
+            parameterController.setSection(nullptr);
     }
 }
 
@@ -429,8 +402,13 @@ void upOrDownButtonChanged(Button *btn, bool released) {
     SerialUSB.print(" ");
     SerialUSB.println((released) ? "RELEASED" : "PRESSED");
 
-    upButton.setLED(btn->id == DOWN_BUTTON);
-    downButton.setLED(btn->id == UP_BUTTON);
+    if (!released) {
+        if (btn->id == UP_BUTTON) {
+            parameterController.upButtonTapped();
+        } else {
+            parameterController.downButtonTapped();
+        }
+    }
 }
 
 void mainRotaryButtonChanged(bool released) {
