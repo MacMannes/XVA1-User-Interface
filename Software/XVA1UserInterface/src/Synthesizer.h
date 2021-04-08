@@ -25,9 +25,7 @@ public:
 
     const string &getPatchName() const;
 
-    const byte *getPatchData() const;
-
-    const byte getParameter(int number) const;
+    byte getParameter(int number) const;
 
     void setParameter(int number, int value);
 };

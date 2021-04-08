@@ -82,11 +82,7 @@ const string &Synthesizer::getPatchName() const {
     return currentPatchName;
 }
 
-const byte *Synthesizer::getPatchData() const {
-    return currentPatchData;
-}
-
-const byte Synthesizer::getParameter(int number) const {
+byte Synthesizer::getParameter(int number) const {
     return currentPatchData[number];
 }
 

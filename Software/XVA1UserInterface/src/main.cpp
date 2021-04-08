@@ -261,28 +261,27 @@ void pollAllMCPs() {
 }
 
 void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter2, int displayNumber) {
-    auto currentPatchData = synthesizer.getPatchData();
     int byte1;
     int byte2;
 
     if (parameter1->getType() == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[parameter1->getNumber(0)];
-        byte lsb = currentPatchData[parameter1->getNumber(1)];
+        byte msb = synthesizer.getParameter(parameter1->getNumber(0));
+        byte lsb = synthesizer.getParameter(parameter1->getNumber(1));
         int combined = (msb << 7) + lsb;
 
         byte1 = (int) combined;
     } else {
-        byte1 = (int) currentPatchData[parameter1->getNumber()];
+        byte1 = (int) synthesizer.getParameter(parameter1->getNumber());
     }
 
     if (parameter2->getType() == PERFORMANCE_CTRL) {
-        byte msb = currentPatchData[parameter2->getNumber(0)];
-        byte lsb = currentPatchData[parameter2->getNumber(1)];
+        byte msb = synthesizer.getParameter(parameter2->getNumber(0));
+        byte lsb = synthesizer.getParameter(parameter2->getNumber(1));
         int combined = (msb << 7) + lsb;
 
         byte2 = (int) combined;
     } else {
-        byte2 = (int) currentPatchData[parameter2->getNumber()];
+        byte2 = (int) synthesizer.getParameter(parameter2->getNumber());
     }
 
     char printValue1[20];
