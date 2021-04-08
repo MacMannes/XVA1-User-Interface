@@ -101,24 +101,24 @@ void rotaryEncoderChanged(bool clockwise, int id) {
 
     Serial.println("Encoder " + String(id) + ": "
                    + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
-    if (shiftButtonPushed) {
-        if (id == 1) {
-            handleParameterChange(&param3, clockwise, speed);
-            displayTwinParameters(&param3, &param4, 1);
-        }
-        if (id == 2) {
-            handleParameterChange(&param4, clockwise, speed);
-            displayTwinParameters(&param3, &param4, 1);
-        }
-    } else {
-        if (id == 1) {
+
+    switch (id) {
+        case 1:
             handleParameterChange(&param1, clockwise, speed);
             displayTwinParameters(&param1, &param2, 0);
-        }
-        if (id == 2) {
+            break;
+        case 2:
             handleParameterChange(&param2, clockwise, speed);
             displayTwinParameters(&param1, &param2, 0);
-        }
+            break;
+        case 3:
+            handleParameterChange(&param3, clockwise, speed);
+            displayTwinParameters(&param3, &param4, 1);
+            break;
+        case 4:
+            handleParameterChange(&param4, clockwise, speed);
+            displayTwinParameters(&param3, &param4, 1);
+            break;
     }
 }
 

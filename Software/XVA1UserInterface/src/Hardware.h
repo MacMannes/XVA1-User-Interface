@@ -21,14 +21,30 @@
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
-#define LOGO_HEIGHT   16
-#define LOGO_WIDTH    16
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define OLED_RESET     (-1) // Reset pin # (or -1 if sharing Arduino reset pin)
 
-#define TFT_GREY 0x5AEB // New colour
-#define MY_ORANGE 0xFBA0 // New colour
+#define TFT_GREY 0x5AEB
+#define MY_ORANGE 0xFBA0
+
+// Pins for MCP23017
+#define GPA0 0
+#define GPA1 1
+#define GPA2 2
+#define GPA3 3
+#define GPA4 4
+#define GPA5 5
+#define GPA6 6
+#define GPA7 7
+#define GPB0 8
+#define GPB1 9
+#define GPB2 10
+#define GPB3 11
+#define GPB4 12
+#define GPB5 13
+#define GPB6 14
+#define GPB7 15
 
 /* Function prototypes */
 
@@ -68,45 +84,50 @@ Rotary mainRotaryEncoder = Rotary(1, 2);
 /* Array of all rotary encoders and their pins */
 RotaryEncOverMCP rotaryEncoders[] = {
         // outputA,B on GPA7,GPA6, register with callback and ID=1
-        RotaryEncOverMCP(&mcp1, 10, 9, &rotaryEncoderChanged, 0),
-        RotaryEncOverMCP(&mcp1, 13, 12, &rotaryEncoderChanged, 1),
-        RotaryEncOverMCP(&mcp1, 2, 3, &rotaryEncoderChanged, 2)
+        RotaryEncOverMCP(&mcp1, GPB5, GPB4, &rotaryEncoderChanged, 1),
+        RotaryEncOverMCP(&mcp1, GPA2, GPA3, &rotaryEncoderChanged, 2),
+        RotaryEncOverMCP(&mcp1, GPB2, GPB1, &rotaryEncoderChanged, 3),
+        RotaryEncOverMCP(&mcp1, GPA5, GPA6, &rotaryEncoderChanged, 4),
+        RotaryEncOverMCP(&mcp2, GPB7, GPB6, &rotaryEncoderChanged, 5),
+        RotaryEncOverMCP(&mcp2, GPA0, GPA1, &rotaryEncoderChanged, 6),
+        RotaryEncOverMCP(&mcp2, GPB4, GPB3, &rotaryEncoderChanged, 7),
+        RotaryEncOverMCP(&mcp2, GPA3, GPA4, &rotaryEncoderChanged, 8),
 };
 
-Button menuButton = Button(&mcp1, 15, MENU_BUTTON, &mainButtonChanged);
-Button saveButton = Button(&mcp1, 14, SAVE_BUTTON, &mainButtonChanged);
-Button escButton = Button(&mcp1, 0, ESC_BUTTON, &mainButtonChanged);
-Button shiftButton = Button(&mcp1, 1, SHIFT_BUTTON, &mainButtonChanged);
+Button menuButton = Button(&mcp1, GPB7, MENU_BUTTON, &mainButtonChanged);
+Button saveButton = Button(&mcp1, GPB6, SAVE_BUTTON, &mainButtonChanged);
+Button escButton = Button(&mcp1, GPA0, ESC_BUTTON, &mainButtonChanged);
+Button shiftButton = Button(&mcp1, GPA1, SHIFT_BUTTON, &mainButtonChanged);
 
 Button *mainButtons[] = {
         &menuButton, &saveButton, &escButton, &shiftButton,
 };
 
-LEDButton shortcutButton1 = LEDButton(&mcp3, 15, 14, 1, &shortcutButtonChanged);
-LEDButton shortcutButton2 = LEDButton(&mcp3, 13, 12, 2, &shortcutButtonChanged);
-LEDButton shortcutButton3 = LEDButton(&mcp3, 11, 10, 3, &shortcutButtonChanged);
-LEDButton shortcutButton4 = LEDButton(&mcp3, 9, 8, 4, &shortcutButtonChanged);
-LEDButton shortcutButton5 = LEDButton(&mcp3, 0, 1, 5, &shortcutButtonChanged);
-LEDButton shortcutButton6 = LEDButton(&mcp3, 2, 3, 6, &shortcutButtonChanged);
-LEDButton shortcutButton7 = LEDButton(&mcp3, 4, 5, 7, &shortcutButtonChanged);
-LEDButton shortcutButton8 = LEDButton(&mcp3, 6, 7, 8, &shortcutButtonChanged);
+LEDButton shortcutButton1 = LEDButton(&mcp3, GPB7, GPB6, 1, &shortcutButtonChanged);
+LEDButton shortcutButton2 = LEDButton(&mcp3, GPB5, GPB4, 2, &shortcutButtonChanged);
+LEDButton shortcutButton3 = LEDButton(&mcp3, GPB3, GPB2, 3, &shortcutButtonChanged);
+LEDButton shortcutButton4 = LEDButton(&mcp3, GPB1, GPB0, 4, &shortcutButtonChanged);
+LEDButton shortcutButton5 = LEDButton(&mcp3, GPA0, GPA1, 5, &shortcutButtonChanged);
+LEDButton shortcutButton6 = LEDButton(&mcp3, GPA2, GPA3, 6, &shortcutButtonChanged);
+LEDButton shortcutButton7 = LEDButton(&mcp3, GPA4, GPA5, 7, &shortcutButtonChanged);
+LEDButton shortcutButton8 = LEDButton(&mcp3, GPA6, GPA7, 8, &shortcutButtonChanged);
 
 LEDButton *shortcutButtons[] = {
         &shortcutButton1, &shortcutButton2, &shortcutButton3, &shortcutButton4,
         &shortcutButton5, &shortcutButton6, &shortcutButton7, &shortcutButton8
 };
 
-Button rotaryButton1 = Button(&mcp1, 11, 1, &rotaryButtonChanged);
-Button rotaryButton2 = Button(&mcp1, 4, 2, &rotaryButtonChanged);
-Button rotaryButton3 = Button(&mcp1, 8, 3, &rotaryButtonChanged);
-Button rotaryButton4 = Button(&mcp1, 7, 4, &rotaryButtonChanged);
-Button rotaryButton5 = Button(&mcp2, 13, 5, &rotaryButtonChanged);
-Button rotaryButton6 = Button(&mcp2, 2, 6, &rotaryButtonChanged);
-Button rotaryButton7 = Button(&mcp2, 10, 7, &rotaryButtonChanged);
-Button rotaryButton8 = Button(&mcp2, 5, 8, &rotaryButtonChanged);
+Button rotaryButton1 = Button(&mcp1, GPB3, 1, &rotaryButtonChanged);
+Button rotaryButton2 = Button(&mcp1, GPA4, 2, &rotaryButtonChanged);
+Button rotaryButton3 = Button(&mcp1, GPB0, 3, &rotaryButtonChanged);
+Button rotaryButton4 = Button(&mcp1, GPA7, 4, &rotaryButtonChanged);
+Button rotaryButton5 = Button(&mcp2, GPB5, 5, &rotaryButtonChanged);
+Button rotaryButton6 = Button(&mcp2, GPA2, 6, &rotaryButtonChanged);
+Button rotaryButton7 = Button(&mcp2, GPB2, 7, &rotaryButtonChanged);
+Button rotaryButton8 = Button(&mcp2, GPA5, 8, &rotaryButtonChanged);
 
-LEDButton upButton = LEDButton(&mcp2, 9, 8, 1, &upOrDownButtonChanged);
-LEDButton downButton = LEDButton(&mcp2, 6, 7, 2, &upOrDownButtonChanged);
+LEDButton upButton = LEDButton(&mcp2, GPB1, GPB0, 1, &upOrDownButtonChanged);
+LEDButton downButton = LEDButton(&mcp2, GPA6, GPA7, 2, &upOrDownButtonChanged);
 
 Button *allButtons[] = {
         &menuButton, &saveButton, &escButton, &shiftButton,
