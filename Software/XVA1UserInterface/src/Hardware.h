@@ -19,7 +19,18 @@
 #define UP_BUTTON           1
 #define DOWN_BUTTON         2
 
-/* function prototypes */
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define LOGO_HEIGHT   16
+#define LOGO_WIDTH    16
+
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+
+#define TFT_GREY 0x5AEB // New colour
+#define MY_ORANGE 0xFBA0 // New colour
+
+/* Function prototypes */
 
 void mainRotaryButtonChanged(bool released);
 
@@ -36,14 +47,20 @@ void rotaryEncoderChanged(bool clockwise, int id);
 // TCA9548A Multiplexer
 Multiplexer multiplexer = Multiplexer(0x70);
 
-/* I2C MCP23017 GPIO expanders */
+// I2C MCP23017 GPIO expanders
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
 Adafruit_MCP23017 mcp3;
 
-//Array of pointers of all MCPs (for now, there's only 1)
+//Array of pointers of all MCPs
 Adafruit_MCP23017 *allMCPs[] = {&mcp1, &mcp2, &mcp3};
 
+
+// OLED display
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// TFT display
+TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 
 Rotary mainRotaryEncoder = Rotary(1, 2);
