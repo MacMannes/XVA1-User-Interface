@@ -8,8 +8,7 @@
 #include <Rotary.h>
 #include <RotaryEncOverMCP.h>
 #include "Button.h"
-
-#define MUX_ADDRESS 0x70 // TCA9548A Multiplexer address
+#include "Multiplexer.h"
 
 #define MAIN_ROTARY_BUTTON  0
 #define MENU_BUTTON         1
@@ -33,6 +32,9 @@ void rotaryButtonChanged(Button *btn, bool released);
 void upOrDownButtonChanged(Button *btn, bool released);
 
 void rotaryEncoderChanged(bool clockwise, int id);
+
+// TCA9548A Multiplexer
+Multiplexer multiplexer = Multiplexer(0x70);
 
 /* I2C MCP23017 GPIO expanders */
 Adafruit_MCP23017 mcp1;

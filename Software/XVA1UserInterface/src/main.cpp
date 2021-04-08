@@ -136,18 +136,9 @@ void rotaryEncoderChanged(bool clockwise, int id) {
     }
 }
 
-
-// Initialize I2C buses using TCA9548A I2C Multiplexer
-void selectMultiplexerChannel(uint8_t i2c_bus) {
-    if (i2c_bus > 7) return;
-    Wire.beginTransmission(MUX_ADDRESS);
-    Wire.write(1 << i2c_bus);
-    Wire.endTransmission();
-}
-
 void initOLEDDisplays() {
     for (int d = 0; d < 4; d++) {
-        selectMultiplexerChannel(d);
+        multiplexer.selectChannel(d);
         // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
         display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
@@ -302,7 +293,7 @@ void displayTwinParameters(SynthParameter *parameter1, SynthParameter *parameter
 }
 
 void displayTwinParameters(const char *title1, char *value1, const char *title2, char *value2, int displayNumber) {
-    selectMultiplexerChannel(displayNumber);
+    multiplexer.selectChannel(displayNumber);
 
     display.clearDisplay();
 
