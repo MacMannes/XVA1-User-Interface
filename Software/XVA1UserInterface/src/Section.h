@@ -32,11 +32,7 @@ public:
 
     const vector<SynthParameter> &getParameters() const;
 
-    int getCurrentSubSection() const;
-
     int getNumberOfSubSections();
-
-    int getCurrentPage() const;
 
     int getNumberOfPages();
 

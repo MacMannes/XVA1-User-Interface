@@ -27,20 +27,12 @@ const vector<SynthParameter> &Section::getParameters() const {
     return parameters;
 }
 
-int Section::getCurrentSubSection() const {
-    return currentSubSection;
-}
-
 int Section::getNumberOfSubSections() {
     if (numberOfSubSections < 0) {
         numberOfSubSections = subSectionTitles.size();
     }
 
     return numberOfSubSections;
-}
-
-int Section::getCurrentPage() const {
-    return currentPage;
 }
 
 int Section::getNumberOfPages()  {
