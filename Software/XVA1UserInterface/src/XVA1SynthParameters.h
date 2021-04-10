@@ -23,9 +23,106 @@ SynthParameter param4 = SynthParameterBuilder("PerfCtl2")
         .build();
 
 /**
- * Oscillators
+ * 1. Voice
  */
 
+Section voiceSection = Section(
+        "Voice",
+        {
+                SynthParameterBuilder("Transpose")
+                        .type(CENTER_128)
+                        .number(241)
+                        .build(),
+                SynthParameterBuilder("Bend Up")
+                        .number(242)
+                        .build(),
+                SynthParameterBuilder("Bend Down")
+                        .number(243)
+                        .build(),
+        }
+);
+
+/**
+ * 2. Mixer
+ */
+
+Section mixerSection = Section(
+        "Mixer",
+        {
+                SynthParameterBuilder("OSC 1 Volume")
+                        .number(27)
+                        .build(),
+                SynthParameterBuilder("OSC 2 Volume")
+                        .number(28)
+                        .build(),
+                SynthParameterBuilder("OSC 3 Volume")
+                        .number(29)
+                        .build(),
+                SynthParameterBuilder("OSC 4 Volume")
+                        .number(30)
+                        .build(),
+                SynthParameterBuilder("OSC 1 Level L")
+                        .number(31)
+                        .build(),
+                SynthParameterBuilder("OSC 2 Level L")
+                        .number(33)
+                        .build(),
+                SynthParameterBuilder("OSC 3 Level L")
+                        .number(35)
+                        .build(),
+                SynthParameterBuilder("OSC 4 Level L")
+                        .number(37)
+                        .build(),
+                SynthParameterBuilder("OSC 1 Level R")
+                        .number(32)
+                        .build(),
+                SynthParameterBuilder("OSC 2 Level R")
+                        .number(34)
+                        .build(),
+                SynthParameterBuilder("OSC 3 Level R")
+                        .number(36)
+                        .build(),
+                SynthParameterBuilder("OSC 4 Level R")
+                        .number(38)
+                        .build(),
+        }
+);
+
+/**
+ * 3. Effects
+ */
+
+Section effectsSection = Section(
+        "Effects",
+        {
+                SynthParameterBuilder("Chorus DRY")
+                        .number(360)
+                        .build(),
+                SynthParameterBuilder("Chorus WET")
+                        .number(351)
+                        .build(),
+        }
+);
+/**
+ * 4. ARP
+ */
+
+Section arpSection = Section(
+        "ARP",
+        {
+                SynthParameterBuilder("MODE")
+                        .number(450)
+                        .build(),
+                SynthParameterBuilder("Temp")
+                        .number(451)
+                        .min(44)
+                        .build(),
+        }
+);
+
+/**
+ * 5. Oscillators
+ */
 
 Section oscillatorSection = Section(
         "Oscillators",
@@ -50,6 +147,7 @@ Section oscillatorSection = Section(
                         .max(3)
                         .descriptions({"0 deg", "90 deg", "180 deg", "270 deg"})
                         .build(),
+
                 SynthParameterBuilder("Pulse Width")
                         .type(CENTER_128)
                         .numbers({15, 16, 17, 18})
@@ -103,8 +201,84 @@ Section oscillatorSection = Section(
         }
 );
 
+/**
+ * 6. Envelopes
+ */
+
+Section envelopeSection = Section(
+        "Envelopes",
+        {"PITCH", "CUTOFF", "AMP"},
+        {
+                SynthParameterBuilder("L0")
+                        .numbers({80, 81, 82})
+                        .build()
+        }
+);
+
+/**
+ * 7. LFOs
+ */
+
+Section lfoSection = Section(
+        "LFO",
+        {"LFO1", "LFO2"},
+        {
+                SynthParameterBuilder("Wave")
+                        .numbers({160, 170})
+                        .max(9)
+                        .build()
+        }
+);
+
+/**
+ * 8. Filter
+ */
+
+Section filterSection = Section(
+        "Filter",
+        {
+                SynthParameterBuilder("Cutoff 1")
+                        .number(72)
+                        .build(),
+
+                SynthParameterBuilder("Resonance 1")
+                        .number(77)
+                        .build(),
+
+                SynthParameterBuilder("Cutoff 2")
+                        .number(78)
+                        .build(),
+
+                SynthParameterBuilder("Resonance 2")
+                        .number(79)
+                        .build(),
+
+                SynthParameterBuilder("Type")
+                        .number(7)
+                        .max(21)
+                        .build()
+        }
+);
+
+/**
+ * 9. Patch
+ */
+
+/**
+ * 10. External Controls
+ */
+
+/**
+ * 11. Performance Controls
+ */
+
+/**
+ * Sequencer
+ */
+
 Section *shortcutSections[] = {
-        &oscillatorSection
+        &voiceSection, &mixerSection, &effectsSection, &arpSection,
+        &oscillatorSection, &envelopeSection, &lfoSection, &filterSection
 };
 
 #endif //XVA1USERINTERFACE_XVA1SYNTHPARAMETERS_H

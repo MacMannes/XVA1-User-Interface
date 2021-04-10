@@ -254,8 +254,8 @@ void shortcutButtonChanged(Button *btn, bool released) {
         }
 
         //TODO: Remove temporary debug information
-        if (activeShortcut == 5) {
-            parameterController.setSection(&oscillatorSection);
+        if (activeShortcut > 0 && activeShortcut <= 8) {
+            parameterController.setSection(shortcutSections[activeShortcut - 1]);
         } else {
             parameterController.setSection(nullptr);
         }
