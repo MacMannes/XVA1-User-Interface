@@ -51,14 +51,17 @@ Section oscillatorSection = Section(
                         .descriptions({"0 deg", "90 deg", "180 deg", "270 deg"})
                         .build(),
                 SynthParameterBuilder("Pulse Width")
+                        .type(CENTER_128)
                         .numbers({15, 16, 17, 18})
                         .build(),
 
                 SynthParameterBuilder("Transpose")
+                        .type(CENTER_128)
                         .numbers({19, 20, 21, 22})
                         .build(),
 
                 SynthParameterBuilder("Detune")
+                        .type(CENTER_128)
                         .numbers({23, 24, 25, 26})
                         .build(),
 

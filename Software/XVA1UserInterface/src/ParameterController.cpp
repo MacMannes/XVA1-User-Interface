@@ -246,20 +246,35 @@ string ParameterController::getDisplayValue(int parameterIndex) {
         SynthParameter parameter = section->getParameters()[parameterIndex];
 
         int value;
-        if (parameter.getType() == PERFORMANCE_CTRL) {
-            byte msb = synthesizer->getParameter(parameter.getNumber(0));
-            byte lsb = synthesizer->getParameter(parameter.getNumber(1));
-            int combined = (msb << 7) + lsb;
+        switch (parameter.getType()) {
+            case PERFORMANCE_CTRL: {
+                byte msb = synthesizer->getParameter(parameter.getNumber(0));
+                byte lsb = synthesizer->getParameter(parameter.getNumber(1));
+                int combined = (msb << 7) + lsb;
 
-            value = (int) combined;
-        } else {
-            value = (int) synthesizer->getParameter(parameter.getNumber());
-        }
+                value = (int) combined;
 
-        if (value < parameter.getDescriptions().size()) {
-            printValue = parameter.getDescriptions()[value];
-        } else {
-            printValue = to_string(value);
+                break;
+            }
+            case CENTER_128: {
+                value = (int) synthesizer->getParameter(parameter.getNumber()) - 128;
+                if (value > 0) {
+                    printValue = "+" + to_string(value);
+                }
+
+                break;
+            }
+            default: {
+                value = (int) synthesizer->getParameter(parameter.getNumber());
+            }
+        };
+
+        if (printValue.empty()) {
+            if (value < parameter.getDescriptions().size()) {
+                printValue = parameter.getDescriptions()[value];
+            } else {
+                printValue = to_string(value);
+            }
         }
     }
 
