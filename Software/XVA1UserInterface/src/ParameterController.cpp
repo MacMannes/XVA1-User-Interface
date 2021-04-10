@@ -227,8 +227,15 @@ void ParameterController::displayParameters() {
 void ParameterController::drawCenteredText(string buf, int x, int y) {
     int16_t x1, y1;
     uint16_t w, h;
-    display->getTextBounds(buf.c_str(), x, y, &x1, &y1, &w, &h); //calc width of new string
-    display->setCursor(x - w / 2, y);
+    display->getTextBounds(buf.c_str(), 0, y, &x1, &y1, &w, &h); //calc width of new string
+    if (x - w / 2 <= 0) {
+        // Text won't fit. Set smallest text size and recompute
+        display->setTextSize(1);
+        display->getTextBounds(buf.c_str(), 0, y, &x1, &y1, &w, &h);
+        display->setCursor(x - w / 2, y + (h / 2));
+    } else {
+        display->setCursor(x - w / 2, y);
+    }
     display->print(buf.c_str());
 }
 

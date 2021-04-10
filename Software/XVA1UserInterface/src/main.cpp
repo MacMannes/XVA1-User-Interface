@@ -121,6 +121,7 @@ void initOLEDDisplays() {
         // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
         display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
+        display.setTextWrap(false);
         display.clearDisplay();
         display.display();
     }
