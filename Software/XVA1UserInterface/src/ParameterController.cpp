@@ -23,7 +23,7 @@ void ParameterController::upButtonTapped() {
 void ParameterController::downButtonTapped() {
     if (section == nullptr) return;
 
-    if (activePage < section->getNumberOfPages()) {
+    if (activePage < section->getNumberOfPages() - 1) {
         int newPage = activePage + 1;
         setActivePage(newPage);
     }
@@ -55,7 +55,7 @@ void ParameterController::setSection(Section *pSection) {
 //        SerialUSB.print("Number of pages: ");
 //        SerialUSB.println(section->getNumberOfPages());
 
-        setActivePage(1);
+        setActivePage(0);
     }
 }
 
@@ -68,7 +68,7 @@ void ParameterController::clearParameters() {
 void ParameterController::setActivePage(int pageNumber) {
     if (section == nullptr) return;
 
-    if (pageNumber < 1 && pageNumber > section->getNumberOfPages()) return;
+    if (pageNumber < 0 && pageNumber > section->getNumberOfPages()) return;
 
     SerialUSB.print("Setting active page: ");
     SerialUSB.println(pageNumber);
@@ -76,7 +76,7 @@ void ParameterController::setActivePage(int pageNumber) {
     clearParameters();
     activePage = pageNumber;
 
-    int start = (pageNumber * 8) - 8;
+    int start = (pageNumber * 8);
     int end = start + 7;
     if (end > section->getParameters().size() - 1) {
         end = section->getParameters().size() - 1;
@@ -115,8 +115,8 @@ void ParameterController::displayActivePage() {
     };
 
     int numberOfPages = section->getNumberOfPages();
-    upButton->setLED(numberOfPages > 1 && activePage > 1);
-    downButton->setLED(numberOfPages > 1 && activePage < numberOfPages);
+    upButton->setLED(numberOfPages > 1 && activePage > 0);
+    downButton->setLED(numberOfPages > 1 && activePage < numberOfPages - 1);
 }
 
 void ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed) {

@@ -11,7 +11,7 @@ Section::Section(string name, vector<SynthParameter> parameters) {
 
 Section::Section(string name, vector<string> subSectionTitles, vector<SynthParameter> parameters) {
     this->name = name;
-    this->subSectionTitles = subSectionTitles;
+    this->virtualSubSectionTitles = subSectionTitles;
     this->parameters = parameters;
 }
 
@@ -20,7 +20,7 @@ const string &Section::getName() const {
 }
 
 const vector<string> &Section::getSubSectionTitles() const {
-    return subSectionTitles;
+    return virtualSubSectionTitles;
 }
 
 const vector<SynthParameter> &Section::getParameters() const {
@@ -28,17 +28,11 @@ const vector<SynthParameter> &Section::getParameters() const {
 }
 
 int Section::getNumberOfSubSections() {
-    if (numberOfSubSections < 0) {
-        numberOfSubSections = subSectionTitles.size();
+    if (virtualSubSectionTitles.size() > 0) {
+        return virtualSubSectionTitles.size();
     }
-
-    return numberOfSubSections;
 }
 
 int Section::getNumberOfPages()  {
-    if (numberOfPages < 0) {
-        numberOfPages = (parameters.size() + 8 - 1) / 8;
-    }
-
-    return numberOfPages;
+    return (parameters.size() + 8 - 1) / 8;;
 }

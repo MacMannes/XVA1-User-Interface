@@ -13,14 +13,10 @@ using namespace std;
 class Section {
 private:
     string name;
-    vector<string> subSectionTitles = {};
+    vector<string> virtualSubSectionTitles = {};
     vector<SynthParameter> parameters;
 
-    int currentSubSection = 1;
-    int numberOfSubSections = -1;
-
-    int currentPage = 1;
-    int numberOfPages = -1;
+    int currentSubSection = 0;
 
 public:
     Section(string name, vector<SynthParameter> parameters);
