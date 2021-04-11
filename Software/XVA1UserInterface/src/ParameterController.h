@@ -26,7 +26,9 @@ private:
     Section *section = &defaultSection;
     int parameterIndices[8];
 
-    int activePage = 1;
+    int activePageNumber = 0;
+    int activeSubSectionNumber = 0;
+    Section subSection = Section("empty");
 
     void clearParameters();
 
@@ -45,6 +47,8 @@ private:
     void drawCenteredText(string buf, int x, int y);
 
     string getDisplayValue(int parameterIndex);
+
+    Section *getSection();
 
     Section defaultSection = Section(
             "Default",

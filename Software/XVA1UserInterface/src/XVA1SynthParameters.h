@@ -95,12 +95,42 @@ Section mixerSection = Section(
 Section effectsSection = Section(
         "Effects",
         {
-                SynthParameterBuilder("Chorus DRY")
-                        .number(360)
-                        .build(),
-                SynthParameterBuilder("Chorus WET")
-                        .number(351)
-                        .build(),
+                Section(
+                        "Chorus/Flanger",
+                        {
+                                SynthParameterBuilder("DRY")
+                                        .number(360)
+                                        .build(),
+                                SynthParameterBuilder("WET")
+                                        .number(351)
+                                        .build(),
+                        }
+
+                ),
+                Section(
+                        "Phaser",
+                        {
+                                SynthParameterBuilder("DRY")
+                                        .number(310)
+                                        .build(),
+                                SynthParameterBuilder("WET")
+                                        .number(311)
+                                        .build(),
+                        }
+
+                ),
+                Section(
+                        "Delay",
+                        {
+                                SynthParameterBuilder("DRY")
+                                        .number(300)
+                                        .build(),
+                                SynthParameterBuilder("WET")
+                                        .number(301)
+                                        .build(),
+                        }
+
+                )
         }
 );
 /**
