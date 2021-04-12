@@ -1,0 +1,11 @@
+//
+// Created by André Mathlener on 12/04/2021.
+//
+
+#ifndef XVA1USERINTERFACE_GLOBALS_H
+#define XVA1USERINTERFACE_GLOBALS_H
+
+#define TFT_GREY 0x5AEB
+#define MY_ORANGE 0xFBA0
+
+#endif //XVA1USERINTERFACE_GLOBALS_H

@@ -23,16 +23,20 @@ private:
     LEDButton *upButton;
     LEDButton *downButton;
 
+    const int LINE_HEIGHT = 30;
+
     Section *section = &defaultSection;
     int parameterIndices[8];
 
-    int activePageNumber = 0;
-    int activeSubSectionNumber = 0;
+    int currentPageNumber = 0;
+    int currentSubSectionNumber = 0;
     Section subSection = Section("empty");
 
     void clearParameters();
 
     void setActivePage(int pageNumber);
+
+    void setActiveSubSection(int pageNumber);
 
     void displayActivePage();
 
@@ -49,6 +53,12 @@ private:
     string getDisplayValue(int parameterIndex);
 
     Section *getSection();
+
+    void displaySubSections();
+
+    void clearCurrentSubsection();
+
+    void displayCurrentSubsection();
 
     Section defaultSection = Section(
             "Default",
@@ -76,9 +86,9 @@ public:
     void setSection(Section *pSection);
     void setDefaultSection();
 
-    void rotaryEncoderChanged(int id, bool clockwise, int speed);
+    bool rotaryEncoderChanged(int id, bool clockwise, int speed);
 
-    void rotaryEncoderButtonChanged(int id, bool released);
+    bool rotaryEncoderButtonChanged(int id, bool released);
 
     void upButtonTapped();
 

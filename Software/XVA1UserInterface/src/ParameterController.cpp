@@ -3,6 +3,7 @@
 //
 
 #include "ParameterController.h"
+#include "Globals.h"
 
 ParameterController::ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft,
                                          Adafruit_SSD1306 *display, LEDButton *upButton, LEDButton *downButton)
@@ -14,8 +15,8 @@ ParameterController::ParameterController(Synthesizer *synthesizer, Multiplexer *
 void ParameterController::upButtonTapped() {
     if (section == nullptr) return;
 
-    if (activePageNumber > 0) {
-        int newPage = activePageNumber - 1;
+    if (currentPageNumber > 0) {
+        int newPage = currentPageNumber - 1;
         setActivePage(newPage);
     }
 }
@@ -23,8 +24,8 @@ void ParameterController::upButtonTapped() {
 void ParameterController::downButtonTapped() {
     if (section == nullptr) return;
 
-    if (activePageNumber < getSection()->getNumberOfPages() - 1) {
-        int newPage = activePageNumber + 1;
+    if (currentPageNumber < getSection()->getNumberOfPages() - 1) {
+        int newPage = currentPageNumber + 1;
         setActivePage(newPage);
     }
 }
@@ -38,6 +39,7 @@ void ParameterController::setSection(Section *pSection) {
     SerialUSB.println((pSection != nullptr) ? pSection->getName().c_str() : "null");
 
     ParameterController::section = pSection;
+    currentSubSectionNumber = 0;
 
     if (section == nullptr) {
         upButton->setLED(false);
@@ -45,10 +47,11 @@ void ParameterController::setSection(Section *pSection) {
         clearParameters();
         displayParameters();
     } else {
-        SerialUSB.println(F("Sub-Sections:"));
-        for (auto &title : section->getSubSectionTitles()) {
-            SerialUSB.print(" - ");
-            SerialUSB.println(title.c_str());
+        if (section != &defaultSection) {
+            displaySubSections();
+        }
+        if (section->getNumberOfSubSections() > 0) {
+            displayCurrentSubsection();
         }
 
 //        SerialUSB.print("Number of parameters: ");
@@ -71,11 +74,13 @@ void ParameterController::setActivePage(int pageNumber) {
 
     if (pageNumber < 0 && pageNumber > getSection()->getNumberOfPages()) return;
 
-    SerialUSB.print(F("Setting active page: "));
-    SerialUSB.println(pageNumber);
+    if (pageNumber != currentPageNumber) {
+        SerialUSB.print(F("Setting active page: "));
+        SerialUSB.println(pageNumber);
+    }
 
     clearParameters();
-    activePageNumber = pageNumber;
+    currentPageNumber = pageNumber;
 
     int start = (pageNumber * 8);
     int end = start + 7;
@@ -108,6 +113,18 @@ void ParameterController::setActivePage(int pageNumber) {
     displayParameters();
 }
 
+void ParameterController::setActiveSubSection(int subSectionNumber) {
+    clearCurrentSubsection();
+
+    if (section->getSubSections().size() > 0 && !section->hasVirtualSubSections()) {
+        subSection = section->getSubSections().at(subSectionNumber);
+    }
+    currentSubSectionNumber = subSectionNumber;
+
+    displayCurrentSubsection();
+    setActivePage(currentPageNumber); // This redraws all parmeters
+}
+
 void ParameterController::displayActivePage() {
     if (section == nullptr) {
         upButton->setLED(false);
@@ -116,34 +133,57 @@ void ParameterController::displayActivePage() {
     };
 
     int numberOfPages = getSection()->getNumberOfPages();
-    upButton->setLED(numberOfPages > 1 && activePageNumber > 0);
-    downButton->setLED(numberOfPages > 1 && activePageNumber < numberOfPages - 1);
+    upButton->setLED(numberOfPages > 1 && currentPageNumber > 0);
+    downButton->setLED(numberOfPages > 1 && currentPageNumber < numberOfPages - 1);
 }
 
-void ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed) {
-    if (section == nullptr) return;
+bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed) {
+    if (section == nullptr) return false;
 
-    id--;
-    int index = parameterIndices[id];
-    if (index >= 0) {
-        handleParameterChange(index, clockwise, speed);
+    if (id == 0) {
+        int numberOfSubSections = section->getNumberOfSubSections();
+        if (numberOfSubSections > 0) {
+            if (clockwise) {
+                if (currentSubSectionNumber + 1 < numberOfSubSections) {
+                    setActiveSubSection(currentSubSectionNumber + 1);
+                }
+            } else {
+                if (currentSubSectionNumber > 0) {
+                    setActiveSubSection(currentSubSectionNumber - 1);
+                }
+            }
+        }
 
-        int index1 = (id % 2 == 0) ? id : id - 1;
-        int index2 = index1 + 1;
-        int displayNumber = (index1 / 2);
+        return true;
+    } else {
+        id--;
+        int index = parameterIndices[id];
+        if (index >= 0) {
+            handleParameterChange(index, clockwise, speed);
 
-        displayTwinParameters(parameterIndices[index1], parameterIndices[index2], displayNumber);
+            int index1 = (id % 2 == 0) ? id : id - 1;
+            int index2 = index1 + 1;
+            int displayNumber = (index1 / 2);
+
+            displayTwinParameters(parameterIndices[index1], parameterIndices[index2], displayNumber);
+            return true;
+        }
     }
+
+    return false;
 }
 
-void ParameterController::rotaryEncoderButtonChanged(int id, bool released) {
-    if (section == nullptr) return;
+bool ParameterController::rotaryEncoderButtonChanged(int id, bool released) {
+    if (section == nullptr) return false;
 
+    return false;
 }
 
 void ParameterController::handleParameterChange(int index, bool clockwise, int speed) {
     SynthParameter parameter = getSection()->getParameters()[index];
     int currentValue;
+
+    int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
 
     if (parameter.getType() == PERFORMANCE_CTRL) {
         byte msb = synthesizer->getParameter(parameter.getNumber(0));
@@ -151,7 +191,7 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
         int combined = (msb << 7) + lsb;
         currentValue = combined;
     } else {
-        currentValue = synthesizer->getParameter(parameter.getNumber());
+        currentValue = synthesizer->getParameter(parameter.getNumber(subIndex));
     }
     int newValue = -1;
 
@@ -179,7 +219,7 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
             synthesizer->setParameter(parameter.getNumber(0), msb);
             synthesizer->setParameter(parameter.getNumber(1), lsb);
         } else {
-            synthesizer->setParameter(parameter.getNumber(), newValue);
+            synthesizer->setParameter(parameter.getNumber(subIndex), newValue);
         }
     }
 }
@@ -246,6 +286,8 @@ string ParameterController::getDisplayValue(int parameterIndex) {
     if (parameterIndex >= 0) {
         SynthParameter parameter = getSection()->getParameters()[parameterIndex];
 
+        int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+
         int value;
         switch (parameter.getType()) {
             case PERFORMANCE_CTRL: {
@@ -258,7 +300,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
                 break;
             }
             case CENTER_128: {
-                value = (int) synthesizer->getParameter(parameter.getNumber()) - 128;
+                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex)) - 128;
                 if (value > 0) {
                     printValue = "+" + to_string(value);
                 }
@@ -266,7 +308,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
                 break;
             }
             default: {
-                value = (int) synthesizer->getParameter(parameter.getNumber());
+                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
             }
         };
 
@@ -284,11 +326,45 @@ string ParameterController::getDisplayValue(int parameterIndex) {
 
 Section *ParameterController::getSection()  {
     if (section->getSubSections().size() > 0) {
-        subSection = section->getSubSections().at(activeSubSectionNumber);
+        subSection = section->getSubSections().at(currentSubSectionNumber);
         return &subSection;
     }
 
     return section;
+}
+
+void ParameterController::displaySubSections() {
+    tft->fillScreen(TFT_BLACK);
+    tft->setCursor(0, 0, 1);
+
+    // Set the font colour to be orange with a black background, set text size multiplier to 1
+    tft->setTextColor(MY_ORANGE, TFT_BLACK);
+    tft->setTextSize(2);
+    tft->println(section->getName().c_str());
+
+    int lineNumber = 0;
+
+    SerialUSB.println(F("Sub-Sections:"));
+    for (auto &title : section->getSubSectionTitles()) {
+        SerialUSB.print(" - ");
+        SerialUSB.println(title.c_str());
+
+        tft->setTextColor(TFT_GREY, TFT_BLACK);
+        tft->drawString(title.c_str(), 20, 40 + LINE_HEIGHT * lineNumber, 1);
+        lineNumber++;
+    }
+}
+
+void ParameterController::clearCurrentSubsection() {
+    tft->setTextColor(TFT_GREY, TFT_BLACK);
+    tft->drawString(" ", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+}
+
+void ParameterController::displayCurrentSubsection() {
+    tft->setTextColor(TFT_WHITE, TFT_BLACK);
+    tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
 }
 
 

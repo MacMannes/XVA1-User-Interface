@@ -27,9 +27,6 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     (-1) // Reset pin # (or -1 if sharing Arduino reset pin)
 
-#define TFT_GREY 0x5AEB
-#define MY_ORANGE 0xFBA0
-
 // Pins for MCP23017
 #define GPA0 0
 #define GPA1 1

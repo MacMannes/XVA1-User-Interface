@@ -10,6 +10,7 @@
 #include "SynthParameterBuilder.h"
 #include "XVA1SynthParameters.h"
 #include "Hardware.h"
+#include "Globals.h"
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
@@ -76,7 +77,15 @@ void setup() {
 void loop() {
     unsigned char result = mainRotaryEncoder.process();
     if (result) {
-        handleMainEncoder(result == DIR_CW);
+        bool clockwise = result == DIR_CW;
+        if (activeShortcut != 0) {
+            bool consumed = parameterController.rotaryEncoderChanged(0, clockwise, 1);
+            if (!consumed) {
+                handleMainEncoder(clockwise);
+            }
+        } else {
+            handleMainEncoder(clockwise);
+        }
     }
 
     readButtons();
@@ -275,6 +284,8 @@ void mainButtonChanged(Button *btn, bool released) {
         case ESC_BUTTON:
             if (activeShortcut > 0) {
                 clearShortcut();
+                clearMainScreen();
+                displayPatchInfo();
             }
             parameterController.setDefaultSection();
     }

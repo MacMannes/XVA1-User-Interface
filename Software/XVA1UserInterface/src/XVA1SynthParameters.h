@@ -96,6 +96,49 @@ Section effectsSection = Section(
         "Effects",
         {
                 Section(
+                        "Bandwidth limit",
+                        {
+                                SynthParameterBuilder("Bandwidth")
+                                        .number(340)
+                                        .max(7)
+                                        .descriptions({
+                                                              "No filter", "20 kHz", "18 kHz", "16 kHz", "14 kHz",
+                                                              "12 kHz", "10 kHz", "8 kHz"
+                                                      })
+                                        .build(),
+                        }
+                ),
+                Section(
+                        "Distortion",
+                        {
+                                SynthParameterBuilder("On or Off")
+                                        .number(340)
+                                        .max(1)
+                                        .descriptions({"OFF", "ON"})
+                                        .build(),
+                                SynthParameterBuilder("Type")
+                                        .number(354)
+                                        .max(3)
+                                        .descriptions({"Hard clipping", "Soft clipping", "Tube 12AX", "Tube DSL"})
+                                        .build(),
+                                SynthParameterBuilder("Gain PRE")
+                                        .number(354)
+                                        .build(),
+                                SynthParameterBuilder("Gain POST")
+                                        .number(354)
+                                        .build(),
+                                SynthParameterBuilder("Filter POST")
+                                        .number(340)
+                                        .max(7)
+                                        .descriptions({
+                                                              "No filter", "20 kHz", "18 kHz", "16 kHz", "14 kHz",
+                                                              "12 kHz", "10 kHz", "8 kHz"
+                                                      })
+                                        .build(),
+                        }
+
+                ),
+                Section(
                         "Chorus/Flanger",
                         {
                                 SynthParameterBuilder("DRY")
