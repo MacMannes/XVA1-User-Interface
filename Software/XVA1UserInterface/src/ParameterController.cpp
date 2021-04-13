@@ -322,23 +322,30 @@ void ParameterController::displaySubSections(bool paintItBlack) {
 
     if (section == nullptr) return;
 
-    tft->setTextPadding(240);
-    tft->setCursor(0, 0, 1);
-
-    // Set the font colour to be orange with a black background, set text size multiplier to 1
-    if (paintItBlack) {
-        tft->setTextColor(TFT_BLACK);
-    } else {
-        tft->setTextColor(MY_ORANGE, TFT_BLACK);
-    }
+    tft->setTextPadding(0);
     tft->setTextSize(2);
-    tft->println(section->getName().c_str());
+
+    if (paintItBlack) {
+        tft->setTextColor(MY_ORANGE);
+    } else {
+        tft->setTextColor(TFT_WHITE);
+    }
+
+    tft->setTextDatum(1);
+    tft->drawString(section->getName().c_str(), 119, 4, 1);
+    tft->setTextDatum(0);
 
     int lineNumber = 0;
 
+    if (paintItBlack) {
+        tft->setTextColor(TFT_BLACK);
+    } else {
+        tft->setTextColor(TFT_WHITE);
+    }
+
     for (auto &title : section->getSubSectionTitles()) {
         if (!paintItBlack) {
-            tft->setTextColor((lineNumber == currentSubSectionNumber) ? TFT_WHITE : TFT_GREY, TFT_BLACK);
+            tft->setTextColor((lineNumber == currentSubSectionNumber) ? TFT_WHITE : TFT_GREY);
         }
         if (lineNumber == currentSubSectionNumber) {
             tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
@@ -352,13 +359,14 @@ void ParameterController::displaySubSections(bool paintItBlack) {
 void ParameterController::clearCurrentSubsection() {
     if (section == nullptr || section->getNumberOfSubSections() == 0) return;
 
-    tft->setTextColor(TFT_GREY, TFT_BLACK);
-    tft->drawString(" ", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->setTextColor(TFT_BLACK);
+    tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->setTextColor(TFT_GREY);
     tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
 }
 
 void ParameterController::displayCurrentSubsection() {
-    tft->setTextColor(TFT_WHITE, TFT_BLACK);
+    tft->setTextColor(TFT_WHITE);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
     tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
 }

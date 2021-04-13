@@ -44,6 +44,8 @@ void initMainScreen();
 
 void initRotaryEncoders();
 
+void rtrim(std::string& s, char c);
+
 void setup() {
     SerialUSB.begin(115200);
 
@@ -123,7 +125,7 @@ void initRotaryEncoders() {
 
 void initMainScreen() {
     tft.init();
-    tft.setRotation(0);  // 0 & 2 Portrait. 1 & 3 landscapeooooooo;;
+    tft.setRotation(0);  // 0 & 2 Portrait. 1 & 3 landscape;
 }
 
 void initOLEDDisplays() {
@@ -183,24 +185,39 @@ void displayPatchInfo() {
     displayPatchInfo(false);
 }
 
+void rtrim(std::string& s, char c) {
+
+    if (s.empty())
+        return;
+
+    std::string::iterator p;
+    for (p = s.end(); p != s.begin() && *--p == c;);
+
+    if (*p != c)
+        p++;
+
+    s.erase(p, s.end());
+}
+
 void displayPatchInfo(bool paintItBlack) {
     int currentPatchNumber = synthesizer.getPatchNumber();
 
-    tft.setCursor(0, 0, 1);
+    if (paintItBlack) {
+        tft.setTextColor(MY_ORANGE);
+    } else {
+        tft.setTextColor(TFT_WHITE);
+    }
 
-    // Set the font colour to be orange with a black background, set text size multiplier to 1
+    tft.setTextSize(2);
+    tft.setTextDatum(1);
+    tft.drawString("XVA1 Synthesizer", 119, 4, 1);
+
     if (paintItBlack) {
         tft.setTextColor(TFT_BLACK);
     } else {
-        tft.setTextColor(MY_ORANGE, TFT_BLACK);
+        tft.setTextColor(TFT_GREY);
     }
-    tft.setTextSize(2);
-    tft.print("XVA1 Synthesizer");
-
-    if (!paintItBlack) {
-        tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    }
-    tft.drawString("Patch", 0, 40, 1);
+    tft.drawString("Patch", 119, 40, 1);
 
     if (!paintItBlack) {
         tft.setTextColor(MY_ORANGE, TFT_BLACK);
@@ -210,7 +227,7 @@ void displayPatchInfo(bool paintItBlack) {
     // This ensures small numbers obliterate large ones on the screen
     tft.setTextPadding(tft.textWidth("999", 4));
     // Draw the patch number in font 4
-    tft.drawNumber(currentPatchNumber, 0, 65, 4);
+    tft.drawNumber(currentPatchNumber, 119, 65, 4);
 
     if (!paintItBlack) {
         tft.setTextColor(TFT_WHITE, TFT_BLACK);
@@ -218,27 +235,18 @@ void displayPatchInfo(bool paintItBlack) {
 
     tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 1));
     // Draw the patch name in font 1
-    tft.drawString(synthesizer.getPatchName().c_str(), 0, 120, 1);
+    string name = synthesizer.getPatchName();
+    rtrim(name, ' ');
+    tft.drawString(name.c_str(), 119, 120, 1);
 
-    // Reset text padding to 0 otherwise all future rendered strings will use it!
+    // Reset text padding and datum to 0 otherwise all future rendered strings will use it!
     tft.setTextPadding(0);
+    tft.setTextDatum(0);
 }
 
-void clearMainScreen() { tft.fillScreen(TFT_BLACK); }
-
-void drawCenteredText(const char *buf, int x, int y) {
-    int16_t x1, y1;
-    uint16_t w, h;
-    display.getTextBounds(buf, x, y, &x1, &y1, &w, &h); //calc width of new string
-    display.setCursor(x - w / 2, y);
-    display.print(buf);
-}
-
-void printHex(uint8_t num) {
-    char hexCar[3];
-
-    sprintf(hexCar, "%02X", num);
-    SerialUSB.print(hexCar);
+void clearMainScreen() {
+    tft.fillScreen(TFT_BLACK);
+    tft.fillRect(0, 0, 240, 26, MY_ORANGE);
 }
 
 void pollAllMCPs() {
@@ -268,13 +276,13 @@ void shortcutButtonChanged(Button *btn, bool released) {
     SerialUSB.print(" ");
     SerialUSB.println((released) ? "RELEASED" : "PRESSED");
 
-    if (!released && activeShortcut > 0) {
-        parameterController.clearScreen();
-    }
-
-    activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
-
     if (!released) {
+        if (activeShortcut > 0) {
+            parameterController.clearScreen();
+        }
+
+        activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
+
         SerialUSB.print("Active Shortcut: ");
         SerialUSB.println(activeShortcut);
         for (auto &shortcutButton : shortcutButtons) {
@@ -301,12 +309,14 @@ void mainButtonChanged(Button *btn, bool released) {
             shiftButtonPushed = !released;
             break;
         case ESC_BUTTON:
-            if (activeShortcut > 0) {
-                clearShortcut();
-                parameterController.clearScreen();
-                displayPatchInfo();
+            if (!released) {
+                if (activeShortcut > 0) {
+                    parameterController.clearScreen();
+                    clearShortcut();
+                    displayPatchInfo();
+                }
+                parameterController.setDefaultSection();
             }
-            parameterController.setDefaultSection();
     }
 }
 
