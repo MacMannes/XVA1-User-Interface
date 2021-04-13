@@ -32,6 +32,8 @@ void readButtons();
 
 void displayPatchInfo();
 
+void displayPatchInfo(bool paintItBlack);
+
 void initButtons();
 
 void clearShortcut();
@@ -67,8 +69,8 @@ void setup() {
     initButtons();
 
     synthesizer.selectPatch(1);
-    displayPatchInfo();
     parameterController.setDefaultSection();
+    displayPatchInfo();
 
     mainRotaryEncoder.begin(true);
 }
@@ -171,27 +173,38 @@ void handleMainEncoder(bool clockwise) {
 
     if (currentPatchNumber != oldValue) {
         synthesizer.selectPatch(currentPatchNumber);
-        displayPatchInfo();
         clearShortcut();
         parameterController.setDefaultSection();
+        displayPatchInfo();
     }
 }
 
 void displayPatchInfo() {
+    displayPatchInfo(false);
+}
+
+void displayPatchInfo(bool paintItBlack) {
     int currentPatchNumber = synthesizer.getPatchNumber();
 
     tft.setCursor(0, 0, 1);
 
     // Set the font colour to be orange with a black background, set text size multiplier to 1
-    tft.setTextColor(MY_ORANGE, TFT_BLACK);
+    if (paintItBlack) {
+        tft.setTextColor(TFT_BLACK);
+    } else {
+        tft.setTextColor(MY_ORANGE, TFT_BLACK);
+    }
     tft.setTextSize(2);
-    tft.println("XVA1 Synthesizer");
+    tft.print("XVA1 Synthesizer");
 
-
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    if (!paintItBlack) {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    }
     tft.drawString("Patch", 0, 40, 1);
 
-    tft.setTextColor(MY_ORANGE, TFT_BLACK);
+    if (!paintItBlack) {
+        tft.setTextColor(MY_ORANGE, TFT_BLACK);
+    }
 
     // Set the padding to the maximum width that the digits could occupy in font 4
     // This ensures small numbers obliterate large ones on the screen
@@ -199,7 +212,9 @@ void displayPatchInfo() {
     // Draw the patch number in font 4
     tft.drawNumber(currentPatchNumber, 0, 65, 4);
 
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    if (!paintItBlack) {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    }
 
     tft.setTextPadding(tft.textWidth("XXXXXXXXXXXXXXXXXXXXXXXXX", 1));
     // Draw the patch name in font 1
@@ -253,6 +268,10 @@ void shortcutButtonChanged(Button *btn, bool released) {
     SerialUSB.print(" ");
     SerialUSB.println((released) ? "RELEASED" : "PRESSED");
 
+    if (!released && activeShortcut > 0) {
+        parameterController.clearScreen();
+    }
+
     activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
 
     if (!released) {
@@ -262,8 +281,8 @@ void shortcutButtonChanged(Button *btn, bool released) {
             shortcutButton->setLED(shortcutButton->id == btn->id);
         }
 
-        //TODO: Remove temporary debug information
         if (activeShortcut > 0 && activeShortcut <= 8) {
+            displayPatchInfo(true);
             parameterController.setSection(shortcutSections[activeShortcut - 1]);
         } else {
             parameterController.setSection(nullptr);
@@ -284,7 +303,7 @@ void mainButtonChanged(Button *btn, bool released) {
         case ESC_BUTTON:
             if (activeShortcut > 0) {
                 clearShortcut();
-                clearMainScreen();
+                parameterController.clearScreen();
                 displayPatchInfo();
             }
             parameterController.setDefaultSection();

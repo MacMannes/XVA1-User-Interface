@@ -47,19 +47,12 @@ void ParameterController::setSection(Section *pSection) {
         clearParameters();
         displayParameters();
     } else {
+        clearCurrentSubsection();
+        setActivePage(0);
+
         if (section != &defaultSection) {
             displaySubSections();
         }
-        if (section->getNumberOfSubSections() > 0) {
-            displayCurrentSubsection();
-        }
-
-//        SerialUSB.print("Number of parameters: ");
-//        SerialUSB.println(section->getParameters().size());
-//        SerialUSB.print("Number of pages: ");
-//        SerialUSB.println(section->getNumberOfPages());
-
-        setActivePage(0);
     }
 }
 
@@ -93,21 +86,6 @@ void ParameterController::setActivePage(int pageNumber) {
         parameterIndex = i <= end ? i : -1;
         i++;
     }
-
-//    SerialUSB.println("Active parameters:");
-//
-//    for (int index : parameterIndices) {
-//        if (index >= 0) {
-//            SynthParameter param = getSection()->getParameters()[index];
-//            SerialUSB.print(" - ");
-//            SerialUSB.print(param.getName().c_str());
-//            SerialUSB.print(" (");
-//            SerialUSB.print(param.getNumber(0));
-//            SerialUSB.println(")");
-//        } else {
-//            SerialUSB.println(" -");
-//        }
-//    }
 
     displayActivePage();
     displayParameters();
@@ -334,28 +312,46 @@ Section *ParameterController::getSection()  {
 }
 
 void ParameterController::displaySubSections() {
-    tft->fillScreen(TFT_BLACK);
+    displaySubSections(false);
+}
+
+void ParameterController::displaySubSections(bool paintItBlack) {
+    SerialUSB.print("displaySubSections(");
+    SerialUSB.print((paintItBlack) ? "true" : "false");
+    SerialUSB.println(")");
+
+    if (section == nullptr) return;
+
+    tft->setTextPadding(240);
     tft->setCursor(0, 0, 1);
 
     // Set the font colour to be orange with a black background, set text size multiplier to 1
-    tft->setTextColor(MY_ORANGE, TFT_BLACK);
+    if (paintItBlack) {
+        tft->setTextColor(TFT_BLACK);
+    } else {
+        tft->setTextColor(MY_ORANGE, TFT_BLACK);
+    }
     tft->setTextSize(2);
     tft->println(section->getName().c_str());
 
     int lineNumber = 0;
 
-    SerialUSB.println(F("Sub-Sections:"));
     for (auto &title : section->getSubSectionTitles()) {
-        SerialUSB.print(" - ");
-        SerialUSB.println(title.c_str());
+        if (!paintItBlack) {
+            tft->setTextColor((lineNumber == currentSubSectionNumber) ? TFT_WHITE : TFT_GREY, TFT_BLACK);
+        }
+        if (lineNumber == currentSubSectionNumber) {
+            tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+        }
 
-        tft->setTextColor(TFT_GREY, TFT_BLACK);
         tft->drawString(title.c_str(), 20, 40 + LINE_HEIGHT * lineNumber, 1);
         lineNumber++;
     }
 }
 
 void ParameterController::clearCurrentSubsection() {
+    if (section == nullptr || section->getNumberOfSubSections() == 0) return;
+
     tft->setTextColor(TFT_GREY, TFT_BLACK);
     tft->drawString(" ", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
     tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
@@ -365,6 +361,11 @@ void ParameterController::displayCurrentSubsection() {
     tft->setTextColor(TFT_WHITE, TFT_BLACK);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
     tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+}
+
+void ParameterController::clearScreen() {
+    clearCurrentSubsection();
+    displaySubSections(true);
 }
 
 

@@ -55,6 +55,7 @@ private:
     Section *getSection();
 
     void displaySubSections();
+    void displaySubSections(bool paintItBlack);
 
     void clearCurrentSubsection();
 
@@ -93,6 +94,8 @@ public:
     void upButtonTapped();
 
     void downButtonTapped();
+
+    void clearScreen();
 
 };
 
