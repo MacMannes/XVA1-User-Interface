@@ -235,10 +235,15 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
 }
 
 void ParameterController::displayTwinParameters(int index1, int index2, int displayNumber) {
-    string name1 = (index1 >= 0) ? getSection()->getParameters()[index1].getName() : "";
-    string name2 = (index2 >= 0) ? getSection()->getParameters()[index2].getName() : "";
+    int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+
+    string name1 = (index1 >= 0 && getSection()->getParameters()[index1].getNumber(subIndex) > 0)
+                   ? getSection()->getParameters()[index1].getName() : "";
+    string name2 = (index2 >= 0 && getSection()->getParameters()[index2].getNumber(subIndex) > 0)
+                   ? getSection()->getParameters()[index2].getName() : "";
 
     displayTwinParameters(name1, getDisplayValue(index1), name2, getDisplayValue(index2), displayNumber);
+
 }
 
 void ParameterController::displayTwinParameters(string title1, string value1, string title2, string value2,
@@ -297,6 +302,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
         SynthParameter parameter = getSection()->getParameters()[parameterIndex];
 
         int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+        if (parameter.getNumber(subIndex) < 0) return printValue;
 
         int value;
         switch (parameter.getType()) {

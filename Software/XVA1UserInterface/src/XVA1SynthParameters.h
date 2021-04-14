@@ -50,7 +50,29 @@ Section mixerSection = Section(
         "Mixer",
         {
                 Section(
-                        "Volume",
+                        "Output",
+                        {
+                                SynthParameterBuilder("Volume")
+                                        .number(509)
+                                        .build(),
+                                SynthParameterBuilder("")
+                                        .build(),
+                                SynthParameterBuilder("Gain Pre-FX")
+                                        .number(510)
+                                        .max(4)
+                                        .descriptions({"0 dB", "+6 dB", "+12 dB", "+18 dB"})
+                                        .build(),
+                                SynthParameterBuilder("")
+                                        .build(),
+                                SynthParameterBuilder("Gain Post-FX")
+                                        .number(511)
+                                        .max(4)
+                                        .descriptions({"0 dB", "+6 dB", "+12 dB", "+18 dB"})
+                                        .build(),
+                        }
+                ),
+                Section(
+                        "Oscillator levels",
                         {
                                 SynthParameterBuilder("OSC 1")
                                         .number(27)
@@ -73,7 +95,7 @@ Section mixerSection = Section(
                         }
                 ),
                 Section(
-                        "Panning",
+                        "Oscillator Panning",
                         {
                                 SynthParameterBuilder("OSC 1 Level L")
                                         .number(31)
@@ -313,47 +335,82 @@ Section envelopeSection = Section(
         "Envelopes",
         {"PITCH", "CUTOFF", "AMP"},
         {
-                SynthParameterBuilder("L0 (Start)")
+                SynthParameterBuilder("L0 - Start")
                         .numbers({80, 81, 82})
                         .build(),
-                SynthParameterBuilder("L4 (Release 1)")
+                SynthParameterBuilder("L4 - Release 1")
                         .numbers({100, 101, 102})
                         .build(),
-                SynthParameterBuilder("L1 (Attack)")
+                SynthParameterBuilder("L1 - Attack")
                         .numbers({85, 86, 88})
                         .build(),
-                SynthParameterBuilder("L5 (Release 2)")
+                SynthParameterBuilder("L5 - Release 2")
                         .numbers({105, 106, 107})
                         .build(),
-                SynthParameterBuilder("L2 (Decay)")
+                SynthParameterBuilder("L2 - Decay")
                         .numbers({90, 91, 92})
                         .build(),
                 SynthParameterBuilder("")
                         .build(),
-                SynthParameterBuilder("L3 (Sustain)")
+                SynthParameterBuilder("L3 - Sustain")
                         .numbers({95, 96, 97})
                         .build(),
                 SynthParameterBuilder("Delay")
                         .numbers({110, 111, 112})
                         .build(),
-                SynthParameterBuilder("R1 (Attack)")
+                SynthParameterBuilder("R1 - Attack")
                         .numbers({115, 116, 117})
                         .build(),
-                SynthParameterBuilder("R5 (Release 2)")
+                SynthParameterBuilder("R5 - Release 2")
                         .numbers({135, 136, 137})
                         .build(),
-                SynthParameterBuilder("R2 (Decay)")
+                SynthParameterBuilder("R2 - Decay")
                         .numbers({120, 121, 122})
                         .build(),
                 SynthParameterBuilder("")
                         .build(),
-                SynthParameterBuilder("R3 (Sustain)")
+                SynthParameterBuilder("R3 - Sustain")
                         .numbers({125, 126, 127})
                         .build(),
                 SynthParameterBuilder("")
                         .build(),
-                SynthParameterBuilder("R4 (Release 1)")
+                SynthParameterBuilder("R4 - Release 1")
                         .numbers({130, 131, 132})
+                        .build(),
+                SynthParameterBuilder("")
+                        .build(),
+
+                SynthParameterBuilder("EG Loop")
+                        .type(BITWISE)
+                        .number(145)
+                        .bitNumbers({0, 1, 6})
+                        .descriptions({"Normal", "Loop"})
+                        .build(),
+                SynthParameterBuilder("")
+                        .build(),
+                SynthParameterBuilder("EG Loop Segment")
+                        .type(BITWISE)
+                        .number(146)
+                        .bitNumbers({0, 1, 6})
+                        .descriptions({"L0 - Attack", "L5 - Decay"})
+                        .build(),
+                SynthParameterBuilder("")
+                        .build(),
+                SynthParameterBuilder("EG Restart from")
+                        .type(BITWISE)
+                        .number(147)
+                        .bitNumbers({0, 1, 6})
+                        .descriptions({"L5 - Decay", "L0 - Start"})
+                        .build(),
+                SynthParameterBuilder("")
+                        .build(),
+                SynthParameterBuilder("Range")
+                        .numbers({148, -1, -1})
+                        .max(10)
+                        .build(),
+                SynthParameterBuilder("Velocity")
+                        .numbers({149, -1, -1})
+                        .max(10)
                         .build(),
 
         }
