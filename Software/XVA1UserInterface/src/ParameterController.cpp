@@ -83,7 +83,7 @@ void ParameterController::setActivePage(int pageNumber) {
 
     int i = start;
     for (int &parameterIndex : parameterIndices) {
-        parameterIndex = i <= end ? i : -1;
+        parameterIndex = (i <= end && !getSection()->getParameters().at(i).getName().empty()) ? i : -1;
         i++;
     }
 
@@ -162,14 +162,32 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
     int currentValue;
 
     int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+    SerialUSB.print("subIndex: ");
+    SerialUSB.println(subIndex);
 
-    if (parameter.getType() == PERFORMANCE_CTRL) {
-        byte msb = synthesizer->getParameter(parameter.getNumber(0));
-        byte lsb = synthesizer->getParameter(parameter.getNumber(1));
-        int combined = (msb << 7) + lsb;
-        currentValue = combined;
-    } else {
-        currentValue = synthesizer->getParameter(parameter.getNumber(subIndex));
+    switch (parameter.getType()) {
+        case PERFORMANCE_CTRL: {
+            byte msb = synthesizer->getParameter(parameter.getNumber(0));
+            byte lsb = synthesizer->getParameter(parameter.getNumber(1));
+            int combined = (msb << 7) + lsb;
+            currentValue = combined;
+            break;
+        }
+        case BITWISE: {
+            int value = synthesizer->getParameter(parameter.getNumber());
+            currentValue = bitRead(value, parameter.getBitNumber(subIndex));
+
+            SerialUSB.print("Byte value: ");
+            SerialUSB.println(value);
+            SerialUSB.print("Bit-nr: ");
+            SerialUSB.println(parameter.getBitNumber(subIndex));
+            SerialUSB.print("Bit value: ");
+            SerialUSB.println(currentValue);
+
+            break;
+        }
+        default:
+            currentValue = synthesizer->getParameter(parameter.getNumber(subIndex));
     }
     int newValue = -1;
 
@@ -179,6 +197,8 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
             if (newValue > parameter.getMax()) {
                 newValue = parameter.getMax();
             }
+        } else if (parameter.getMax() == 1) {
+            newValue = 0;
         }
     } else {
         if (currentValue > parameter.getMin()) {
@@ -186,18 +206,30 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
             if (newValue < parameter.getMin()) {
                 newValue = parameter.getMin();
             }
+        } else if (parameter.getMax() == 1) {
+            newValue = 1;
         }
     }
 
     if (newValue >= 0 && newValue != currentValue) {
-        if (parameter.getType() == PERFORMANCE_CTRL) {
-            int msb = newValue >> 7;
-            int lsb = newValue & 127;
+        switch (parameter.getType()) {
+            case PERFORMANCE_CTRL: {
+                int msb = newValue >> 7;
+                int lsb = newValue & 127;
 
-            synthesizer->setParameter(parameter.getNumber(0), msb);
-            synthesizer->setParameter(parameter.getNumber(1), lsb);
-        } else {
-            synthesizer->setParameter(parameter.getNumber(subIndex), newValue);
+                synthesizer->setParameter(parameter.getNumber(0), msb);
+                synthesizer->setParameter(parameter.getNumber(1), lsb);
+                break;
+            }
+            case BITWISE: {
+                int value = synthesizer->getParameter(parameter.getNumber());
+                bitWrite(value, parameter.getBitNumber(subIndex), newValue);
+                synthesizer->setParameter(parameter.getNumber(), value);
+
+                break;
+            }
+            default:
+                synthesizer->setParameter(parameter.getNumber(subIndex), newValue);
         }
     }
 }
@@ -277,6 +309,12 @@ string ParameterController::getDisplayValue(int parameterIndex) {
 
                 break;
             }
+            case BITWISE: {
+                int byte = synthesizer->getParameter(parameter.getNumber());
+                value = bitRead(byte, parameter.getBitNumber(subIndex));
+
+                break;
+            }
             case CENTER_128: {
                 value = (int) synthesizer->getParameter(parameter.getNumber(subIndex)) - 128;
                 if (value > 0) {
@@ -302,7 +340,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
     return printValue;
 }
 
-Section *ParameterController::getSection()  {
+Section *ParameterController::getSection() {
     if (section->getSubSections().size() > 0) {
         subSection = section->getSubSections().at(currentSubSectionNumber);
         return &subSection;
@@ -325,11 +363,7 @@ void ParameterController::displaySubSections(bool paintItBlack) {
     tft->setTextPadding(0);
     tft->setTextSize(2);
 
-    if (paintItBlack) {
-        tft->setTextColor(MY_ORANGE);
-    } else {
-        tft->setTextColor(TFT_WHITE);
-    }
+    tft->setTextColor(paintItBlack ? MY_ORANGE : TFT_WHITE);
 
     tft->setTextDatum(1);
     tft->drawString(section->getName().c_str(), 119, 4, 1);
@@ -337,11 +371,7 @@ void ParameterController::displaySubSections(bool paintItBlack) {
 
     int lineNumber = 0;
 
-    if (paintItBlack) {
-        tft->setTextColor(TFT_BLACK);
-    } else {
-        tft->setTextColor(TFT_WHITE);
-    }
+    tft->setTextColor(paintItBlack ? TFT_BLACK : TFT_WHITE);
 
     for (auto &title : section->getSubSectionTitles()) {
         if (!paintItBlack) {
@@ -362,13 +392,15 @@ void ParameterController::clearCurrentSubsection() {
     tft->setTextColor(TFT_BLACK);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
     tft->setTextColor(TFT_GREY);
-    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
+                    40 + LINE_HEIGHT * currentSubSectionNumber, 1);
 }
 
 void ParameterController::displayCurrentSubsection() {
     tft->setTextColor(TFT_WHITE);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
-    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
+                    40 + LINE_HEIGHT * currentSubSectionNumber, 1);
 }
 
 void ParameterController::clearScreen() {

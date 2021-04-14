@@ -3,5 +3,6 @@ enum ParameterType {
   CENTER_128,
   BITWISE,
   MIDI_NOTE,
-  PERFORMANCE_CTRL  
+  ASCII_CHAR,
+  PERFORMANCE_CTRL
 };

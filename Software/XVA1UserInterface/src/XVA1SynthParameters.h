@@ -49,42 +49,58 @@ Section voiceSection = Section(
 Section mixerSection = Section(
         "Mixer",
         {
-                SynthParameterBuilder("OSC 1 Volume")
-                        .number(27)
-                        .build(),
-                SynthParameterBuilder("OSC 2 Volume")
-                        .number(28)
-                        .build(),
-                SynthParameterBuilder("OSC 3 Volume")
-                        .number(29)
-                        .build(),
-                SynthParameterBuilder("OSC 4 Volume")
-                        .number(30)
-                        .build(),
-                SynthParameterBuilder("OSC 1 Level L")
-                        .number(31)
-                        .build(),
-                SynthParameterBuilder("OSC 2 Level L")
-                        .number(33)
-                        .build(),
-                SynthParameterBuilder("OSC 3 Level L")
-                        .number(35)
-                        .build(),
-                SynthParameterBuilder("OSC 4 Level L")
-                        .number(37)
-                        .build(),
-                SynthParameterBuilder("OSC 1 Level R")
-                        .number(32)
-                        .build(),
-                SynthParameterBuilder("OSC 2 Level R")
-                        .number(34)
-                        .build(),
-                SynthParameterBuilder("OSC 3 Level R")
-                        .number(36)
-                        .build(),
-                SynthParameterBuilder("OSC 4 Level R")
-                        .number(38)
-                        .build(),
+                Section(
+                        "Volume",
+                        {
+                                SynthParameterBuilder("OSC 1")
+                                        .number(27)
+                                        .build(),
+                                SynthParameterBuilder("")
+                                        .build(),
+                                SynthParameterBuilder("OSC 2")
+                                        .number(28)
+                                        .build(),
+                                SynthParameterBuilder("")
+                                        .build(),
+                                SynthParameterBuilder("OSC 3")
+                                        .number(29)
+                                        .build(),
+                                SynthParameterBuilder("")
+                                        .build(),
+                                SynthParameterBuilder("OSC 4")
+                                        .number(30)
+                                        .build(),
+                        }
+                ),
+                Section(
+                        "Panning",
+                        {
+                                SynthParameterBuilder("OSC 1 Level L")
+                                        .number(31)
+                                        .build(),
+                                SynthParameterBuilder("OSC 1 Level R")
+                                        .number(32)
+                                        .build(),
+                                SynthParameterBuilder("OSC 2 Level L")
+                                        .number(33)
+                                        .build(),
+                                SynthParameterBuilder("OSC 2 Level R")
+                                        .number(34)
+                                        .build(),
+                                SynthParameterBuilder("OSC 3 Level L")
+                                        .number(35)
+                                        .build(),
+                                SynthParameterBuilder("OSC 3 Level R")
+                                        .number(36)
+                                        .build(),
+                                SynthParameterBuilder("OSC 4 Level L")
+                                        .number(37)
+                                        .build(),
+                                SynthParameterBuilder("OSC 4 Level R")
+                                        .number(38)
+                                        .build(),
+                        }
+                )
         }
 );
 
@@ -207,6 +223,21 @@ Section oscillatorSection = Section(
                         .descriptions({"OFF", "ON"})
                         .build(),
 
+                SynthParameterBuilder("Mode")
+                        .type(BITWISE)
+                        .number(6)
+                        .bitNumbers({0, 1, 2, 3})
+                        .descriptions({"KeyTrack", "FixedPitch"})
+                        .build(),
+
+
+                SynthParameterBuilder("Sync")
+                        .type(BITWISE)
+                        .number(5)
+                        .bitNumbers({0, 1, 2, 3})
+                        .descriptions({"Free running", "Restart on Key-ON"})
+                        .build(),
+
                 SynthParameterBuilder("Waveform")
                         .numbers({11, 12, 13, 14})
                         .max(8)
@@ -282,9 +313,49 @@ Section envelopeSection = Section(
         "Envelopes",
         {"PITCH", "CUTOFF", "AMP"},
         {
-                SynthParameterBuilder("L0")
+                SynthParameterBuilder("L0 (Start)")
                         .numbers({80, 81, 82})
-                        .build()
+                        .build(),
+                SynthParameterBuilder("L4 (Release 1)")
+                        .numbers({100, 101, 102})
+                        .build(),
+                SynthParameterBuilder("L1 (Attack)")
+                        .numbers({85, 86, 88})
+                        .build(),
+                SynthParameterBuilder("L5 (Release 2)")
+                        .numbers({105, 106, 107})
+                        .build(),
+                SynthParameterBuilder("L2 (Decay)")
+                        .numbers({90, 91, 92})
+                        .build(),
+                SynthParameterBuilder("")
+                        .build(),
+                SynthParameterBuilder("L3 (Sustain)")
+                        .numbers({95, 96, 97})
+                        .build(),
+                SynthParameterBuilder("Delay")
+                        .numbers({110, 111, 112})
+                        .build(),
+                SynthParameterBuilder("R1 (Attack)")
+                        .numbers({115, 116, 117})
+                        .build(),
+                SynthParameterBuilder("R5 (Release 2)")
+                        .numbers({135, 136, 137})
+                        .build(),
+                SynthParameterBuilder("R2 (Decay)")
+                        .numbers({120, 121, 122})
+                        .build(),
+                SynthParameterBuilder("")
+                        .build(),
+                SynthParameterBuilder("R3 (Sustain)")
+                        .numbers({125, 126, 127})
+                        .build(),
+                SynthParameterBuilder("")
+                        .build(),
+                SynthParameterBuilder("R4 (Release 1)")
+                        .numbers({130, 131, 132})
+                        .build(),
+
         }
 );
 
@@ -308,29 +379,83 @@ Section lfoSection = Section(
  */
 
 Section filterSection = Section(
-        "Filter",
+        "Filters",
         {
-                SynthParameterBuilder("Cutoff 1")
-                        .number(72)
-                        .build(),
+                Section("Filter 1",
+                        {
 
-                SynthParameterBuilder("Resonance 1")
-                        .number(77)
-                        .build(),
+                                SynthParameterBuilder("Cutoff")
+                                        .number(72)
+                                        .build(),
 
-                SynthParameterBuilder("Cutoff 2")
-                        .number(78)
-                        .build(),
+                                SynthParameterBuilder("Resonance")
+                                        .number(77)
+                                        .build()
+                        }
+                ),
+                Section("Filter 2",
+                        {
+                                SynthParameterBuilder("Cutoff")
+                                        .number(78)
+                                        .build(),
 
-                SynthParameterBuilder("Resonance 2")
-                        .number(79)
-                        .build(),
+                                SynthParameterBuilder("Resonance")
+                                        .number(79)
+                                        .build()
+                        }
+                ),
+                Section("Settings",
+                        {
 
-                SynthParameterBuilder("Type")
-                        .number(7)
-                        .max(21)
-                        .build()
+                                SynthParameterBuilder("Type")
+                                        .number(71)
+                                        .max(21)
+                                        .descriptions({
+                                                              "Bypass", "LPF 1P", "LPF 2P", "LPF 3P", "LPF 4P",
+                                                              "HPF 1P",
+                                                              "HPF 2P", "HPF 3P", "HPF 4P", "BPF 2P", "BPF 4P",
+                                                              "BRF 2P",
+                                                              "BRF 4P", "LP -> LP", "LP -> BP", "LP -> HP", "LP // LP",
+                                                              "LP // BP", "LP // HP", "BP // BP", "BP // HP", "HP // HP"
+                                                      })
+                                        .build(),
+                                SynthParameterBuilder("Velocity")
+                                        .type(CENTER_128)
+                                        .number(73)
+                                        .build(),
+                                SynthParameterBuilder("KBD Track")
+                                        .type(CENTER_128)
+                                        .number(74)
+                                        .build(),
+                                SynthParameterBuilder("EG depth")
+                                        .type(CENTER_128)
+                                        .number(75)
+                                        .build(),
+                                SynthParameterBuilder("EG Velocity")
+                                        .type(CENTER_128)
+                                        .number(76)
+                                        .build(),
+                                SynthParameterBuilder("Velocity RESO")
+                                        .type(CENTER_128)
+                                        .number(276)
+                                        .build(),
+                                SynthParameterBuilder("KBD Track RESO")
+                                        .type(CENTER_128)
+                                        .number(277)
+                                        .build(),
+                                SynthParameterBuilder("Drive")
+                                        .number(275)
+                                        .max(7)
+                                        .build(),
+                                SynthParameterBuilder("Routing")
+                                        .number(278)
+                                        .max(1)
+                                        .descriptions({"Standard", "LR Mode"})
+                                        .build(),
+                        }
+                )
         }
+
 );
 
 /**
@@ -346,7 +471,7 @@ Section filterSection = Section(
  */
 
 /**
- * Sequencer
+ * 12. Sequencer
  */
 
 Section *shortcutSections[] = {

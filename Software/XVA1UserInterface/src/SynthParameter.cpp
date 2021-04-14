@@ -21,11 +21,23 @@ int SynthParameter::getNumber() const {
 }
 
 int SynthParameter::getBitNumber() const {
-    return bitNumber;
+    return bitNumbers[0];
+}
+
+int SynthParameter::getBitNumber(int index) const {
+    if (index < bitNumbers.size()) {
+        return bitNumbers[index];
+    }
+
+    return bitNumbers[0];
 }
 
 int SynthParameter::getNumber(int index) const {
-    return numbers[index];
+    if (index < numbers.size()) {
+        return numbers[index];
+    }
+
+    return numbers[0];
 }
 
 int SynthParameter::getMin() const {

@@ -202,21 +202,13 @@ void rtrim(std::string& s, char c) {
 void displayPatchInfo(bool paintItBlack) {
     int currentPatchNumber = synthesizer.getPatchNumber();
 
-    if (paintItBlack) {
-        tft.setTextColor(MY_ORANGE);
-    } else {
-        tft.setTextColor(TFT_WHITE);
-    }
+    tft.setTextColor(paintItBlack ? MY_ORANGE : TFT_WHITE);
 
     tft.setTextSize(2);
     tft.setTextDatum(1);
     tft.drawString("XVA1 Synthesizer", 119, 4, 1);
 
-    if (paintItBlack) {
-        tft.setTextColor(TFT_BLACK);
-    } else {
-        tft.setTextColor(TFT_GREY);
-    }
+    tft.setTextColor((paintItBlack) ? TFT_BLACK : TFT_GREY);
     tft.drawString("Patch", 119, 40, 1);
 
     if (!paintItBlack) {

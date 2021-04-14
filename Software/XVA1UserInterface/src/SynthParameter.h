@@ -16,7 +16,7 @@ class SynthParameter {
     std::string name;
     // This will contain one or more parameter numbers (4 for XVA1 oscillators, 8 for XFM2 operators, 2 for Performance controls),
     std::vector<int> numbers;
-    int bitNumber = -1;
+    std::vector<int> bitNumbers;
     int min = 0;
     int max = 255;
     std::vector<std::string> descriptions;
@@ -35,6 +35,8 @@ public:
     int getNumber(int index) const;
 
     int getBitNumber() const;
+
+    int getBitNumber(int index) const;
 
     int getMin() const;
 

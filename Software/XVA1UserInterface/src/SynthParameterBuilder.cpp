@@ -6,6 +6,10 @@
 #include "SynthParameterBuilder.h"
 
 SynthParameter SynthParameterBuilder::build() {
+    if (synthParameter.type == BITWISE) {
+        synthParameter.max = 1;
+    }
+
     return std::move(synthParameter);
 }
 
@@ -25,7 +29,12 @@ SynthParameterBuilder &SynthParameterBuilder::numbers(std::vector<int> numbers) 
 }
 
 SynthParameterBuilder &SynthParameterBuilder::bitNumber(int bitNumber) {
-    synthParameter.bitNumber = bitNumber;
+    synthParameter.bitNumbers = { bitNumber };
+    return *this;
+}
+
+SynthParameterBuilder &SynthParameterBuilder::bitNumbers(std::vector<int> bitNumbers) {
+    synthParameter.bitNumbers = bitNumbers;
     return *this;
 }
 

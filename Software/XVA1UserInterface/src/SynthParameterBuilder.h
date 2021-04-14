@@ -20,6 +20,7 @@ public:
     SynthParameterBuilder &number(int number);
     SynthParameterBuilder &numbers(std::vector<int>);
     SynthParameterBuilder &bitNumber(int bitNumber);
+    SynthParameterBuilder &bitNumbers(std::vector<int>);
     SynthParameterBuilder &performanceControlType(int paramNumber1, int paramNumber2);
     SynthParameterBuilder &descriptions(std::vector<std::string>);
 
