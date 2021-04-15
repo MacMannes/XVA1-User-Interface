@@ -281,12 +281,8 @@ void shortcutButtonChanged(Button *btn, bool released) {
             shortcutButton->setLED(shortcutButton->id == btn->id);
         }
 
-        if (activeShortcut > 0 && activeShortcut <= 8) {
-            displayPatchInfo(true);
-            parameterController.setSection(shortcutSections[activeShortcut - 1]);
-        } else {
-            parameterController.setSection(nullptr);
-        }
+        displayPatchInfo(true);
+        parameterController.setSection(shortcutSections[activeShortcut - 1]);
     }
 }
 

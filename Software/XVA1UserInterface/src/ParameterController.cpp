@@ -329,6 +329,17 @@ string ParameterController::getDisplayValue(int parameterIndex) {
 
                 break;
             }
+            case MIDI_NOTE: {
+                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
+                string MIDI_NOTES[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+                int octave = (value / 12) - 1;
+                int noteIndex = (value % 12);
+                printValue = MIDI_NOTES[noteIndex] + to_string(octave);
+                break;
+            }
+            case ASCII_CHAR:
+                break;
             default: {
                 value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
             }

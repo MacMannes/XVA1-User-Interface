@@ -264,7 +264,8 @@ Section oscillatorSection = Section(
                         .numbers({11, 12, 13, 14})
                         .max(8)
                         .descriptions(
-                                {"Saw up", "Saw down", "Square", "Triangle", "Sine", "Noise", "Sawstack x3 (stereo)",
+                                {"Saw up", "Saw down", "Square", "Triangle", "Sine",
+                                 "Noise", "Sawstack x3 (stereo)",
                                  "Sawstack x7 (mono)", "Sawstack x7 (stereo)"})
                         .build(),
 
@@ -468,12 +469,16 @@ Section filterSection = Section(
                                         .number(71)
                                         .max(21)
                                         .descriptions({
-                                                              "Bypass", "LPF 1P", "LPF 2P", "LPF 3P", "LPF 4P",
+                                                              "Bypass", "LPF 1P", "LPF 2P",
+                                                              "LPF 3P", "LPF 4P",
                                                               "HPF 1P",
-                                                              "HPF 2P", "HPF 3P", "HPF 4P", "BPF 2P", "BPF 4P",
+                                                              "HPF 2P", "HPF 3P", "HPF 4P",
+                                                              "BPF 2P", "BPF 4P",
                                                               "BRF 2P",
-                                                              "BRF 4P", "LP -> LP", "LP -> BP", "LP -> HP", "LP // LP",
-                                                              "LP // BP", "LP // HP", "BP // BP", "BP // HP", "HP // HP"
+                                                              "BRF 4P", "LP -> LP", "LP -> BP",
+                                                              "LP -> HP", "LP // LP",
+                                                              "LP // BP", "LP // HP",
+                                                              "BP // BP", "BP // HP", "HP // HP"
                                                       })
                                         .build(),
                                 SynthParameterBuilder("Velocity")
@@ -519,21 +524,170 @@ Section filterSection = Section(
  * 9. Patch
  */
 
+Section patchSection = Section(
+        "Patch",
+        {
+                SynthParameterBuilder("")
+                        .build(),
+        }
+);
+
 /**
  * 10. External Controls
  */
+
+Section externalControlsSection = Section(
+        "External Ctrls",
+        {
+                SynthParameterBuilder("")
+                        .build(),
+        }
+);
 
 /**
  * 11. Performance Controls
  */
 
+Section performanceControlsSection = Section(
+        "Performance Ctrls",
+        {
+                SynthParameterBuilder("Midi CC 70")
+                        .performanceControlType(400, 401)
+                        .build(),
+                SynthParameterBuilder("Midi CC 74")
+                        .performanceControlType(408, 409)
+                        .build(),
+                SynthParameterBuilder("Midi CC 71")
+                        .performanceControlType(402, 403)
+                        .build(),
+                SynthParameterBuilder("Midi CC 75")
+                        .performanceControlType(410, 411)
+                        .build(),
+                SynthParameterBuilder("Midi CC 72")
+                        .performanceControlType(404, 405)
+                        .build(),
+                SynthParameterBuilder("Midi CC 76")
+                        .performanceControlType(412, 413)
+                        .build(),
+                SynthParameterBuilder("Midi CC 73")
+                        .performanceControlType(406, 407)
+                        .build(),
+                SynthParameterBuilder("Midi CC 77")
+                        .performanceControlType(414, 415)
+                        .build()
+        }
+
+);
 /**
  * 12. Sequencer
  */
 
+Section sequencerSection = Section(
+        "Sequencer",
+//        {
+//                Section(
+//                        "Main",
+//                        {
+//                                SynthParameterBuilder("On or Off")
+//                                        .number(428)
+//                                        .max(1)
+//                                        .descriptions({"OFF", "ON"})
+//                                        .build(),
+//                                SynthParameterBuilder("Steps")
+//                                        .number(430)
+//                                        .max(16)
+//                                        .build(),
+//                                SynthParameterBuilder("Tempo")
+//                                        .number(431)
+//                                        .build(),
+//                                SynthParameterBuilder("Multiplier")
+//                                        .number(432)
+//                                        .build(),
+//                                SynthParameterBuilder("Velocity")
+//                                        .number(429)
+//                                        .build(),
+//                                SynthParameterBuilder("Transpose")
+//                                        .number(433)
+//                                        .build(),
+//                        }
+//                ),
+//                Section(
+//                        "Steps",
+        {
+                SynthParameterBuilder("Step 1")
+                        .number(434)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 5")
+                        .number(438)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 2")
+                        .number(435)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 6")
+                        .number(439)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 3")
+                        .number(436)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 7")
+                        .number(440)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 4")
+                        .number(437)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 8")
+                        .number(441)
+                        .type(MIDI_NOTE)
+                        .build(),
+
+                SynthParameterBuilder("Step 9")
+                        .number(442)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 13")
+                        .number(446)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 10")
+                        .number(443)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 14")
+                        .number(447)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 11")
+                        .number(444)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 15")
+                        .number(448)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 12")
+                        .number(445)
+                        .type(MIDI_NOTE)
+                        .build(),
+                SynthParameterBuilder("Step 16")
+                        .number(449)
+                        .type(MIDI_NOTE)
+                        .build()
+//                        }
+//                )
+        }
+);
+
 Section *shortcutSections[] = {
         &voiceSection, &mixerSection, &effectsSection, &arpSection,
-        &oscillatorSection, &envelopeSection, &lfoSection, &filterSection
+        &oscillatorSection, &envelopeSection, &lfoSection, &filterSection,
+        &patchSection, &externalControlsSection, &performanceControlsSection, &sequencerSection
 };
 
 #endif //XVA1USERINTERFACE_XVA1SYNTHPARAMETERS_H
