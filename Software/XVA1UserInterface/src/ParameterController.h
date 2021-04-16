@@ -13,6 +13,7 @@
 #include "Section.h"
 #include "LEDButton.h"
 #include "SynthParameterBuilder.h"
+#include "SectionFactory.h"
 
 class ParameterController {
 private:
@@ -25,7 +26,7 @@ private:
 
     const int LINE_HEIGHT = 30;
 
-    Section *section = &defaultSection;
+    Section *section = SectionFactory().createDefaultSection();
     int parameterIndices[8];
 
     int currentPageNumber = 0;
@@ -52,7 +53,7 @@ private:
 
     string getDisplayValue(int parameterIndex);
 
-    Section *getSection();
+    Section *getSubSection();
 
     void displaySubSections();
     void displaySubSections(bool paintItBlack);
@@ -61,30 +62,13 @@ private:
 
     void displayCurrentSubsection();
 
-    Section defaultSection = Section(
-            "Default",
-            {
-                    SynthParameterBuilder("Cutoff")
-                            .number(72)
-                            .build(),
-
-                    SynthParameterBuilder("Resonance")
-                            .number(77)
-                            .build(),
-
-                    SynthParameterBuilder("Sequencer")
-                            .number(428)
-                            .max(1)
-                            .descriptions({"OFF", "ON"})
-                            .build()
-            }
-    );
-
 public:
     ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft, Adafruit_SSD1306 *display,
                         LEDButton *upButton, LEDButton *downButton);
 
     void setSection(Section *pSection);
+    void setSection(Section *pSection, bool showSubSections);
+
     void setDefaultSection();
 
     bool rotaryEncoderChanged(int id, bool clockwise, int speed);

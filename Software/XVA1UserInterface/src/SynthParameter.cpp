@@ -20,11 +20,11 @@ int SynthParameter::getNumber() const {
     return numbers[0];
 }
 
-int SynthParameter::getBitNumber() const {
+uint8_t SynthParameter::getBitNumber() const {
     return bitNumbers[0];
 }
 
-int SynthParameter::getBitNumber(int index) const {
+uint8_t SynthParameter::getBitNumber(int index) const {
     if (index < bitNumbers.size()) {
         return bitNumbers[index];
     }
@@ -40,11 +40,11 @@ int SynthParameter::getNumber(int index) const {
     return numbers[0];
 }
 
-int SynthParameter::getMin() const {
+uint8_t SynthParameter::getMin() const {
     return min;
 }
 
-int SynthParameter::getMax() const {
+uint8_t SynthParameter::getMax() const {
     return max;
 }
 

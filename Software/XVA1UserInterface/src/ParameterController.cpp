@@ -24,21 +24,26 @@ void ParameterController::upButtonTapped() {
 void ParameterController::downButtonTapped() {
     if (section == nullptr) return;
 
-    if (currentPageNumber < getSection()->getNumberOfPages() - 1) {
+    if (currentPageNumber < getSubSection()->getNumberOfPages() - 1) {
         int newPage = currentPageNumber + 1;
         setActivePage(newPage);
     }
 }
 
 void ParameterController::setDefaultSection() {
-    setSection(&defaultSection);
+    setSection(SectionFactory().createDefaultSection(), false);
 }
 
 void ParameterController::setSection(Section *pSection) {
-    SerialUSB.print(F("Setting active section: "));
-    SerialUSB.println((pSection != nullptr) ? pSection->getName().c_str() : "null");
+    setSection(pSection, true);
+}
 
-    ParameterController::section = pSection;
+void ParameterController::setSection(Section *pSection, bool showSubSections) {
+    SerialUSB.print(F("Setting active section: "));
+    SerialUSB.println(pSection->getName().c_str());
+
+    delete section;
+    section = pSection;
     currentSubSectionNumber = 0;
 
     if (section == nullptr) {
@@ -50,7 +55,7 @@ void ParameterController::setSection(Section *pSection) {
         clearCurrentSubsection();
         setActivePage(0);
 
-        if (section != &defaultSection) {
+        if (showSubSections) {
             displaySubSections();
         }
     }
@@ -65,7 +70,7 @@ void ParameterController::clearParameters() {
 void ParameterController::setActivePage(int pageNumber) {
     if (section == nullptr) return;
 
-    if (pageNumber < 0 && pageNumber > getSection()->getNumberOfPages()) return;
+    if (pageNumber < 0 && pageNumber > getSubSection()->getNumberOfPages()) return;
 
     if (pageNumber != currentPageNumber) {
         SerialUSB.print(F("Setting active page: "));
@@ -77,13 +82,13 @@ void ParameterController::setActivePage(int pageNumber) {
 
     int start = (pageNumber * 8);
     int end = start + 7;
-    if (end > getSection()->getParameters().size() - 1) {
-        end = getSection()->getParameters().size() - 1;
+    if (end > getSubSection()->getParameters().size() - 1) {
+        end = getSubSection()->getParameters().size() - 1;
     }
 
     int i = start;
     for (int &parameterIndex : parameterIndices) {
-        parameterIndex = (i <= end && !getSection()->getParameters().at(i).getName().empty()) ? i : -1;
+        parameterIndex = (i <= end && !getSubSection()->getParameters().at(i).getName().empty()) ? i : -1;
         i++;
     }
 
@@ -110,7 +115,7 @@ void ParameterController::displayActivePage() {
         return;
     };
 
-    int numberOfPages = getSection()->getNumberOfPages();
+    int numberOfPages = getSubSection()->getNumberOfPages();
     upButton->setLED(numberOfPages > 1 && currentPageNumber > 0);
     downButton->setLED(numberOfPages > 1 && currentPageNumber < numberOfPages - 1);
 }
@@ -158,7 +163,7 @@ bool ParameterController::rotaryEncoderButtonChanged(int id, bool released) {
 }
 
 void ParameterController::handleParameterChange(int index, bool clockwise, int speed) {
-    SynthParameter parameter = getSection()->getParameters()[index];
+    SynthParameter parameter = getSubSection()->getParameters()[index];
     int currentValue;
 
     int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
@@ -237,10 +242,10 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
 void ParameterController::displayTwinParameters(int index1, int index2, int displayNumber) {
     int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
 
-    string name1 = (index1 >= 0 && getSection()->getParameters()[index1].getNumber(subIndex) > 0)
-                   ? getSection()->getParameters()[index1].getName() : "";
-    string name2 = (index2 >= 0 && getSection()->getParameters()[index2].getNumber(subIndex) > 0)
-                   ? getSection()->getParameters()[index2].getName() : "";
+    string name1 = (index1 >= 0 && getSubSection()->getParameters()[index1].getNumber(subIndex) > 0)
+                   ? getSubSection()->getParameters()[index1].getName() : "";
+    string name2 = (index2 >= 0 && getSubSection()->getParameters()[index2].getNumber(subIndex) > 0)
+                   ? getSubSection()->getParameters()[index2].getName() : "";
 
     displayTwinParameters(name1, getDisplayValue(index1), name2, getDisplayValue(index2), displayNumber);
 
@@ -299,7 +304,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
     string printValue = "";
 
     if (parameterIndex >= 0) {
-        SynthParameter parameter = getSection()->getParameters()[parameterIndex];
+        SynthParameter parameter = getSubSection()->getParameters()[parameterIndex];
 
         int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
         if (parameter.getNumber(subIndex) < 0) return printValue;
@@ -357,7 +362,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
     return printValue;
 }
 
-Section *ParameterController::getSection() {
+Section *ParameterController::getSubSection() {
     if (section->getSubSections().size() > 0) {
         subSection = section->getSubSections().at(currentSubSectionNumber);
         return &subSection;

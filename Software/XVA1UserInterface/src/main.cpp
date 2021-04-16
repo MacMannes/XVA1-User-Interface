@@ -8,9 +8,9 @@
 #include "SynthParameter.h"
 #include "Button.h"
 #include "SynthParameterBuilder.h"
-#include "XVA1SynthParameters.h"
 #include "Hardware.h"
 #include "Globals.h"
+#include "FreeMemory.h"
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
@@ -50,7 +50,7 @@ void setup() {
     SerialUSB.begin(115200);
 
     //while the serial stream is not open, do nothing:
-//     while (!SerialUSB);
+     while (!SerialUSB);
 
     SerialUSB.println("\n");
     SerialUSB.println("===================");
@@ -75,6 +75,23 @@ void setup() {
     displayPatchInfo();
 
     mainRotaryEncoder.begin(true);
+
+    SerialUSB.print("freeMemory()=");
+    SerialUSB.println(freeMemory());
+
+
+    Section *section;
+
+    SerialUSB.println("createOscillatorSection ");
+    section = SectionFactory().createOscillatorSection();
+    SerialUSB.println(section->getName().c_str());
+    SerialUSB.print("freeMemory()=");
+    SerialUSB.println(freeMemory());
+    delete section;
+    SerialUSB.println("delete");
+    SerialUSB.print("freeMemory()=");
+    SerialUSB.println(freeMemory());
+
 }
 
 
@@ -282,7 +299,63 @@ void shortcutButtonChanged(Button *btn, bool released) {
         }
 
         displayPatchInfo(true);
-        parameterController.setSection(shortcutSections[activeShortcut - 1]);
+        switch (activeShortcut) {
+            case 1: {
+                parameterController.setSection(SectionFactory().createVoiceSection());
+                break;
+            }
+            case 2: {
+                parameterController.setSection(SectionFactory().createMixerSection());
+                break;
+            }
+            case 3: {
+                parameterController.setSection(SectionFactory().createEffectsSection());
+                break;
+            }
+            case 4: {
+                parameterController.setSection(SectionFactory().createArpSection());
+                break;
+            }
+            case 5: {
+                parameterController.setSection(SectionFactory().createOscillatorSection());
+                break;
+            }
+            case 6: {
+                parameterController.setSection(SectionFactory().createEnvelopeSection());
+                break;
+            }
+            case 7: {
+                parameterController.setSection(SectionFactory().createLFOSection());
+                break;
+            }
+            case 8: {
+                parameterController.setSection(SectionFactory().createFilterSection());
+                break;
+            }
+            case 9: {
+                parameterController.setSection(SectionFactory().createPatchSection());
+                break;
+            }
+            case 10: {
+                parameterController.setSection(SectionFactory().createExternalControlsSection());
+                break;
+            }
+            case 11: {
+                parameterController.setSection(SectionFactory().createPerformanceControlsSection());
+                break;
+            }
+            case 12: {
+                parameterController.setSection(SectionFactory().createSequencerSection());
+                break;
+            }
+            default: {
+                parameterController.setSection(SectionFactory().createDefaultSection());
+                break;
+            }
+        }
+
+        SerialUSB.print("freeMemory()=");
+        SerialUSB.println(freeMemory());
     }
 }
 

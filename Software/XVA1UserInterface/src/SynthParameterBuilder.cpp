@@ -28,22 +28,22 @@ SynthParameterBuilder &SynthParameterBuilder::numbers(std::vector<int> numbers) 
     return *this;
 }
 
-SynthParameterBuilder &SynthParameterBuilder::bitNumber(int bitNumber) {
+SynthParameterBuilder &SynthParameterBuilder::bitNumber(uint8_t bitNumber) {
     synthParameter.bitNumbers = { bitNumber };
     return *this;
 }
 
-SynthParameterBuilder &SynthParameterBuilder::bitNumbers(std::vector<int> bitNumbers) {
+SynthParameterBuilder &SynthParameterBuilder::bitNumbers(std::vector<uint8_t> bitNumbers) {
     synthParameter.bitNumbers = bitNumbers;
     return *this;
 }
 
-SynthParameterBuilder &SynthParameterBuilder::min(int min) {
+SynthParameterBuilder &SynthParameterBuilder::min(uint8_t min) {
     synthParameter.min = min;
     return *this;
 }
 
-SynthParameterBuilder &SynthParameterBuilder::max(int max) {
+SynthParameterBuilder &SynthParameterBuilder::max(uint8_t max) {
     synthParameter.max = max;
     return *this;
 }

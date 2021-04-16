@@ -15,12 +15,12 @@ public:
     explicit SynthParameterBuilder(std::string name) : synthParameter(name) {}
 
     SynthParameterBuilder &type(ParameterType type);
-    SynthParameterBuilder &min(int min);
-    SynthParameterBuilder &max(int max);
+    SynthParameterBuilder &min(uint8_t min);
+    SynthParameterBuilder &max(uint8_t max);
     SynthParameterBuilder &number(int number);
     SynthParameterBuilder &numbers(std::vector<int>);
-    SynthParameterBuilder &bitNumber(int bitNumber);
-    SynthParameterBuilder &bitNumbers(std::vector<int>);
+    SynthParameterBuilder &bitNumber(uint8_t bitNumber);
+    SynthParameterBuilder &bitNumbers(std::vector<uint8_t>);
     SynthParameterBuilder &performanceControlType(int paramNumber1, int paramNumber2);
     SynthParameterBuilder &descriptions(std::vector<std::string>);
 
