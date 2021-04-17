@@ -24,7 +24,7 @@ private:
     LEDButton *upButton;
     LEDButton *downButton;
 
-    const int LINE_HEIGHT = 30;
+    const int LINE_HEIGHT = 25;
 
     Section *section = SectionFactory().createDefaultSection();
     int parameterIndices[8];

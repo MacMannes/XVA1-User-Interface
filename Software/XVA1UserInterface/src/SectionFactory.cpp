@@ -413,12 +413,78 @@ Section *SectionFactory::createEnvelopeSection() {
 Section *SectionFactory::createLFOSection() {
     return new Section(
             "LFO",
-            {"LFO1", "LFO2"},
             {
-                    SynthParameterBuilder("Wave")
-                            .numbers({160, 170})
-                            .max(9)
-                            .build()
+                    Section(
+                            "LFO1",
+                            {
+                                    SynthParameterBuilder("Wave")
+                                            .number(160)
+                                            .max(9)
+                                            .descriptions({
+                                                "Triangle", "Square", "Saw Up", "Saw Down", "Sine",
+                                                "Sin( x ) + Sin( 2x )", "Sin( x ) + Sin( 3x )", "Sin( x ) ^ 3",
+                                                "Guitar", "S & H"
+                                            })
+                                            .build(),
+                                    SynthParameterBuilder("Range")
+                                            .number(166)
+                                            .build(),
+                                    SynthParameterBuilder("Speed")
+                                            .number(161)
+                                            .build(),
+                                    SynthParameterBuilder("Sync")
+                                            .number(162)
+                                            .descriptions({
+                                                "Single, Free running", "Single, Key sync",
+                                                "Multi, Free running", "Multi, Key sync"
+                                            })
+                                            .build(),
+                                    SynthParameterBuilder("Fade")
+                                            .number(163)
+                                            .build(),
+                                    SynthParameterBuilder("Depth Pitch")
+                                            .number(164)
+                                            .build(),
+                                    SynthParameterBuilder("AMP Pitch")
+                                            .number(165)
+                                            .build(),
+                            }),
+                    Section(
+                            "LFO2",
+                            {
+                                    SynthParameterBuilder("Wave")
+                                            .number(170)
+                                            .max(9)
+                                            .descriptions({
+                                                                  "Triangle", "Square", "Saw Up", "Saw Down", "Sine",
+                                                                  "Sin( x ) + Sin( 2x )", "Sin( x ) + Sin( 3x )", "Sin( x ) ^ 3",
+                                                                  "Guitar", "S & H"
+                                                          })
+                                            .build(),
+                                    SynthParameterBuilder("Range")
+                                            .number(176)
+                                            .build(),
+                                    SynthParameterBuilder("Speed")
+                                            .number(171)
+                                            .build(),
+                                    SynthParameterBuilder("Sync")
+                                            .number(172)
+                                            .descriptions({
+                                                                  "Single, Free running", "Single, Key sync",
+                                                                  "Multi, Free running", "Multi, Key sync"
+                                                          })
+                                            .build(),
+                                    SynthParameterBuilder("Fade")
+                                            .number(173)
+                                            .build(),
+                                    SynthParameterBuilder("Depth Pitch")
+                                            .number(174)
+                                            .build(),
+                                    SynthParameterBuilder("AMP Pitch")
+                                            .number(175)
+                                            .build(),
+                            })
+
             }
     );
 }
@@ -527,6 +593,207 @@ Section *SectionFactory::createExternalControlsSection() {
                             .build(),
             }
     );
+//    return new Section(
+//            "External Ctrls",
+//            {
+//                    Section(
+//                            "Pitch",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(200)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(201)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(202)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Temperature")
+//                                            .number(220)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-1")
+//                                            .number(221)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-2")
+//                                            .number(222)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Random")
+//                                            .number(203)
+//                                            .build(),
+//                            }
+//                    ),
+//                    Section(
+//                            "Pulse Width",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(204)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Wheel")
+//                                            .number(205)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(206)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(207)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Temperature")
+//                                            .number(223)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-1")
+//                                            .number(224)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-2")
+//                                            .number(225)
+//                                            .type(CENTER_128)
+//                                            .build(),                            }
+//                    ),
+//                    Section(
+//                            "Cutoff",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(208)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Wheel")
+//                                            .number(209)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(210)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(211)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Temperature")
+//                                            .number(226)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-1")
+//                                            .number(227)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-2")
+//                                            .number(228)
+//                                            .type(CENTER_128)
+//                                            .build(),                             }
+//                    ),
+//                    Section(
+//                            "Volume",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(212)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Wheel")
+//                                            .number(213)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(214)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(215)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("Temperature")
+//                                            .number(228)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-1")
+//                                            .number(230)
+//                                            .type(CENTER_128)
+//                                            .build(),
+//                                    SynthParameterBuilder("CV-2")
+//                                            .number(231)
+//                                            .type(CENTER_128)
+//                                            .build(),                             }
+//                    ),
+//                    Section(
+//                            "Pitch LFO",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(180)
+//                                            .build(),
+//                                    SynthParameterBuilder("Wheel")
+//                                            .number(181)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(182)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(183)
+//                                            .build(),
+//                            }
+//                    ),
+//                    Section(
+//                            "Pulse Width LFO",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(184)
+//                                            .build(),
+//                                    SynthParameterBuilder("Wheel")
+//                                            .number(185)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(186)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(187)
+//                                            .build(),
+//                            }
+//                    ),
+//                    Section(
+//                            "Cutoff LFO",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(188)
+//                                            .build(),
+//                                    SynthParameterBuilder("Wheel")
+//                                            .number(189)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(190)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(191)
+//                                            .build(),
+//                            }
+//                    ),
+//                    Section(
+//                            "Amplitude LFO",
+//                            {
+//                                    SynthParameterBuilder("Aftertouch")
+//                                            .number(192)
+//                                            .build(),
+//                                    SynthParameterBuilder("Wheel")
+//                                            .number(193)
+//                                            .build(),
+//                                    SynthParameterBuilder("Breath")
+//                                            .number(194)
+//                                            .build(),
+//                                    SynthParameterBuilder("Foot")
+//                                            .number(195)
+//                                            .build(),
+//                            }
+//                    ),
+//            }
+//    );
 }
 
 Section *SectionFactory::createPerformanceControlsSection() {
@@ -565,104 +832,104 @@ Section *SectionFactory::createPerformanceControlsSection() {
 Section *SectionFactory::createSequencerSection() {
     return new Section(
             "Sequencer",
-        {
-                Section(
-                        "Main",
-                        {
-                                SynthParameterBuilder("On or Off")
-                                        .number(428)
-                                        .max(1)
-                                        .descriptions({"OFF", "ON"})
-                                        .build(),
-                                SynthParameterBuilder("Steps")
-                                        .number(430)
-                                        .max(16)
-                                        .build(),
-                                SynthParameterBuilder("Tempo")
-                                        .number(431)
-                                        .build(),
-                                SynthParameterBuilder("Multiplier")
-                                        .number(432)
-                                        .min(1)
-                                        .build(),
-                                SynthParameterBuilder("Velocity")
-                                        .number(429)
-                                        .build(),
-                                SynthParameterBuilder("Transpose")
-                                        .number(433)
-                                        .build(),
-                        }
-                ),
-                Section(
-                        "Steps",
             {
-                    SynthParameterBuilder("Step 1")
-                            .number(434)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 5")
-                            .number(438)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 2")
-                            .number(435)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 6")
-                            .number(439)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 3")
-                            .number(436)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 7")
-                            .number(440)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 4")
-                            .number(437)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 8")
-                            .number(441)
-                            .type(MIDI_NOTE)
-                            .build(),
+                    Section(
+                            "Main",
+                            {
+                                    SynthParameterBuilder("On or Off")
+                                            .number(428)
+                                            .max(1)
+                                            .descriptions({"OFF", "ON"})
+                                            .build(),
+                                    SynthParameterBuilder("Steps")
+                                            .number(430)
+                                            .max(16)
+                                            .build(),
+                                    SynthParameterBuilder("Tempo")
+                                            .number(431)
+                                            .build(),
+                                    SynthParameterBuilder("Multiplier")
+                                            .number(432)
+                                            .min(1)
+                                            .build(),
+                                    SynthParameterBuilder("Velocity")
+                                            .number(429)
+                                            .build(),
+                                    SynthParameterBuilder("Transpose")
+                                            .number(433)
+                                            .build(),
+                            }
+                    ),
+                    Section(
+                            "Steps",
+                            {
+                                    SynthParameterBuilder("Step 1")
+                                            .number(434)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 5")
+                                            .number(438)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 2")
+                                            .number(435)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 6")
+                                            .number(439)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 3")
+                                            .number(436)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 7")
+                                            .number(440)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 4")
+                                            .number(437)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 8")
+                                            .number(441)
+                                            .type(MIDI_NOTE)
+                                            .build(),
 
-                    SynthParameterBuilder("Step 9")
-                            .number(442)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 13")
-                            .number(446)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 10")
-                            .number(443)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 14")
-                            .number(447)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 11")
-                            .number(444)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 15")
-                            .number(448)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 12")
-                            .number(445)
-                            .type(MIDI_NOTE)
-                            .build(),
-                    SynthParameterBuilder("Step 16")
-                            .number(449)
-                            .type(MIDI_NOTE)
-                            .build()
-                        }
-                )
+                                    SynthParameterBuilder("Step 9")
+                                            .number(442)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 13")
+                                            .number(446)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 10")
+                                            .number(443)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 14")
+                                            .number(447)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 11")
+                                            .number(444)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 15")
+                                            .number(448)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 12")
+                                            .number(445)
+                                            .type(MIDI_NOTE)
+                                            .build(),
+                                    SynthParameterBuilder("Step 16")
+                                            .number(449)
+                                            .type(MIDI_NOTE)
+                                            .build()
+                            }
+                    )
             }
     );
 }
