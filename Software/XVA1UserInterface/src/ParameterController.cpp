@@ -42,6 +42,7 @@ void ParameterController::setSection(Section *pSection, bool showSubSections) {
     SerialUSB.print(F("Setting active section: "));
     SerialUSB.println(pSection->getName().c_str());
 
+    subSection = Section("empty");
     delete section;
     section = pSection;
     currentSubSectionNumber = 0;
@@ -103,9 +104,10 @@ void ParameterController::setActiveSubSection(int subSectionNumber) {
         subSection = section->getSubSections().at(subSectionNumber);
     }
     currentSubSectionNumber = subSectionNumber;
+    currentPageNumber = 0;
 
     displayCurrentSubsection();
-    setActivePage(currentPageNumber); // This redraws all parmeters
+    setActivePage(currentPageNumber); // This redraws all parameters
 }
 
 void ParameterController::displayActivePage() {
@@ -213,6 +215,25 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
             }
         } else if (parameter.getMax() == 1) {
             newValue = 1;
+        }
+    }
+
+    // Besides values 0 through 127, MIDI_NOTE can also have values 200, 201 and 255
+    if (parameter.getType() == MIDI_NOTE && newValue > 127) {
+        if (newValue != 200 && newValue != 201 && newValue != 255) {
+            if (clockwise) {
+                if (newValue < 200) {
+                    newValue = 200;
+                } else if (newValue < 255) {
+                    newValue = 255;
+                }
+            } else {
+                if (newValue < 200) {
+                    newValue = 127;
+                } else if (newValue < 255) {
+                    newValue = 201;
+                }
+            }
         }
     }
 
@@ -336,11 +357,19 @@ string ParameterController::getDisplayValue(int parameterIndex) {
             }
             case MIDI_NOTE: {
                 value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
-                string MIDI_NOTES[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+                if (value <= 127) {
+                    string MIDI_NOTES[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-                int octave = (value / 12) - 1;
-                int noteIndex = (value % 12);
-                printValue = MIDI_NOTES[noteIndex] + to_string(octave);
+                    int octave = (value / 12) - 1;
+                    int noteIndex = (value % 12);
+                    printValue = MIDI_NOTES[noteIndex] + to_string(octave);
+                } else if (value == 200) {
+                    printValue = "Gate ON";
+                } else if (value == 201) {
+                    printValue = "Gate OFF";
+                } else if (value == 255) {
+                    printValue = "Note OFF";
+                }
                 break;
             }
             case ASCII_CHAR:

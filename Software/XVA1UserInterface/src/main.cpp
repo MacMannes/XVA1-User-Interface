@@ -50,7 +50,7 @@ void setup() {
     SerialUSB.begin(115200);
 
     //while the serial stream is not open, do nothing:
-     while (!SerialUSB);
+//     while (!SerialUSB);
 
     SerialUSB.println("\n");
     SerialUSB.println("===================");
@@ -78,20 +78,6 @@ void setup() {
 
     SerialUSB.print("freeMemory()=");
     SerialUSB.println(freeMemory());
-
-
-    Section *section;
-
-    SerialUSB.println("createOscillatorSection ");
-    section = SectionFactory().createOscillatorSection();
-    SerialUSB.println(section->getName().c_str());
-    SerialUSB.print("freeMemory()=");
-    SerialUSB.println(freeMemory());
-    delete section;
-    SerialUSB.println("delete");
-    SerialUSB.print("freeMemory()=");
-    SerialUSB.println(freeMemory());
-
 }
 
 

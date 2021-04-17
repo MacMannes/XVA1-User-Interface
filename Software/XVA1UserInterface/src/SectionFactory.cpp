@@ -583,6 +583,7 @@ Section *SectionFactory::createSequencerSection() {
                                         .build(),
                                 SynthParameterBuilder("Multiplier")
                                         .number(432)
+                                        .min(1)
                                         .build(),
                                 SynthParameterBuilder("Velocity")
                                         .number(429)
