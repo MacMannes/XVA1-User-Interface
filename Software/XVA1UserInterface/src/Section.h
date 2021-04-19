@@ -13,18 +13,15 @@ using namespace std;
 
 class Section {
 private:
-    string name;
-    vector<string> virtualSubSectionTitles = {};
-    vector<Section> subSections = {};
-    vector<SynthParameter> parameters = {};
-
-    int currentSubSection = 0;
+    string _name;
+    vector<string> _virtualSubSectionTitles;
+    vector<Section> _subSections;
+    vector<SynthParameter> _parameters;
 
 public:
-    Section(const string &name);
-    Section(string name, vector<SynthParameter> parameters);
-    Section(string name, vector<Section> subSections);
-    Section(string name, vector<string> titles, vector<SynthParameter> parameters);
+    Section(string name);
+
+    virtual ~Section();
 
     const string &getName() const;
 
@@ -39,6 +36,10 @@ public:
     int getNumberOfPages();
 
     bool hasVirtualSubSections();
+
+    Section &parameters(std::initializer_list<SynthParameter> parameters);
+    Section &subSections(std::initializer_list<Section> sections);
+    Section &virtualSubSectionTitles(std::initializer_list<std::string> titles);
 
 };
 

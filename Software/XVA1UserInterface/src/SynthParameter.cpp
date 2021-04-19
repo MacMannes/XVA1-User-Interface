@@ -5,51 +5,105 @@
 #include "SynthParameter.h"
 
 SynthParameter::SynthParameter(std::string name) {
-    this->name = name;
+    this->_name = name;
 }
 
 ParameterType SynthParameter::getType() const {
-    return type;
+    return _type;
 }
 
 const std::string &SynthParameter::getName() const {
-    return name;
+    return _name;
 }
 
 int SynthParameter::getNumber() const {
-    return numbers[0];
+    return _numbers[0];
 }
 
 uint8_t SynthParameter::getBitNumber() const {
-    return bitNumbers[0];
+    return _bitNumbers[0];
 }
 
 uint8_t SynthParameter::getBitNumber(int index) const {
-    if (index < bitNumbers.size()) {
-        return bitNumbers[index];
+    if (index < _bitNumbers.size()) {
+        return _bitNumbers[index];
     }
 
-    return bitNumbers[0];
+    return _bitNumbers[0];
 }
 
 int SynthParameter::getNumber(int index) const {
-    if (index < numbers.size()) {
-        return numbers[index];
+    if (index < _numbers.size()) {
+        return _numbers[index];
     }
 
-    return numbers[0];
+    return _numbers[0];
 }
 
 uint8_t SynthParameter::getMin() const {
-    return min;
+    return _min;
 }
 
 uint8_t SynthParameter::getMax() const {
-    return max;
+    return _max;
 }
 
 const std::vector<std::string> &SynthParameter::getDescriptions() const {
-    return descriptions;
+    return _descriptions;
 }
+
+SynthParameter &SynthParameter::type(ParameterType type) {
+    _type = type;
+    return *this;
+}
+
+SynthParameter &SynthParameter::min(int min) {
+    _min = min;
+    return *this;
+}
+
+SynthParameter &SynthParameter::max(int max) {
+    _max = max;
+    return *this;
+}
+
+SynthParameter &SynthParameter::number(int number) {
+    _numbers.push_back(number);
+    return *this;
+}
+
+SynthParameter &SynthParameter::numbers(std::initializer_list<int> numbers) {
+    for (const auto &item : numbers) {
+        _numbers.push_back(item);
+    }
+    return *this;
+}
+
+SynthParameter &SynthParameter::bitNumber(int bitNumber) {
+    _bitNumbers.push_back(bitNumber);
+    return *this;
+}
+
+SynthParameter &SynthParameter::bitNumbers(std::initializer_list<int> bitNumbers) {
+    for (const auto &item : bitNumbers) {
+        _bitNumbers.push_back(item);
+    }
+    return *this;
+}
+
+SynthParameter &SynthParameter::descriptions(std::initializer_list<std::string> descriptions) {
+    for (const auto &item : descriptions) {
+        _descriptions.push_back(item);
+    }
+    return *this;
+}
+
+SynthParameter &SynthParameter::performanceControlType(int paramNumber1, int paramNumber2) {
+    _type = PERFORMANCE_CTRL;
+    _numbers.push_back(paramNumber1);
+    _numbers.push_back(paramNumber2);
+    return *this;
+}
+
 
 

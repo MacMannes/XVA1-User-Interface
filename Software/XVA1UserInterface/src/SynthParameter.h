@@ -12,14 +12,14 @@
 #include "ParameterType.h"
 
 class SynthParameter {
-    ParameterType type = NUMERIC;
-    std::string name;
+    ParameterType _type = NUMERIC;
+    std::string _name;
     // This will contain one or more parameter numbers (4 for XVA1 oscillators, 8 for XFM2 operators, 2 for Performance controls),
-    std::vector<int> numbers;
-    std::vector<uint8_t> bitNumbers;
-    uint8_t min = 0;
-    uint8_t max = 255;
-    std::vector<std::string> descriptions;
+    std::vector<int> _numbers;
+    std::vector<uint8_t> _bitNumbers;
+    uint8_t _min = 0;
+    uint8_t _max = 255;
+    std::vector<std::string> _descriptions;
 
 public:
     explicit SynthParameter(std::string name);
@@ -43,6 +43,25 @@ public:
     uint8_t getMax() const;
 
     const std::vector<std::string> &getDescriptions() const;
+
+    SynthParameter &type(ParameterType type);
+
+    SynthParameter &min(int min);
+
+    SynthParameter &max(int max);
+
+    SynthParameter &number(int number);
+
+    SynthParameter &numbers(std::initializer_list<int> numbers);
+
+    SynthParameter &bitNumber(int bitNumber);
+
+    SynthParameter &bitNumbers(std::initializer_list<int> bitNumbers);
+
+    SynthParameter &descriptions(std::initializer_list<std::string> descriptions);
+
+    SynthParameter &performanceControlType(int paramNumber1, int paramNumber2);
+
 };
 
 

@@ -10,31 +10,31 @@
 
 class SectionFactory {
 public:
-    Section *createDefaultSection();
+    Section createDefaultSection();
 
-    Section *createVoiceSection();
+    Section createVoiceSection();
 
-    Section *createMixerSection();
+    Section createMixerSection();
 
-    Section *createEffectsSection();
+    Section createEffectsSection();
 
-    Section *createArpSection();
+    Section createArpSection();
 
-    Section *createOscillatorSection();
+    Section createOscillatorSection();
 
-    Section *createEnvelopeSection();
+    Section createEnvelopeSection();
 
-    Section *createLFOSection();
+    Section createLFOSection();
 
-    Section *createFilterSection();
+    Section createFilterSection();
 
-    Section *createPatchSection();
+    Section createPatchSection();
 
-    Section *createExternalControlsSection();
+    Section createExternalControlsSection();
 
-    Section *createPerformanceControlsSection();
+    Section createPerformanceControlsSection();
 
-    Section *createSequencerSection();
+    Section createSequencerSection();
 };
 
 

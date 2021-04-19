@@ -3,933 +3,773 @@
 //
 
 #include "SectionFactory.h"
-#include "SynthParameterBuilder.h"
+#include "SynthParameter.h"
 
-Section *SectionFactory::createDefaultSection() {
-    return new Section(
-            "Default",
-            {
-                    SynthParameterBuilder("Cutoff")
-                            .number(72)
-                            .build(),
+Section SectionFactory::createDefaultSection() {
+    return Section("Default")
+            .parameters(
+                    {
+                            SynthParameter("Cutoff")
+                                    .number(72),
 
-                    SynthParameterBuilder("Resonance")
-                            .number(77)
-                            .build(),
+                            SynthParameter("Resonance")
+                                    .number(77),
 
-                    SynthParameterBuilder("Sequencer")
-                            .number(428)
-                            .max(1)
-                            .descriptions({"OFF", "ON"})
-                            .build()
-            }
-    );
+                            SynthParameter("Sequencer")
+                                    .number(428)
+                                    .max(1)
+                                    .descriptions({"OFF", "ON"})
+                    }
+            );
 }
 
-Section *SectionFactory::createVoiceSection() {
-    return new Section(
-            "Voice",
-            {
-                    SynthParameterBuilder("Transpose")
-                            .type(CENTER_128)
-                            .number(241)
-                            .build(),
-                    SynthParameterBuilder("Bend Up")
-                            .number(242)
-                            .build(),
-                    SynthParameterBuilder("Bend Down")
-                            .number(243)
-                            .build(),
-            }
-    );
+Section SectionFactory::createVoiceSection() {
+    return Section("Voice")
+            .parameters(
+                    {
+                            SynthParameter("Transpose")
+                                    .type(CENTER_128)
+                                    .number(241),
+                            SynthParameter("Bend Up")
+                                    .number(242),
+                            SynthParameter("Bend Down")
+                                    .number(243)
+
+                    }
+            );
 }
 
-Section *SectionFactory::createMixerSection() {
-    return new Section(
-            "Mixer",
-            {
-                    Section(
-                            "Output",
-                            {
-                                    SynthParameterBuilder("Volume")
-                                            .number(509)
-                                            .build(),
-                                    SynthParameterBuilder("")
-                                            .build(),
-                                    SynthParameterBuilder("Gain Pre-FX")
-                                            .number(510)
-                                            .max(4)
-                                            .descriptions({"0 dB", "+6 dB", "+12 dB", "+18 dB"})
-                                            .build(),
-                                    SynthParameterBuilder("")
-                                            .build(),
-                                    SynthParameterBuilder("Gain Post-FX")
-                                            .number(511)
-                                            .max(4)
-                                            .descriptions({"0 dB", "+6 dB", "+12 dB", "+18 dB"})
-                                            .build(),
-                            }
-                    ),
-                    Section(
-                            "Oscillator levels",
-                            {
-                                    SynthParameterBuilder("OSC 1")
-                                            .number(27)
-                                            .build(),
-                                    SynthParameterBuilder("")
-                                            .build(),
-                                    SynthParameterBuilder("OSC 2")
-                                            .number(28)
-                                            .build(),
-                                    SynthParameterBuilder("")
-                                            .build(),
-                                    SynthParameterBuilder("OSC 3")
-                                            .number(29)
-                                            .build(),
-                                    SynthParameterBuilder("")
-                                            .build(),
-                                    SynthParameterBuilder("OSC 4")
-                                            .number(30)
-                                            .build(),
-                            }
-                    ),
-                    Section(
-                            "Oscillator Panning",
-                            {
-                                    SynthParameterBuilder("OSC 1 Level L")
-                                            .number(31)
-                                            .build(),
-                                    SynthParameterBuilder("OSC 1 Level R")
-                                            .number(32)
-                                            .build(),
-                                    SynthParameterBuilder("OSC 2 Level L")
-                                            .number(33)
-                                            .build(),
-                                    SynthParameterBuilder("OSC 2 Level R")
-                                            .number(34)
-                                            .build(),
-                                    SynthParameterBuilder("OSC 3 Level L")
-                                            .number(35)
-                                            .build(),
-                                    SynthParameterBuilder("OSC 3 Level R")
-                                            .number(36)
-                                            .build(),
-                                    SynthParameterBuilder("OSC 4 Level L")
-                                            .number(37)
-                                            .build(),
-                                    SynthParameterBuilder("OSC 4 Level R")
-                                            .number(38)
-                                            .build(),
-                            }
-                    )
-            }
-    );
+Section SectionFactory::createMixerSection() {
+    return Section("Mixer")
+            .subSections(
+                    {
+                            Section("Output")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Volume")
+                                                            .number(509),
+                                                    SynthParameter(""),
+                                                    SynthParameter("Gain Pre-FX")
+                                                            .number(510)
+                                                            .max(4)
+                                                            .descriptions(
+                                                                    {"0 dB", "+6 dB", "+12 dB", "+18 dB"}),
+                                                    SynthParameter(""),
+                                                    SynthParameter("Gain Post-FX")
+                                                            .number(511)
+                                                            .max(4)
+                                                            .descriptions(
+                                                                    {"0 dB", "+6 dB", "+12 dB", "+18 dB"})
+                                            }
+                                    ),
+                            Section("Oscillator levels")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("OSC 1")
+                                                            .number(27),
+                                                    SynthParameter(""),
+                                                    SynthParameter("OSC 2")
+                                                            .number(28),
+                                                    SynthParameter(""),
+                                                    SynthParameter("OSC 3")
+                                                            .number(29),
+                                                    SynthParameter(""),
+                                                    SynthParameter("OSC 4")
+                                                            .number(30)
+                                            }
+                                    ),
+                            Section("Oscillator Panning")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("OSC 1 Level L")
+                                                            .number(31),
+                                                    SynthParameter("OSC 1 Level R")
+                                                            .number(32),
+                                                    SynthParameter("OSC 2 Level L")
+                                                            .number(33),
+                                                    SynthParameter("OSC 2 Level R")
+                                                            .number(34),
+                                                    SynthParameter("OSC 3 Level L")
+                                                            .number(35),
+                                                    SynthParameter("OSC 3 Level R")
+                                                            .number(36),
+                                                    SynthParameter("OSC 4 Level L")
+                                                            .number(37),
+                                                    SynthParameter("OSC 4 Level R")
+                                                            .number(38)
+                                            }
+                                    )
+                    }
+            );
 }
 
-Section *SectionFactory::createEffectsSection() {
-    return new Section(
-            "Effects",
-            {
-                    Section(
-                            "Bandwidth limit",
-                            {
-                                    SynthParameterBuilder("Bandwidth")
-                                            .number(340)
-                                            .max(7)
-                                            .descriptions({
-                                                                  "No filter", "20 kHz", "18 kHz", "16 kHz", "14 kHz",
-                                                                  "12 kHz", "10 kHz", "8 kHz"
-                                                          })
-                                            .build(),
-                            }
-                    ),
-                    Section(
-                            "Distortion",
-                            {
-                                    SynthParameterBuilder("On or Off")
-                                            .number(340)
-                                            .max(1)
-                                            .descriptions({"OFF", "ON"})
-                                            .build(),
-                                    SynthParameterBuilder("Type")
-                                            .number(354)
-                                            .max(3)
-                                            .descriptions({"Hard clipping", "Soft clipping", "Tube 12AX", "Tube DSL"})
-                                            .build(),
-                                    SynthParameterBuilder("Gain PRE")
-                                            .number(354)
-                                            .build(),
-                                    SynthParameterBuilder("Gain POST")
-                                            .number(354)
-                                            .build(),
-                                    SynthParameterBuilder("Filter POST")
-                                            .number(340)
-                                            .max(7)
-                                            .descriptions({
-                                                                  "No filter", "20 kHz", "18 kHz", "16 kHz", "14 kHz",
-                                                                  "12 kHz", "10 kHz", "8 kHz"
-                                                          })
-                                            .build(),
-                            }
+Section SectionFactory::createEffectsSection() {
+    return Section("Effects")
+            .subSections(
+                    {
+                            Section("Bandwidth limit")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Bandwidth")
+                                                            .number(340)
+                                                            .max(7)
+                                                            .descriptions(
+                                                                    {
+                                                                            "No filter", "20 kHz", "18 kHz",
+                                                                            "16 kHz", "14 kHz",
+                                                                            "12 kHz", "10 kHz", "8 kHz"
+                                                                    }
+                                                            )
+                                            }
+                                    ),
+                            Section("Distortion")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("On or Off")
+                                                            .number(340)
+                                                            .max(1)
+                                                            .descriptions({"OFF", "ON"}),
+                                                    SynthParameter("Type")
+                                                            .number(354)
+                                                            .max(3)
+                                                            .descriptions(
+                                                                    {"Hard clipping", "Soft clipping", "Tube 12AX",
+                                                                     "Tube DSL"}),
+                                                    SynthParameter("Gain PRE")
+                                                            .number(354),
+                                                    SynthParameter("Gain POST")
+                                                            .number(354),
+                                                    SynthParameter("Filter POST")
+                                                            .number(340)
+                                                            .max(7)
+                                                            .descriptions(
+                                                                    {
+                                                                            "No filter", "20 kHz", "18 kHz", "16 kHz",
+                                                                            "14 kHz",
+                                                                            "12 kHz", "10 kHz", "8 kHz"
+                                                                    }
+                                                            )
+                                            }
+                                    ),
+                            Section("Chorus/Flanger")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("DRY")
+                                                            .number(360),
+                                                    SynthParameter("WET")
+                                                            .number(351)
 
-                    ),
-                    Section(
-                            "Chorus/Flanger",
-                            {
-                                    SynthParameterBuilder("DRY")
-                                            .number(360)
-                                            .build(),
-                                    SynthParameterBuilder("WET")
-                                            .number(351)
-                                            .build(),
-                            }
+                                            }
+                                    ),
+                            Section("Phaser")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("DRY")
+                                                            .number(310),
+                                                    SynthParameter("WET")
+                                                            .number(311)
 
-                    ),
-                    Section(
-                            "Phaser",
-                            {
-                                    SynthParameterBuilder("DRY")
-                                            .number(310)
-                                            .build(),
-                                    SynthParameterBuilder("WET")
-                                            .number(311)
-                                            .build(),
-                            }
-
-                    ),
-                    Section(
-                            "Delay",
-                            {
-                                    SynthParameterBuilder("DRY")
-                                            .number(300)
-                                            .build(),
-                                    SynthParameterBuilder("WET")
-                                            .number(301)
-                                            .build(),
-                            }
-
-                    )
-            }
-    );
+                                            }
+                                    ),
+                            Section("Delay")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("DRY")
+                                                            .number(300),
+                                                    SynthParameter("WET")
+                                                            .number(301)
+                                            }
+                                    )
+                    }
+            );
 }
 
-Section *SectionFactory::createArpSection() {
-    return new Section(
-            "ARP",
-            {
-                    SynthParameterBuilder("MODE")
-                            .number(450)
-                            .build(),
-                    SynthParameterBuilder("Temp")
-                            .number(451)
-                            .min(44)
-                            .build(),
-            }
-    );
+Section SectionFactory::createArpSection() {
+    return Section("ARP")
+            .parameters(
+                    {
+                            SynthParameter("MODE")
+                                    .number(450),
+                            SynthParameter("Temp")
+                                    .number(451)
+                                    .min(44)
+
+                    }
+            );
 }
 
-Section *SectionFactory::createOscillatorSection() {
-    return new Section(
-            "Oscillators",
-            {"Oscillator 1", "Oscillator 2", "Oscillator 3", "Oscillator 4"},
-            {
-                    SynthParameterBuilder("On or Off")
-                            .numbers({1, 2, 3, 4})
-                            .max(1)
-                            .descriptions({"OFF", "ON"})
-                            .build(),
+Section SectionFactory::createOscillatorSection() {
+    return Section("Oscillators")
+            .virtualSubSectionTitles({"Oscillator 1", "Oscillator 2", "Oscillator 3", "Oscillator 4"})
+            .parameters(
+                    {
+                            SynthParameter("On or Off")
+                                    .numbers({1, 2, 3, 4})
+                                    .max(1)
+                                    .descriptions({"OFF", "ON"}),
 
-                    SynthParameterBuilder("Mode")
-                            .type(BITWISE)
-                            .number(6)
-                            .bitNumbers({0, 1, 2, 3})
-                            .descriptions({"KeyTrack", "FixedPitch"})
-                            .build(),
+                            SynthParameter("Mode")
+                                    .type(BITWISE)
+                                    .number(6)
+                                    .bitNumbers({0, 1, 2, 3})
+                                    .descriptions({"KeyTrack", "FixedPitch"}),
 
+                            SynthParameter("Sync")
+                                    .type(BITWISE)
+                                    .number(5)
+                                    .bitNumbers({0, 1, 2, 3})
+                                    .descriptions({"Free running", "Restart on Key-ON"}),
 
-                    SynthParameterBuilder("Sync")
-                            .type(BITWISE)
-                            .number(5)
-                            .bitNumbers({0, 1, 2, 3})
-                            .descriptions({"Free running", "Restart on Key-ON"})
-                            .build(),
+                            SynthParameter("Waveform")
+                                    .numbers({11, 12, 13, 14})
+                                    .max(8)
+                                    .descriptions(
+                                            {"Saw up", "Saw down", "Square", "Triangle", "Sine",
+                                             "Noise", "Sawstack x3 (stereo)",
+                                             "Sawstack x7 (mono)", "Sawstack x7 (stereo)"}),
 
-                    SynthParameterBuilder("Waveform")
-                            .numbers({11, 12, 13, 14})
-                            .max(8)
-                            .descriptions(
-                                    {"Saw up", "Saw down", "Square", "Triangle", "Sine",
-                                     "Noise", "Sawstack x3 (stereo)",
-                                     "Sawstack x7 (mono)", "Sawstack x7 (stereo)"})
-                            .build(),
+                            SynthParameter("Phase")
+                                    .numbers({7, 8, 9, 10})
+                                    .max(3)
+                                    .descriptions({"0 deg", "90 deg", "180 deg", "270 deg"}),
 
-                    SynthParameterBuilder("Phase")
-                            .numbers({7, 8, 9, 10})
-                            .max(3)
-                            .descriptions({"0 deg", "90 deg", "180 deg", "270 deg"})
-                            .build(),
+                            SynthParameter("Pulse Width")
+                                    .type(CENTER_128)
+                                    .numbers({15, 16, 17, 18}),
 
-                    SynthParameterBuilder("Pulse Width")
-                            .type(CENTER_128)
-                            .numbers({15, 16, 17, 18})
-                            .build(),
+                            SynthParameter("Transpose")
+                                    .type(CENTER_128)
+                                    .numbers({19, 20, 21, 22}),
 
-                    SynthParameterBuilder("Transpose")
-                            .type(CENTER_128)
-                            .numbers({19, 20, 21, 22})
-                            .build(),
+                            SynthParameter("Detune")
+                                    .type(CENTER_128)
+                                    .numbers({23, 24, 25, 26}),
 
-                    SynthParameterBuilder("Detune")
-                            .type(CENTER_128)
-                            .numbers({23, 24, 25, 26})
-                            .build(),
+                            SynthParameter("Sawstack Detune")
+                                    .numbers({285, 286, 287, 288}),
 
-                    SynthParameterBuilder("Sawstack Detune")
-                            .numbers({285, 286, 287, 288})
-                            .build(),
+                            SynthParameter("Drift")
+                                    .numbers({260, 261, 262, 263}),
 
-                    SynthParameterBuilder("Drift")
-                            .numbers({260, 261, 262, 263})
-                            .build(),
+                            SynthParameter("Key breakpoint")
+                                    .numbers({43, 44, 45, 46}),
 
-                    SynthParameterBuilder("Key breakpoint")
-                            .numbers({43, 44, 45, 46})
-                            .build(),
+                            SynthParameter("Key L depth")
+                                    .numbers({47, 48, 49, 50}),
 
-                    SynthParameterBuilder("Key L depth")
-                            .numbers({47, 48, 49, 50})
-                            .build(),
+                            SynthParameter("Key R depth")
+                                    .numbers({51, 52, 53, 54}),
 
-                    SynthParameterBuilder("Key R depth")
-                            .numbers({51, 52, 53, 54})
-                            .build(),
+                            SynthParameter("Key L curve")
+                                    .numbers({55, 56, 57, 58}),
 
-                    SynthParameterBuilder("Key L curve")
-                            .numbers({55, 56, 57, 58})
-                            .build(),
+                            SynthParameter("Key R curve")
+                                    .numbers({59, 60, 61, 62}),
 
-                    SynthParameterBuilder("Key R curve")
-                            .numbers({59, 60, 61, 62})
-                            .build(),
+                            SynthParameter("PMS")
+                                    .numbers({63, 64, 65, 66}),
 
-                    SynthParameterBuilder("PMS")
-                            .numbers({63, 64, 65, 66})
-                            .build(),
-
-                    SynthParameterBuilder("AMS")
-                            .numbers({67, 66, 67, 68})
-                            .build()
-            }
-    );
+                            SynthParameter("AMS")
+                                    .numbers({67, 66, 67, 68})
+                    }
+            );
 }
 
-Section *SectionFactory::createEnvelopeSection() {
-    return new Section(
-            "Envelopes",
-            {"PITCH", "CUTOFF", "AMP"},
-            {
-                    SynthParameterBuilder("L0 - Start")
-                            .numbers({80, 81, 82})
-                            .build(),
-                    SynthParameterBuilder("L4 - Release 1")
-                            .numbers({100, 101, 102})
-                            .build(),
-                    SynthParameterBuilder("L1 - Attack")
-                            .numbers({85, 86, 88})
-                            .build(),
-                    SynthParameterBuilder("L5 - Release 2")
-                            .numbers({105, 106, 107})
-                            .build(),
-                    SynthParameterBuilder("L2 - Decay")
-                            .numbers({90, 91, 92})
-                            .build(),
-                    SynthParameterBuilder("")
-                            .build(),
-                    SynthParameterBuilder("L3 - Sustain")
-                            .numbers({95, 96, 97})
-                            .build(),
-                    SynthParameterBuilder("Delay")
-                            .numbers({110, 111, 112})
-                            .build(),
-                    SynthParameterBuilder("R1 - Attack")
-                            .numbers({115, 116, 117})
-                            .build(),
-                    SynthParameterBuilder("R5 - Release 2")
-                            .numbers({135, 136, 137})
-                            .build(),
-                    SynthParameterBuilder("R2 - Decay")
-                            .numbers({120, 121, 122})
-                            .build(),
-                    SynthParameterBuilder("")
-                            .build(),
-                    SynthParameterBuilder("R3 - Sustain")
-                            .numbers({125, 126, 127})
-                            .build(),
-                    SynthParameterBuilder("")
-                            .build(),
-                    SynthParameterBuilder("R4 - Release 1")
-                            .numbers({130, 131, 132})
-                            .build(),
-                    SynthParameterBuilder("")
-                            .build(),
+Section SectionFactory::createEnvelopeSection() {
+    return Section("Envelopes")
+            .virtualSubSectionTitles({"PITCH", "CUTOFF", "AMP"})
+            .parameters(
+                    {
+                            SynthParameter("L0 - Start")
+                                    .numbers({80, 81, 82}),
+                            SynthParameter("L4 - Release 1")
+                                    .numbers({100, 101, 102}),
+                            SynthParameter("L1 - Attack")
+                                    .numbers({85, 86, 88}),
+                            SynthParameter("L5 - Release 2")
+                                    .numbers({105, 106, 107}),
+                            SynthParameter("L2 - Decay")
+                                    .numbers({90, 91, 92}),
+                            SynthParameter(""),
+                            SynthParameter("L3 - Sustain")
+                                    .numbers({95, 96, 97}),
+                            SynthParameter("Delay")
+                                    .numbers({110, 111, 112}),
+                            SynthParameter("R1 - Attack")
+                                    .numbers({115, 116, 117}),
+                            SynthParameter("R5 - Release 2")
+                                    .numbers({135, 136, 137}),
+                            SynthParameter("R2 - Decay")
+                                    .numbers({120, 121, 122}),
+                            SynthParameter(""),
+                            SynthParameter("R3 - Sustain")
+                                    .numbers({125, 126, 127}),
+                            SynthParameter(""),
+                            SynthParameter("R4 - Release 1")
+                                    .numbers({130, 131, 132}),
+                            SynthParameter(""),
 
-                    SynthParameterBuilder("EG Loop")
-                            .type(BITWISE)
-                            .number(145)
-                            .bitNumbers({0, 1, 6})
-                            .descriptions({"Normal", "Loop"})
-                            .build(),
-                    SynthParameterBuilder("")
-                            .build(),
-                    SynthParameterBuilder("EG Loop Segment")
-                            .type(BITWISE)
-                            .number(146)
-                            .bitNumbers({0, 1, 6})
-                            .descriptions({"L0 - Attack", "L5 - Decay"})
-                            .build(),
-                    SynthParameterBuilder("")
-                            .build(),
-                    SynthParameterBuilder("EG Restart from")
-                            .type(BITWISE)
-                            .number(147)
-                            .bitNumbers({0, 1, 6})
-                            .descriptions({"L5 - Decay", "L0 - Start"})
-                            .build(),
-                    SynthParameterBuilder("")
-                            .build(),
-                    SynthParameterBuilder("Range")
-                            .numbers({148, -1, -1})
-                            .max(10)
-                            .build(),
-                    SynthParameterBuilder("Velocity")
-                            .numbers({149, -1, -1})
-                            .max(10)
-                            .build(),
+                            SynthParameter("EG Loop")
+                                    .type(BITWISE)
+                                    .number(145)
+                                    .bitNumbers({0, 1, 6})
+                                    .descriptions({"Normal", "Loop"}),
+                            SynthParameter(""),
+                            SynthParameter("EG Loop Segment")
+                                    .type(BITWISE)
+                                    .number(146)
+                                    .bitNumbers({0, 1, 6})
+                                    .descriptions({"L0 - Attack", "L5 - Decay"}),
+                            SynthParameter(""),
+                            SynthParameter("EG Restart from")
+                                    .type(BITWISE)
+                                    .number(147)
+                                    .bitNumbers({0, 1, 6})
+                                    .descriptions({"L5 - Decay", "L0 - Start"}),
+                            SynthParameter(""),
+                            SynthParameter("Range")
+                                    .numbers({148, -1, -1})
+                                    .max(10),
+                            SynthParameter("Velocity")
+                                    .numbers({149, -1, -1})
+                                    .max(10)
 
-            }
-    );
+                    }
+            );
 }
 
-Section *SectionFactory::createLFOSection() {
-    return new Section(
-            "LFO",
-            {
-                    Section(
-                            "LFO1",
-                            {
-                                    SynthParameterBuilder("Wave")
-                                            .number(160)
-                                            .max(9)
-                                            .descriptions({
-                                                "Triangle", "Square", "Saw Up", "Saw Down", "Sine",
-                                                "Sin( x ) + Sin( 2x )", "Sin( x ) + Sin( 3x )", "Sin( x ) ^ 3",
-                                                "Guitar", "S & H"
+Section SectionFactory::createLFOSection() {
+    return Section("LFO")
+            .subSections(
+                    {
+                            Section("LFO1")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Wave")
+                                                            .number(160)
+                                                            .max(9)
+                                                            .descriptions(
+                                                                    {
+                                                                            "Triangle", "Square", "Saw Up",
+                                                                            "Saw Down", "Sine",
+                                                                            "Sin( x ) + Sin( 2x )",
+                                                                            "Sin( x ) + Sin( 3x )",
+                                                                            "Sin( x ) ^ 3",
+                                                                            "Guitar", "S & H"
+                                                                    }
+                                                            ),
+                                                    SynthParameter("Range")
+                                                            .number(166),
+                                                    SynthParameter("Speed")
+                                                            .number(161),
+                                                    SynthParameter("Sync")
+                                                            .number(162)
+                                                            .descriptions(
+                                                                    {
+                                                                            "Single, Free running",
+                                                                            "Single, Key sync",
+                                                                            "Multi, Free running",
+                                                                            "Multi, Key sync"
+                                                                    }
+                                                            ),
+                                                    SynthParameter("Fade")
+                                                            .number(163),
+                                                    SynthParameter("Depth Pitch")
+                                                            .number(164),
+                                                    SynthParameter("AMP Pitch")
+                                                            .number(165)
+                                            }),
+                            Section("LFO2")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Wave")
+                                                            .number(170)
+                                                            .max(9)
+                                                            .descriptions(
+                                                                    {
+                                                                            "Triangle", "Square", "Saw Up",
+                                                                            "Saw Down", "Sine",
+                                                                            "Sin( x ) + Sin( 2x )",
+                                                                            "Sin( x ) + Sin( 3x )",
+                                                                            "Sin( x ) ^ 3",
+                                                                            "Guitar", "S & H"
+                                                                    }),
+                                                    SynthParameter("Range")
+                                                            .number(176),
+                                                    SynthParameter("Speed")
+                                                            .number(171),
+                                                    SynthParameter("Sync")
+                                                            .number(172)
+                                                            .descriptions(
+                                                                    {
+                                                                            "Single, Free running",
+                                                                            "Single, Key sync",
+                                                                            "Multi, Free running",
+                                                                            "Multi, Key sync"
+                                                                    }
+                                                            ),
+                                                    SynthParameter("Fade")
+                                                            .number(173),
+                                                    SynthParameter("Depth Pitch")
+                                                            .number(174),
+                                                    SynthParameter("AMP Pitch")
+                                                            .number(175)
                                             })
-                                            .build(),
-                                    SynthParameterBuilder("Range")
-                                            .number(166)
-                                            .build(),
-                                    SynthParameterBuilder("Speed")
-                                            .number(161)
-                                            .build(),
-                                    SynthParameterBuilder("Sync")
-                                            .number(162)
-                                            .descriptions({
-                                                "Single, Free running", "Single, Key sync",
-                                                "Multi, Free running", "Multi, Key sync"
-                                            })
-                                            .build(),
-                                    SynthParameterBuilder("Fade")
-                                            .number(163)
-                                            .build(),
-                                    SynthParameterBuilder("Depth Pitch")
-                                            .number(164)
-                                            .build(),
-                                    SynthParameterBuilder("AMP Pitch")
-                                            .number(165)
-                                            .build(),
-                            }),
-                    Section(
-                            "LFO2",
-                            {
-                                    SynthParameterBuilder("Wave")
-                                            .number(170)
-                                            .max(9)
-                                            .descriptions({
-                                                                  "Triangle", "Square", "Saw Up", "Saw Down", "Sine",
-                                                                  "Sin( x ) + Sin( 2x )", "Sin( x ) + Sin( 3x )", "Sin( x ) ^ 3",
-                                                                  "Guitar", "S & H"
-                                                          })
-                                            .build(),
-                                    SynthParameterBuilder("Range")
-                                            .number(176)
-                                            .build(),
-                                    SynthParameterBuilder("Speed")
-                                            .number(171)
-                                            .build(),
-                                    SynthParameterBuilder("Sync")
-                                            .number(172)
-                                            .descriptions({
-                                                                  "Single, Free running", "Single, Key sync",
-                                                                  "Multi, Free running", "Multi, Key sync"
-                                                          })
-                                            .build(),
-                                    SynthParameterBuilder("Fade")
-                                            .number(173)
-                                            .build(),
-                                    SynthParameterBuilder("Depth Pitch")
-                                            .number(174)
-                                            .build(),
-                                    SynthParameterBuilder("AMP Pitch")
-                                            .number(175)
-                                            .build(),
-                            })
 
-            }
-    );
+                    }
+            );
 }
 
-Section *SectionFactory::createFilterSection() {
-    return new Section(
-            "Filters",
-            {
-                    Section("Filter 1",
-                            {
+Section SectionFactory::createFilterSection() {
+    return Section("Filters")
+            .subSections(
+                    {
+                            Section("Filter 1")
+                                    .parameters(
+                                            {
 
-                                    SynthParameterBuilder("Cutoff")
-                                            .number(72)
-                                            .build(),
+                                                    SynthParameter("Cutoff")
+                                                            .number(72),
 
-                                    SynthParameterBuilder("Resonance")
-                                            .number(77)
-                                            .build()
-                            }
-                    ),
-                    Section("Filter 2",
-                            {
-                                    SynthParameterBuilder("Cutoff")
-                                            .number(78)
-                                            .build(),
+                                                    SynthParameter("Resonance")
+                                                            .number(77)
+                                            }
+                                    ),
+                            Section("Filter 2")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Cutoff")
+                                                            .number(78),
 
-                                    SynthParameterBuilder("Resonance")
-                                            .number(79)
-                                            .build()
-                            }
-                    ),
-                    Section("Settings",
-                            {
+                                                    SynthParameter("Resonance")
+                                                            .number(79),
+                                            }
+                                    ),
+                            Section("Settings")
+                                    .parameters(
+                                            {
 
-                                    SynthParameterBuilder("Type")
-                                            .number(71)
-                                            .max(21)
-                                            .descriptions({
-                                                                  "Bypass", "LPF 1P", "LPF 2P",
-                                                                  "LPF 3P", "LPF 4P",
-                                                                  "HPF 1P",
-                                                                  "HPF 2P", "HPF 3P", "HPF 4P",
-                                                                  "BPF 2P", "BPF 4P",
-                                                                  "BRF 2P",
-                                                                  "BRF 4P", "LP -> LP", "LP -> BP",
-                                                                  "LP -> HP", "LP // LP",
-                                                                  "LP // BP", "LP // HP",
-                                                                  "BP // BP", "BP // HP", "HP // HP"
-                                                          })
-                                            .build(),
-                                    SynthParameterBuilder("Velocity")
-                                            .type(CENTER_128)
-                                            .number(73)
-                                            .build(),
-                                    SynthParameterBuilder("KBD Track")
-                                            .type(CENTER_128)
-                                            .number(74)
-                                            .build(),
-                                    SynthParameterBuilder("EG depth")
-                                            .type(CENTER_128)
-                                            .number(75)
-                                            .build(),
-                                    SynthParameterBuilder("EG Velocity")
-                                            .type(CENTER_128)
-                                            .number(76)
-                                            .build(),
-                                    SynthParameterBuilder("Velocity RESO")
-                                            .type(CENTER_128)
-                                            .number(276)
-                                            .build(),
-                                    SynthParameterBuilder("KBD Track RESO")
-                                            .type(CENTER_128)
-                                            .number(277)
-                                            .build(),
-                                    SynthParameterBuilder("Drive")
-                                            .number(275)
-                                            .max(7)
-                                            .build(),
-                                    SynthParameterBuilder("Routing")
-                                            .number(278)
-                                            .max(1)
-                                            .descriptions({"Standard", "LR Mode"})
-                                            .build(),
-                            }
-                    )
-            }
-
-    );
+                                                    SynthParameter("Type")
+                                                            .number(71)
+                                                            .max(21)
+                                                            .descriptions(
+                                                                    {
+                                                                            "Bypass", "LPF 1P", "LPF 2P",
+                                                                            "LPF 3P", "LPF 4P",
+                                                                            "HPF 1P",
+                                                                            "HPF 2P", "HPF 3P", "HPF 4P",
+                                                                            "BPF 2P", "BPF 4P",
+                                                                            "BRF 2P",
+                                                                            "BRF 4P", "LP -> LP", "LP -> BP",
+                                                                            "LP -> HP", "LP // LP",
+                                                                            "LP // BP", "LP // HP",
+                                                                            "BP // BP", "BP // HP", "HP // HP"
+                                                                    }
+                                                            ),
+                                                    SynthParameter("Velocity")
+                                                            .type(CENTER_128)
+                                                            .number(73),
+                                                    SynthParameter("KBD Track")
+                                                            .type(CENTER_128)
+                                                            .number(74),
+                                                    SynthParameter("EG depth")
+                                                            .type(CENTER_128)
+                                                            .number(75),
+                                                    SynthParameter("EG Velocity")
+                                                            .type(CENTER_128)
+                                                            .number(76),
+                                                    SynthParameter("Velocity RESO")
+                                                            .type(CENTER_128)
+                                                            .number(276),
+                                                    SynthParameter("KBD Track RESO")
+                                                            .type(CENTER_128)
+                                                            .number(277),
+                                                    SynthParameter("Drive")
+                                                            .number(275)
+                                                            .max(7),
+                                                    SynthParameter("Routing")
+                                                            .number(278)
+                                                            .max(1)
+                                                            .descriptions({"Standard", "LR Mode"})
+                                            }
+                                    )
+                    }
+            );
 }
 
-Section *SectionFactory::createPatchSection() {
-    return new Section(
-            "Patch",
-            {
-                    SynthParameterBuilder("")
-                            .build(),
-            }
-    );
+Section SectionFactory::createPatchSection() {
+    return Section("Patch")
+            .parameters(
+                    {
+                            SynthParameter("")
+                    }
+            );
 }
 
-Section *SectionFactory::createExternalControlsSection() {
-    return new Section(
-            "External Ctrls",
-            {
-                    SynthParameterBuilder("")
-                            .build(),
-            }
-    );
-//    return new Section(
-//            "External Ctrls",
-//            {
-//                    Section(
-//                            "Pitch",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(200)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(201)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(202)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Temperature")
-//                                            .number(220)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-1")
-//                                            .number(221)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-2")
-//                                            .number(222)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Random")
-//                                            .number(203)
-//                                            .build(),
-//                            }
-//                    ),
-//                    Section(
-//                            "Pulse Width",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(204)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Wheel")
-//                                            .number(205)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(206)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(207)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Temperature")
-//                                            .number(223)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-1")
-//                                            .number(224)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-2")
-//                                            .number(225)
-//                                            .type(CENTER_128)
-//                                            .build(),                            }
-//                    ),
-//                    Section(
-//                            "Cutoff",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(208)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Wheel")
-//                                            .number(209)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(210)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(211)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Temperature")
-//                                            .number(226)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-1")
-//                                            .number(227)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-2")
-//                                            .number(228)
-//                                            .type(CENTER_128)
-//                                            .build(),                             }
-//                    ),
-//                    Section(
-//                            "Volume",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(212)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Wheel")
-//                                            .number(213)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(214)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(215)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("Temperature")
-//                                            .number(228)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-1")
-//                                            .number(230)
-//                                            .type(CENTER_128)
-//                                            .build(),
-//                                    SynthParameterBuilder("CV-2")
-//                                            .number(231)
-//                                            .type(CENTER_128)
-//                                            .build(),                             }
-//                    ),
-//                    Section(
-//                            "Pitch LFO",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(180)
-//                                            .build(),
-//                                    SynthParameterBuilder("Wheel")
-//                                            .number(181)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(182)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(183)
-//                                            .build(),
-//                            }
-//                    ),
-//                    Section(
-//                            "Pulse Width LFO",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(184)
-//                                            .build(),
-//                                    SynthParameterBuilder("Wheel")
-//                                            .number(185)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(186)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(187)
-//                                            .build(),
-//                            }
-//                    ),
-//                    Section(
-//                            "Cutoff LFO",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(188)
-//                                            .build(),
-//                                    SynthParameterBuilder("Wheel")
-//                                            .number(189)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(190)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(191)
-//                                            .build(),
-//                            }
-//                    ),
-//                    Section(
-//                            "Amplitude LFO",
-//                            {
-//                                    SynthParameterBuilder("Aftertouch")
-//                                            .number(192)
-//                                            .build(),
-//                                    SynthParameterBuilder("Wheel")
-//                                            .number(193)
-//                                            .build(),
-//                                    SynthParameterBuilder("Breath")
-//                                            .number(194)
-//                                            .build(),
-//                                    SynthParameterBuilder("Foot")
-//                                            .number(195)
-//                                            .build(),
-//                            }
-//                    ),
-//            }
-//    );
+Section SectionFactory::createExternalControlsSection() {
+    return Section("External Ctrls")
+            .subSections(
+                    {
+                            Section("Pitch")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Aftertouch")
+                                                            .number(200)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Breath")
+                                                            .number(201)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Foot")
+                                                            .number(202)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Temperature")
+                                                            .number(220)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-1")
+                                                            .number(221)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-2")
+                                                            .number(222)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Random")
+                                                            .number(203)
+                                            }
+                                    ),
+                            Section("Pulse Width")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Aftertouch")
+                                                            .number(204)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Wheel")
+                                                            .number(205)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Breath")
+                                                            .number(206)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Foot")
+                                                            .number(207)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Temperature")
+                                                            .number(223)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-1")
+                                                            .number(224)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-2")
+                                                            .number(225)
+                                                            .type(CENTER_128)}
+                                    ),
+                            Section("Cutoff")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Aftertouch")
+                                                            .number(208)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Wheel")
+                                                            .number(209)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Breath")
+                                                            .number(210)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Foot")
+                                                            .number(211)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Temperature")
+                                                            .number(226)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-1")
+                                                            .number(227)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-2")
+                                                            .number(228)
+                                                            .type(CENTER_128)}
+                                    ),
+                            Section("Volume")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Aftertouch")
+                                                            .number(212)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Wheel")
+                                                            .number(213)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Breath")
+                                                            .number(214)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Foot")
+                                                            .number(215)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("Temperature")
+                                                            .number(228)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-1")
+                                                            .number(230)
+                                                            .type(CENTER_128),
+                                                    SynthParameter("CV-2")
+                                                            .number(231)
+                                                            .type(CENTER_128),}
+                                    ),
+                            Section("Pitch LFO")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Aftertouch")
+                                                            .number(180),
+                                                    SynthParameter("Wheel")
+                                                            .number(181),
+                                                    SynthParameter("Breath")
+                                                            .number(182),
+                                                    SynthParameter("Foot")
+                                                            .number(183)
+                                            }
+                                    ),
+                            Section("Pulse Width LFO")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Aftertouch")
+                                                            .number(184),
+                                                    SynthParameter("Wheel")
+                                                            .number(185),
+                                                    SynthParameter("Breath")
+                                                            .number(186),
+                                                    SynthParameter("Foot")
+                                                            .number(187),
+                                            }
+                                    ),
+//                            Section("Cutoff LFO")
+//                                    .parameters(
+//                                            {
+//                                                    SynthParameter("Aftertouch")
+//                                                            .number(188),
+//                                                    SynthParameter("Wheel")
+//                                                            .number(189),
+//                                                    SynthParameter("Breath")
+//                                                            .number(190),
+//                                                    SynthParameter("Foot")
+//                                                            .number(191),
+//                                            }
+//                                    ),
+//                            Section("Amplitude LFO")
+//                                    .parameters(
+//                                            {
+//                                                    SynthParameter("Aftertouch")
+//                                                            .number(192),
+//                                                    SynthParameter("Wheel")
+//                                                            .number(193),
+//                                                    SynthParameter("Breath")
+//                                                            .number(194),
+//                                                    SynthParameter("Foot")
+//                                                            .number(195),
+//                                            }
+//                                    )
+                    }
+            );
 }
 
-Section *SectionFactory::createPerformanceControlsSection() {
-    return new Section(
-            "Performance Ctrls",
-            {
-                    SynthParameterBuilder("Midi CC 70")
-                            .performanceControlType(400, 401)
-                            .build(),
-                    SynthParameterBuilder("Midi CC 74")
-                            .performanceControlType(408, 409)
-                            .build(),
-                    SynthParameterBuilder("Midi CC 71")
-                            .performanceControlType(402, 403)
-                            .build(),
-                    SynthParameterBuilder("Midi CC 75")
-                            .performanceControlType(410, 411)
-                            .build(),
-                    SynthParameterBuilder("Midi CC 72")
-                            .performanceControlType(404, 405)
-                            .build(),
-                    SynthParameterBuilder("Midi CC 76")
-                            .performanceControlType(412, 413)
-                            .build(),
-                    SynthParameterBuilder("Midi CC 73")
-                            .performanceControlType(406, 407)
-                            .build(),
-                    SynthParameterBuilder("Midi CC 77")
-                            .performanceControlType(414, 415)
-                            .build()
-            }
+Section SectionFactory::createPerformanceControlsSection() {
+    return Section("Performance Ctrls")
+            .parameters(
+                    {
+                            SynthParameter("Midi CC 70")
+                                    .performanceControlType(400, 401),
+                            SynthParameter("Midi CC 74")
+                                    .performanceControlType(408, 409),
+                            SynthParameter("Midi CC 71")
+                                    .performanceControlType(402, 403),
+                            SynthParameter("Midi CC 75")
+                                    .performanceControlType(410, 411),
+                            SynthParameter("Midi CC 72")
+                                    .performanceControlType(404, 405),
+                            SynthParameter("Midi CC 76")
+                                    .performanceControlType(412, 413),
+                            SynthParameter("Midi CC 73")
+                                    .performanceControlType(406, 407),
+                            SynthParameter("Midi CC 77")
+                                    .performanceControlType(414, 415)
+                    }
 
-    );
+            );
 }
 
-Section *SectionFactory::createSequencerSection() {
-    return new Section(
-            "Sequencer",
-            {
-                    Section(
-                            "Main",
-                            {
-                                    SynthParameterBuilder("On or Off")
-                                            .number(428)
-                                            .max(1)
-                                            .descriptions({"OFF", "ON"})
-                                            .build(),
-                                    SynthParameterBuilder("Steps")
-                                            .number(430)
-                                            .max(16)
-                                            .build(),
-                                    SynthParameterBuilder("Tempo")
-                                            .number(431)
-                                            .build(),
-                                    SynthParameterBuilder("Multiplier")
-                                            .number(432)
-                                            .min(1)
-                                            .build(),
-                                    SynthParameterBuilder("Velocity")
-                                            .number(429)
-                                            .build(),
-                                    SynthParameterBuilder("Transpose")
-                                            .number(433)
-                                            .build(),
-                            }
-                    ),
-                    Section(
-                            "Steps",
-                            {
-                                    SynthParameterBuilder("Step 1")
-                                            .number(434)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 5")
-                                            .number(438)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 2")
-                                            .number(435)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 6")
-                                            .number(439)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 3")
-                                            .number(436)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 7")
-                                            .number(440)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 4")
-                                            .number(437)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 8")
-                                            .number(441)
-                                            .type(MIDI_NOTE)
-                                            .build(),
+Section SectionFactory::createSequencerSection() {
+    return Section("Sequencer")
+            .subSections(
+                    {
+                            Section("Main")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("On or Off")
+                                                            .number(428)
+                                                            .max(1)
+                                                            .descriptions({"OFF", "ON"}),
+                                                    SynthParameter("Steps")
+                                                            .number(430)
+                                                            .max(16),
+                                                    SynthParameter("Tempo")
+                                                            .number(431),
+                                                    SynthParameter("Multiplier")
+                                                            .number(432)
+                                                            .min(1),
+                                                    SynthParameter("Velocity")
+                                                            .number(429),
+                                                    SynthParameter("Transpose")
+                                                            .number(433)
+                                            }
+                                    ),
+                            Section("Steps")
+                                    .parameters(
+                                            {
+                                                    SynthParameter("Step 1")
+                                                            .number(434)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 5")
+                                                            .number(438)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 2")
+                                                            .number(435)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 6")
+                                                            .number(439)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 3")
+                                                            .number(436)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 7")
+                                                            .number(440)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 4")
+                                                            .number(437)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 8")
+                                                            .number(441)
+                                                            .type(MIDI_NOTE),
 
-                                    SynthParameterBuilder("Step 9")
-                                            .number(442)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 13")
-                                            .number(446)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 10")
-                                            .number(443)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 14")
-                                            .number(447)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 11")
-                                            .number(444)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 15")
-                                            .number(448)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 12")
-                                            .number(445)
-                                            .type(MIDI_NOTE)
-                                            .build(),
-                                    SynthParameterBuilder("Step 16")
-                                            .number(449)
-                                            .type(MIDI_NOTE)
-                                            .build()
-                            }
-                    )
-            }
-    );
+                                                    SynthParameter("Step 9")
+                                                            .number(442)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 13")
+                                                            .number(446)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 10")
+                                                            .number(443)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 14")
+                                                            .number(447)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 11")
+                                                            .number(444)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 15")
+                                                            .number(448)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 12")
+                                                            .number(445)
+                                                            .type(MIDI_NOTE),
+                                                    SynthParameter("Step 16")
+                                                            .number(449)
+                                                            .type(MIDI_NOTE)
+                                            }
+                                    )
+                    }
+            );
 }

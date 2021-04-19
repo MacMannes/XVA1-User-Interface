@@ -4,6 +4,7 @@
 
 #include "ParameterController.h"
 #include "Globals.h"
+#include "FreeMemory.h"
 
 ParameterController::ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft,
                                          Adafruit_SSD1306 *display, LEDButton *upButton, LEDButton *downButton)
@@ -13,8 +14,6 @@ ParameterController::ParameterController(Synthesizer *synthesizer, Multiplexer *
 }
 
 void ParameterController::upButtonTapped() {
-    if (section == nullptr) return;
-
     if (currentPageNumber > 0) {
         int newPage = currentPageNumber - 1;
         setActivePage(newPage);
@@ -22,8 +21,6 @@ void ParameterController::upButtonTapped() {
 }
 
 void ParameterController::downButtonTapped() {
-    if (section == nullptr) return;
-
     if (currentPageNumber < getSubSection()->getNumberOfPages() - 1) {
         int newPage = currentPageNumber + 1;
         setActivePage(newPage);
@@ -31,34 +28,32 @@ void ParameterController::downButtonTapped() {
 }
 
 void ParameterController::setDefaultSection() {
-    setSection(SectionFactory().createDefaultSection(), false);
+    setSection(0, false);
 }
 
-void ParameterController::setSection(Section *pSection) {
-    setSection(pSection, true);
+void ParameterController::setSection(int sectionNumber) {
+    setSection(sectionNumber, true);
 }
 
-void ParameterController::setSection(Section *pSection, bool showSubSections) {
-    SerialUSB.print(F("Setting active section: "));
-    SerialUSB.println(pSection->getName().c_str());
-
+void ParameterController::setSection(int sectionNumber, bool showSubSections) {
     subSection = Section("empty");
-    delete section;
-    section = pSection;
+
+    section = createSection(sectionNumber);
     currentSubSectionNumber = 0;
 
-    if (section == nullptr) {
-        upButton->setLED(false);
-        downButton->setLED(false);
-        clearParameters();
-        displayParameters();
-    } else {
-        clearCurrentSubsection();
-        setActivePage(0);
+    clearCurrentSubsection();
+    setActivePage(0);
 
-        if (showSubSections) {
-            displaySubSections();
-        }
+    if (showSubSections) {
+        SerialUSB.println("BEFORE displaySubSections");
+        SerialUSB.print("freeMemory()=");
+        SerialUSB.println(freeMemory());
+
+        displaySubSections();
+
+        SerialUSB.println("AFTER displaySubSections");
+        SerialUSB.print("freeMemory()=");
+        SerialUSB.println(freeMemory());
     }
 }
 
@@ -69,8 +64,6 @@ void ParameterController::clearParameters() {
 }
 
 void ParameterController::setActivePage(int pageNumber) {
-    if (section == nullptr) return;
-
     if (pageNumber < 0 && pageNumber > getSubSection()->getNumberOfPages()) return;
 
     if (pageNumber != currentPageNumber) {
@@ -100,8 +93,8 @@ void ParameterController::setActivePage(int pageNumber) {
 void ParameterController::setActiveSubSection(int subSectionNumber) {
     clearCurrentSubsection();
 
-    if (section->getSubSections().size() > 0 && !section->hasVirtualSubSections()) {
-        subSection = section->getSubSections().at(subSectionNumber);
+    if (section.getSubSections().size() > 0 && !section.hasVirtualSubSections()) {
+        subSection = section.getSubSections().at(subSectionNumber);
     }
     currentSubSectionNumber = subSectionNumber;
     currentPageNumber = 0;
@@ -111,22 +104,14 @@ void ParameterController::setActiveSubSection(int subSectionNumber) {
 }
 
 void ParameterController::displayActivePage() {
-    if (section == nullptr) {
-        upButton->setLED(false);
-        downButton->setLED(false);
-        return;
-    };
-
     int numberOfPages = getSubSection()->getNumberOfPages();
     upButton->setLED(numberOfPages > 1 && currentPageNumber > 0);
     downButton->setLED(numberOfPages > 1 && currentPageNumber < numberOfPages - 1);
 }
 
 bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed) {
-    if (section == nullptr) return false;
-
     if (id == 0) {
-        int numberOfSubSections = section->getNumberOfSubSections();
+        int numberOfSubSections = section.getNumberOfSubSections();
         if (numberOfSubSections > 0) {
             if (clockwise) {
                 if (currentSubSectionNumber + 1 < numberOfSubSections) {
@@ -159,8 +144,6 @@ bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed
 }
 
 bool ParameterController::rotaryEncoderButtonChanged(int id, bool released) {
-    if (section == nullptr) return false;
-
     return false;
 }
 
@@ -168,7 +151,7 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
     SynthParameter parameter = getSubSection()->getParameters()[index];
     int currentValue;
 
-    int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+    int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
     SerialUSB.print("subIndex: ");
     SerialUSB.println(subIndex);
 
@@ -261,7 +244,7 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
 }
 
 void ParameterController::displayTwinParameters(int index1, int index2, int displayNumber) {
-    int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+    int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
 
     string name1 = (index1 >= 0 && getSubSection()->getParameters()[index1].getNumber(subIndex) > 0)
                    ? getSubSection()->getParameters()[index1].getName() : "";
@@ -327,7 +310,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
     if (parameterIndex >= 0) {
         SynthParameter parameter = getSubSection()->getParameters()[parameterIndex];
 
-        int subIndex = (section->hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+        int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
         if (parameter.getNumber(subIndex) < 0) return printValue;
 
         int value;
@@ -358,7 +341,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
             case MIDI_NOTE: {
                 value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
                 if (value <= 127) {
-                    string MIDI_NOTES[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+                    string MIDI_NOTES[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
                     int octave = (value / 12) - 1;
                     int noteIndex = (value % 12);
@@ -392,12 +375,12 @@ string ParameterController::getDisplayValue(int parameterIndex) {
 }
 
 Section *ParameterController::getSubSection() {
-    if (section->getSubSections().size() > 0) {
-        subSection = section->getSubSections().at(currentSubSectionNumber);
+    if (section.getSubSections().size() > 0) {
+        subSection = section.getSubSections().at(currentSubSectionNumber);
         return &subSection;
     }
 
-    return section;
+    return &section;
 }
 
 void ParameterController::displaySubSections() {
@@ -409,22 +392,20 @@ void ParameterController::displaySubSections(bool paintItBlack) {
     SerialUSB.print((paintItBlack) ? "true" : "false");
     SerialUSB.println(")");
 
-    if (section == nullptr) return;
-
     tft->setTextPadding(0);
     tft->setTextSize(2);
 
     tft->setTextColor(paintItBlack ? MY_ORANGE : TFT_WHITE);
 
     tft->setTextDatum(1);
-    tft->drawString(section->getName().c_str(), 119, 4, 1);
+    tft->drawString(section.getName().c_str(), 119, 4, 1);
     tft->setTextDatum(0);
 
     int lineNumber = 0;
 
     tft->setTextColor(paintItBlack ? TFT_BLACK : TFT_WHITE);
 
-    for (auto &title : section->getSubSectionTitles()) {
+    for (auto &title : section.getSubSectionTitles()) {
         if (!paintItBlack) {
             tft->setTextColor((lineNumber == currentSubSectionNumber) ? TFT_WHITE : TFT_GREY);
         }
@@ -438,25 +419,56 @@ void ParameterController::displaySubSections(bool paintItBlack) {
 }
 
 void ParameterController::clearCurrentSubsection() {
-    if (section == nullptr || section->getNumberOfSubSections() == 0) return;
+    if (section.getNumberOfSubSections() == 0) return;
 
     tft->setTextColor(TFT_BLACK);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
     tft->setTextColor(TFT_GREY);
-    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
+    tft->drawString(section.getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
                     40 + LINE_HEIGHT * currentSubSectionNumber, 1);
 }
 
 void ParameterController::displayCurrentSubsection() {
     tft->setTextColor(TFT_WHITE);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
-    tft->drawString(section->getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
+    tft->drawString(section.getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
                     40 + LINE_HEIGHT * currentSubSectionNumber, 1);
 }
 
 void ParameterController::clearScreen() {
     clearCurrentSubsection();
     displaySubSections(true);
+}
+
+Section ParameterController::createSection(int sectionNumber) {
+    switch (sectionNumber) {
+        case 1:
+            return SectionFactory().createVoiceSection();
+        case 2:
+            return SectionFactory().createMixerSection();
+        case 3:
+            return SectionFactory().createEffectsSection();
+        case 4:
+            return SectionFactory().createArpSection();
+        case 5:
+            return SectionFactory().createOscillatorSection();
+        case 6:
+            return SectionFactory().createEnvelopeSection();
+        case 7:
+            return SectionFactory().createLFOSection();
+        case 8:
+            return SectionFactory().createFilterSection();
+        case 9:
+            return SectionFactory().createPatchSection();
+        case 10:
+            return SectionFactory().createExternalControlsSection();
+        case 11:
+            return SectionFactory().createPerformanceControlsSection();
+        case 12:
+            return SectionFactory().createSequencerSection();
+        default:
+            return SectionFactory().createDefaultSection();
+    }
 }
 
 

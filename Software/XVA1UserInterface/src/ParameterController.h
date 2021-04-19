@@ -12,7 +12,6 @@
 #include "Multiplexer.h"
 #include "Section.h"
 #include "LEDButton.h"
-#include "SynthParameterBuilder.h"
 #include "SectionFactory.h"
 
 class ParameterController {
@@ -26,7 +25,7 @@ private:
 
     const int LINE_HEIGHT = 25;
 
-    Section *section = SectionFactory().createDefaultSection();
+    Section section = SectionFactory().createDefaultSection();
     int parameterIndices[8];
 
     int currentPageNumber = 0;
@@ -66,8 +65,8 @@ public:
     ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft, Adafruit_SSD1306 *display,
                         LEDButton *upButton, LEDButton *downButton);
 
-    void setSection(Section *pSection);
-    void setSection(Section *pSection, bool showSubSections);
+    void setSection(int sectionNumber);
+    void setSection(int sectionNumber, bool showSubSections);
 
     void setDefaultSection();
 
@@ -80,6 +79,8 @@ public:
     void downButtonTapped();
 
     void clearScreen();
+
+    Section createSection(int sectionNumber);
 
 };
 

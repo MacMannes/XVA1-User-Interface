@@ -4,61 +4,71 @@
 
 #include "Section.h"
 
-Section::Section(const string &name) : name(name) {}
-
-Section::Section(string name, vector<SynthParameter> parameters) {
-    this->name = name;
-    this->parameters = parameters;
-}
-
-Section::Section(string name, vector<Section> subSections) {
-    this->name = name;
-    this->subSections = subSections;
-    this->parameters = {};
-}
-
-Section::Section(string name, vector<string> subSectionTitles, vector<SynthParameter> parameters) {
-    this->name = name;
-    this->virtualSubSectionTitles = subSectionTitles;
-    this->parameters = parameters;
-}
+Section::Section(string name) : _name(name) {}
 
 const string &Section::getName() const {
-    return name;
+    return _name;
 }
 
 const vector<string> &Section::getSubSectionTitles() {
-    if (virtualSubSectionTitles.size() == 0 && subSections.size() > 0) {
-        for (auto &section : subSections) {
-            virtualSubSectionTitles.push_back(section.getName());
+    if (_virtualSubSectionTitles.size() == 0 && _subSections.size() > 0) {
+        for (auto &section : _subSections) {
+            _virtualSubSectionTitles.push_back(section.getName());
         }
     }
 
-    return virtualSubSectionTitles;
+    return _virtualSubSectionTitles;
 }
 
 const vector<SynthParameter> &Section::getParameters() const {
-    return parameters;
+    return _parameters;
 }
 
 int Section::getNumberOfSubSections() {
-    if (subSections.size() > 0) {
-        return subSections.size();
-    } else if (virtualSubSectionTitles.size() > 0) {
-        return virtualSubSectionTitles.size();
+    if (_subSections.size() > 0) {
+        return _subSections.size();
+    } else if (_virtualSubSectionTitles.size() > 0) {
+        return _virtualSubSectionTitles.size();
     }
 
     return 0;
 }
 
 int Section::getNumberOfPages() {
-    return (parameters.size() + 8 - 1) / 8;;
+    return (_parameters.size() + 8 - 1) / 8;;
 }
 
 const vector<Section> &Section::getSubSections() const {
-    return subSections;
+    return _subSections;
 }
 
 bool Section::hasVirtualSubSections() {
-    return virtualSubSectionTitles.size() > 0 && subSections.size() == 0;
+    return _virtualSubSectionTitles.size() > 0 && _subSections.size() == 0;
+}
+
+Section::~Section() {
+    _virtualSubSectionTitles.clear();
+    _parameters.clear();
+    _subSections.clear();
+}
+
+Section &Section::parameters(std::initializer_list<SynthParameter> parameters) {
+    for (const auto &parameter : parameters) {
+        _parameters.push_back(parameter);
+    }
+    return *this;
+}
+
+Section &Section::subSections(std::initializer_list<Section> sections) {
+    for (const auto &section : sections) {
+        _subSections.push_back(section);
+    }
+    return *this;
+}
+
+Section &Section::virtualSubSectionTitles(std::initializer_list<std::string> titles) {
+    for (const auto &title : titles) {
+        _virtualSubSectionTitles.push_back(title);
+    }
+    return *this;
 }
