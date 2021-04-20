@@ -52,23 +52,19 @@ Section::~Section() {
     _subSections.clear();
 }
 
-Section &Section::parameters(std::initializer_list<SynthParameter> parameters) {
-    for (const auto &parameter : parameters) {
-        _parameters.push_back(parameter);
-    }
-    return *this;
-}
-
-Section &Section::subSections(std::initializer_list<Section> sections) {
-    for (const auto &section : sections) {
-        _subSections.push_back(section);
-    }
-    return *this;
-}
-
-Section &Section::virtualSubSectionTitles(std::initializer_list<std::string> titles) {
+Section &Section::virtualSubSectionTitles(const std::initializer_list<const std::string> titles) {
     for (const auto &title : titles) {
         _virtualSubSectionTitles.push_back(title);
     }
+    return *this;
+}
+
+Section &Section::addSubSection(const Section &section) {
+    _subSections.push_back(section);
+    return *this;
+}
+
+Section &Section::addParameter(const SynthParameter &parameter) {
+    _parameters.push_back(parameter);
     return *this;
 }

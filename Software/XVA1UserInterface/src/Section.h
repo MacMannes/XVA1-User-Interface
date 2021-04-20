@@ -19,7 +19,7 @@ private:
     vector<SynthParameter> _parameters;
 
 public:
-    Section(string name);
+    explicit Section(string name);
 
     virtual ~Section();
 
@@ -37,9 +37,11 @@ public:
 
     bool hasVirtualSubSections();
 
-    Section &parameters(std::initializer_list<SynthParameter> parameters);
-    Section &subSections(std::initializer_list<Section> sections);
-    Section &virtualSubSectionTitles(std::initializer_list<std::string> titles);
+    Section &virtualSubSectionTitles(std::initializer_list<const std::string> titles);
+
+    Section &addSubSection(const Section &section);
+
+    Section &addParameter(const SynthParameter &parameter);
 
 };
 

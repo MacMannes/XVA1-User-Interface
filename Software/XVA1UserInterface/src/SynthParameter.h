@@ -52,13 +52,13 @@ public:
 
     SynthParameter &number(int number);
 
-    SynthParameter &numbers(std::initializer_list<int> numbers);
+    SynthParameter &numbers(std::initializer_list<const int> numbers);
 
     SynthParameter &bitNumber(int bitNumber);
 
-    SynthParameter &bitNumbers(std::initializer_list<int> bitNumbers);
+    SynthParameter &bitNumbers(std::initializer_list<const int> bitNumbers);
 
-    SynthParameter &descriptions(std::initializer_list<std::string> descriptions);
+    SynthParameter &descriptions(std::initializer_list<const std::string> descriptions);
 
     SynthParameter &performanceControlType(int paramNumber1, int paramNumber2);
 

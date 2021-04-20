@@ -38,6 +38,7 @@ void ParameterController::setSection(int sectionNumber) {
 void ParameterController::setSection(int sectionNumber, bool showSubSections) {
     subSection = Section("empty");
 
+    section = Section("empty"); // Ugly trick to release some memory
     section = createSection(sectionNumber);
     currentSubSectionNumber = 0;
 

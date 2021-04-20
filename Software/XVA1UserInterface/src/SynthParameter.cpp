@@ -52,7 +52,7 @@ const std::vector<std::string> &SynthParameter::getDescriptions() const {
     return _descriptions;
 }
 
-SynthParameter &SynthParameter::type(ParameterType type) {
+SynthParameter &SynthParameter::type(const ParameterType type) {
     _type = type;
     return *this;
 }
@@ -62,43 +62,43 @@ SynthParameter &SynthParameter::min(int min) {
     return *this;
 }
 
-SynthParameter &SynthParameter::max(int max) {
+SynthParameter &SynthParameter::max(const int max) {
     _max = max;
     return *this;
 }
 
-SynthParameter &SynthParameter::number(int number) {
+SynthParameter &SynthParameter::number(const int number) {
     _numbers.push_back(number);
     return *this;
 }
 
-SynthParameter &SynthParameter::numbers(std::initializer_list<int> numbers) {
+SynthParameter &SynthParameter::numbers(const std::initializer_list<const int> numbers) {
     for (const auto &item : numbers) {
         _numbers.push_back(item);
     }
     return *this;
 }
 
-SynthParameter &SynthParameter::bitNumber(int bitNumber) {
+SynthParameter &SynthParameter::bitNumber(const int bitNumber) {
     _bitNumbers.push_back(bitNumber);
     return *this;
 }
 
-SynthParameter &SynthParameter::bitNumbers(std::initializer_list<int> bitNumbers) {
+SynthParameter &SynthParameter::bitNumbers(const std::initializer_list<const int> bitNumbers) {
     for (const auto &item : bitNumbers) {
         _bitNumbers.push_back(item);
     }
     return *this;
 }
 
-SynthParameter &SynthParameter::descriptions(std::initializer_list<std::string> descriptions) {
+SynthParameter &SynthParameter::descriptions(const std::initializer_list<const std::string> descriptions) {
     for (const auto &item : descriptions) {
         _descriptions.push_back(item);
     }
     return *this;
 }
 
-SynthParameter &SynthParameter::performanceControlType(int paramNumber1, int paramNumber2) {
+SynthParameter &SynthParameter::performanceControlType(const int paramNumber1, const int paramNumber2) {
     _type = PERFORMANCE_CTRL;
     _numbers.push_back(paramNumber1);
     _numbers.push_back(paramNumber2);
