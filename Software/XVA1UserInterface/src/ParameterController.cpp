@@ -2,6 +2,7 @@
 // Created by André Mathlener on 08/04/2021.
 //
 
+#include <sstream>
 #include "ParameterController.h"
 #include "Globals.h"
 #include "FreeMemory.h"
@@ -46,15 +47,15 @@ void ParameterController::setSection(int sectionNumber, bool showSubSections) {
     setActivePage(0);
 
     if (showSubSections) {
-        SerialUSB.println("BEFORE displaySubSections");
-        SerialUSB.print("freeMemory()=");
-        SerialUSB.println(freeMemory());
+        Serial.println("BEFORE displaySubSections");
+        Serial.print("freeMemory()=");
+        Serial.println(freeMemory());
 
         displaySubSections();
 
-        SerialUSB.println("AFTER displaySubSections");
-        SerialUSB.print("freeMemory()=");
-        SerialUSB.println(freeMemory());
+        Serial.println("AFTER displaySubSections");
+        Serial.print("freeMemory()=");
+        Serial.println(freeMemory());
     }
 }
 
@@ -68,8 +69,8 @@ void ParameterController::setActivePage(int pageNumber) {
     if (pageNumber < 0 && pageNumber > getSubSection()->getNumberOfPages()) return;
 
     if (pageNumber != currentPageNumber) {
-        SerialUSB.print(F("Setting active page: "));
-        SerialUSB.println(pageNumber);
+        Serial.print(F("Setting active page: "));
+        Serial.println(pageNumber);
     }
 
     clearParameters();
@@ -153,8 +154,8 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
     int currentValue;
 
     int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
-    SerialUSB.print("subIndex: ");
-    SerialUSB.println(subIndex);
+    Serial.print("subIndex: ");
+    Serial.println(subIndex);
 
     switch (parameter.getType()) {
         case PERFORMANCE_CTRL: {
@@ -168,12 +169,12 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
             int value = synthesizer->getParameter(parameter.getNumber());
             currentValue = bitRead(value, parameter.getBitNumber(subIndex));
 
-            SerialUSB.print("Byte value: ");
-            SerialUSB.println(value);
-            SerialUSB.print("Bit-nr: ");
-            SerialUSB.println(parameter.getBitNumber(subIndex));
-            SerialUSB.print("Bit value: ");
-            SerialUSB.println(currentValue);
+            Serial.print("Byte value: ");
+            Serial.println(value);
+            Serial.print("Bit-nr: ");
+            Serial.println(parameter.getBitNumber(subIndex));
+            Serial.print("Bit value: ");
+            Serial.println(currentValue);
 
             break;
         }
@@ -389,9 +390,9 @@ void ParameterController::displaySubSections() {
 }
 
 void ParameterController::displaySubSections(bool paintItBlack) {
-    SerialUSB.print("displaySubSections(");
-    SerialUSB.print((paintItBlack) ? "true" : "false");
-    SerialUSB.println(")");
+    Serial.print("displaySubSections(");
+    Serial.print((paintItBlack) ? "true" : "false");
+    Serial.println(")");
 
     tft->setTextPadding(0);
     tft->setTextSize(2);
@@ -470,6 +471,12 @@ Section ParameterController::createSection(int sectionNumber) {
         default:
             return SectionFactory().createDefaultSection();
     }
+}
+
+string ParameterController::to_string(int value) {
+    stringstream temp;
+    temp<<value;
+    return temp.str();
 }
 
 

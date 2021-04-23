@@ -7,7 +7,6 @@
 
 
 #include <Adafruit_MCP23017.h>
-#include <wiring_constants.h>
 #include <Arduino.h>
 
 class Button {
