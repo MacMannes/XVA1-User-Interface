@@ -5,6 +5,6 @@
 #ifndef XVA1USERINTERFACE_FREEMEMORY_H
 #define XVA1USERINTERFACE_FREEMEMORY_H
 
-int freeMemory();
+uint32_t freeMemory();
 
 #endif //XVA1USERINTERFACE_FREEMEMORY_H

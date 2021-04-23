@@ -2,23 +2,9 @@
 // Created by André Mathlener on 16/04/2021.
 //
 
+#include <Esp.h>
 #include "FreeMemory.h"
 
-//#ifdef __arm__
-//// should use uinstd.h to define sbrk but Due causes a conflict
-//extern "C" char* sbrk(int incr);
-//#else  // __ARM__
-//extern char *__brkval;
-//#endif  // __arm__
-
-int freeMemory() {
-    return -1;
-//    char top;
-//#ifdef __arm__
-//    return &top - reinterpret_cast<char*>(sbrk(0));
-//#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
-//    return &top - __brkval;
-//#else  // __arm__
-//  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
-//#endif  // __arm__
+uint32_t freeMemory() {
+    return ESP.getFreeHeap();
 }

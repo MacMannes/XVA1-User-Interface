@@ -7,7 +7,7 @@
 
 
 
-set(CMAKE_CONFIGURATION_TYPES "seeed_xiao" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "esp32" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
 
 
 SET(CMAKE_C_COMPILER "$ENV{HOME}/.platformio/packages/toolchain-xtensa32/bin/xtensa-esp32-elf-gcc")
@@ -18,7 +18,7 @@ SET(CMAKE_C_FLAGS "-std=gnu99 -Wno-old-style-declaration -include include/User_S
 SET(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
 
-if (CMAKE_BUILD_TYPE MATCHES "seeed_xiao")
+if (CMAKE_BUILD_TYPE MATCHES "esp32")
     add_definitions(-D'PLATFORMIO=50101')
     add_definitions(-D'ARDUINO_ESP32_DEV')
     add_definitions(-D'USER_SETUP_LOADED=1')
@@ -35,12 +35,12 @@ if (CMAKE_BUILD_TYPE MATCHES "seeed_xiao")
     include_directories("${CMAKE_CURRENT_LIST_DIR}/include")
     include_directories("${CMAKE_CURRENT_LIST_DIR}/src")
     include_directories("${CMAKE_CURRENT_LIST_DIR}/lib/RotaryEncOverMCP")
-    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/TFT_eSPI")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/esp32/TFT_eSPI")
     include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif32/libraries/SPIFFS/src")
     include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif32/libraries/FS/src")
-    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit SSD1306")
-    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit GFX Library")
-    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/Adafruit BusIO")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/esp32/Adafruit SSD1306")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/esp32/Adafruit GFX Library")
+    include_directories("${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/esp32/Adafruit BusIO")
     include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src")
     include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src")
     include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoespressif32/tools/sdk/include/config")
@@ -137,7 +137,7 @@ if (CMAKE_BUILD_TYPE MATCHES "seeed_xiao")
     include_directories("$ENV{HOME}/.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include")
 
     FILE(GLOB_RECURSE EXTRA_LIB_SOURCES
-        ${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/seeed_xiao/*.*
+        ${CMAKE_CURRENT_LIST_DIR}/.pio/libdeps/esp32/*.*
     )
 endif()
 
