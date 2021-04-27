@@ -82,6 +82,7 @@ public:
 
     Section createSection(int sectionNumber);
 
+    string to_string(int value);
 };
 
 

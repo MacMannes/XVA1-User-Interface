@@ -17,6 +17,8 @@ private:
     byte currentPatchData[512] = {};
 
 public:
+    void begin();
+
     void selectPatch(int number);
 
     void loadPatchData();

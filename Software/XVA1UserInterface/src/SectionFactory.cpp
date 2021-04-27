@@ -24,8 +24,26 @@ Section SectionFactory::createVoiceSection() {
                             .type(CENTER_128)
                             .number(241)
             )
+            .addParameter(SynthParameter("Ring Mod").number(271))
             .addParameter(SynthParameter("Bend Up").number(242))
-            .addParameter(SynthParameter("Bend Down").number(243));
+            .addParameter(SynthParameter("Bend Down").number(243))
+            .addParameter(
+                    SynthParameter("Legato Mode")
+                            .number(244)
+                            .max(1)
+                            .descriptions({" Polyphonic ", "Monophonic/Legato"})
+            )
+            .addParameter(SynthParameter(""))
+            .addParameter(
+                    SynthParameter("Glide")
+                            .number(245)
+                            .max(2)
+                            .descriptions({"Off", "Always", "Only Legato Notes"})
+            )
+            .addParameter(SynthParameter("Glide Time").number(246))
+            .addParameter(SynthParameter("Velocity offset").number(249))
+            .addParameter(SynthParameter("Tuning").number(251))
+            .addParameter(SynthParameter("Temperature offset").number(239));
 }
 
 Section SectionFactory::createMixerSection() {
@@ -33,18 +51,17 @@ Section SectionFactory::createMixerSection() {
             .addSubSection(
                     Section("Output")
                             .addParameter(SynthParameter("Volume").number(509))
-                            .addParameter(SynthParameter(""))
+                            .addParameter(SynthParameter("Panning").number(247).type(CENTER_128))
                             .addParameter(
                                     SynthParameter("Gain Pre-FX")
                                             .number(510)
-                                            .max(4)
+                                            .max(3)
                                             .descriptions({"0 dB", "+6 dB", "+12 dB", "+18 dB"})
                             )
-                            .addParameter(SynthParameter(""))
                             .addParameter(
                                     SynthParameter("Gain Post-FX")
                                             .number(511)
-                                            .max(4)
+                                            .max(3)
                                             .descriptions({"0 dB", "+6 dB", "+12 dB", "+18 dB"})
                             )
 
@@ -76,20 +93,27 @@ Section SectionFactory::createMixerSection() {
 Section SectionFactory::createEffectsSection() {
     return Section("Effects")
             .addSubSection(
-                    Section("Bandwidth limit")
+                    Section("Main")
                             .addParameter(
                                     SynthParameter("Bandwidth")
                                             .number(340)
                                             .max(7)
-                                            .descriptions({"No filter", "20 kHz", "18 kHz", "16 kHz",
+                                            .descriptions({"Full", "20 kHz", "18 kHz", "16 kHz",
                                                            "14 kHz", "12 kHz", "10 kHz", "8 kHz"})
+                            )
+                            .addParameter(
+                                    SynthParameter("FX Routing")
+                                            .number(508)
+                                            .max(2)
+                                            .descriptions({"Chor/Phas/AM/Gate/Dly", "Gate/Dly/Chor/Phas/AM",
+                                                           "Bypass effects"})
                             )
             )
             .addSubSection(
                     Section("Distortion")
                             .addParameter(
                                     SynthParameter("On or Off")
-                                            .number(340)
+                                            .number(350)
                                             .max(1)
                                             .descriptions({"OFF", "ON"})
                             )
@@ -98,16 +122,16 @@ Section SectionFactory::createEffectsSection() {
                                             .number(354)
                                             .max(3)
                                             .descriptions(
-                                                    {"Hard clipping", "Soft clipping", "Tube 12AX",
+                                                    {"Hard clip", "Soft clip", "Tube 12AX",
                                                      "Tube DSL"})
                             )
-                            .addParameter(SynthParameter("Gain PRE").number(354))
-                            .addParameter(SynthParameter("Gain POST").number(354))
+                            .addParameter(SynthParameter("Gain PRE").number(351))
+                            .addParameter(SynthParameter("Gain POST").number(352))
                             .addParameter(
                                     SynthParameter("Filter POST")
-                                            .number(340)
+                                            .number(353)
                                             .max(7)
-                                            .descriptions({"No filter", "20 kHz", "18 kHz", "16 kHz",
+                                            .descriptions({"Full", "20 kHz", "18 kHz", "16 kHz",
                                                            "14 kHz", "12 kHz", "10 kHz", "8 kHz"})
                             )
             )
@@ -115,26 +139,94 @@ Section SectionFactory::createEffectsSection() {
                     Section("Chorus/Flanger")
                             .addParameter(SynthParameter("DRY").number(360))
                             .addParameter(SynthParameter("WET").number(351))
+                            .addParameter(
+                                    SynthParameter("Mode")
+                                            .number(362)
+                                            .max(3)
+                                            .descriptions(
+                                                    {"Chorus Long", "Chorus Short", "Flanger Long", "Flanger Short"})
+                            )
+                            .addParameter(SynthParameter("Speed").number(363))
+                            .addParameter(SynthParameter("Depth").number(364))
+                            .addParameter(SynthParameter("Feedback").number(365))
+
+                            .addParameter(SynthParameter("LR Phase").number(366).type(CENTER_128))
             )
             .addSubSection(
                     Section("Phaser")
                             .addParameter(SynthParameter("DRY").number(310))
                             .addParameter(SynthParameter("WET").number(311))
+                            .addParameter(
+                                    SynthParameter("Mode")
+                                            .number(312)
+                                            .max(2)
+                                            .descriptions({"Mono", "Stereo", "Cross"})
+                            )
+                            .addParameter(SynthParameter("Speed").number(314))
+                            .addParameter(SynthParameter("Depth").number(313))
+                            .addParameter(SynthParameter("Offset").number(316))
+                            .addParameter(
+                                    SynthParameter("Stages")
+                                            .number(317)
+                                            .min(4).max(12)
+                            )
+                            .addParameter(SynthParameter("Feedback").number(315))
+                            .addParameter(SynthParameter("LR Phase").number(318).type(CENTER_128))
             )
             .addSubSection(
                     Section("Delay")
                             .addParameter(SynthParameter("DRY").number(300))
                             .addParameter(SynthParameter("WET").number(301))
+                            .addParameter(
+                                    SynthParameter("Mode")
+                                            .number(302)
+                                            .max(2)
+                                            .descriptions({"Mono", "Stereo", "Cross"})
+                            )
+                            .addParameter(SynthParameter("Time").number(303))
+                            .addParameter(SynthParameter("Feedback").number(304))
+                            .addParameter(SynthParameter("Tempo").number(307))
+                            .addParameter(SynthParameter("HI").number(305))
+                            .addParameter(SynthParameter("LO").number(306))
+                            .addParameter(SynthParameter("Multiplier").number(308).min(1))
+                            .addParameter(SynthParameter("Divider").number(309).min(1))
+                            .addParameter(SynthParameter("Mod Speed").number(298))
+                            .addParameter(SynthParameter("Mod Depth").number(299))
+                            .addParameter(
+                                    SynthParameter("Smear")
+                                            .number(291)
+                                            .max(7)
+                                            .descriptions(
+                                                    {"None", "16-bit", "15-bit", "14-bit", "13-bit", "12-bit", "11-bit",
+                                                     "10-bit"})
+                            )
+                            .addParameter(
+                                    SynthParameter("2x")
+                                            .number(291)
+                                            .max(1)
+                                            .descriptions({"Off", "2x Delay"})
+                            )
             );
 }
 
 Section SectionFactory::createArpSection() {
     return Section("ARP")
-            .addParameter(SynthParameter("MODE").number(450))
             .addParameter(
-                    SynthParameter("Temp")
+                    SynthParameter("MODE")
+                            .number(450)
+                            .max(5)
+                            .descriptions({"Off", "Up", "Down", "Up/Down", "As played", "Random"})
+            )
+            .addParameter(
+                    SynthParameter("Tempo")
                             .number(451)
-                            .min(44)
+//                            .min(50) // TODO: Also allow 0 to follow incoming MIDI clock tempo
+            )
+            .addParameter(
+                    SynthParameter("Multiplier").number(453).min(1)
+            )
+            .addParameter(
+                    SynthParameter("Octaves").number(454).max(10)
             );
 }
 
@@ -268,8 +360,8 @@ Section SectionFactory::createLFOSection() {
                                                            "Sin( x ) + Sin( 2x )", "Sin( x ) + Sin( 3x )",
                                                            "Sin( x ) ^ 3", "Guitar", "S & H"})
                             )
-                            .addParameter(SynthParameter("Range").number(166))
                             .addParameter(SynthParameter("Speed").number(161))
+                            .addParameter(SynthParameter("Range").number(166))
                             .addParameter(
                                     SynthParameter("Sync")
                                             .number(162)
@@ -277,8 +369,9 @@ Section SectionFactory::createLFOSection() {
                                                            "Multi, Free running", "Multi, Key sync"})
                             )
                             .addParameter(SynthParameter("Fade").number(163))
+                            .addParameter(SynthParameter(""))
+                            .addParameter(SynthParameter("Depth Amplitude").number(165))
                             .addParameter(SynthParameter("Depth Pitch").number(164))
-                            .addParameter(SynthParameter("AMP Pitch").number(165))
             )
             .addSubSection(
                     Section("LFO2")
@@ -290,8 +383,8 @@ Section SectionFactory::createLFOSection() {
                                                            "Sin( x ) + Sin( 2x )", "Sin( x ) + Sin( 3x )",
                                                            "Sin( x ) ^ 3", "Guitar", "S & H"})
                             )
-                            .addParameter(SynthParameter("Range").number(176))
                             .addParameter(SynthParameter("Speed").number(171))
+                            .addParameter(SynthParameter("Range").number(176))
                             .addParameter(
                                     SynthParameter("Sync")
                                             .number(172)
@@ -299,8 +392,9 @@ Section SectionFactory::createLFOSection() {
                                                            "Multi, Free running", "Multi, Key sync"})
                             )
                             .addParameter(SynthParameter("Fade").number(173))
-                            .addParameter(SynthParameter("Depth Pitch").number(174))
-                            .addParameter(SynthParameter("AMP Pitch").number(175))
+                            .addParameter(SynthParameter(""))
+                            .addParameter(SynthParameter("Depth Pulse Width").number(174))
+                            .addParameter(SynthParameter("Depth Cutoff").number(175))
             );
 }
 
@@ -492,41 +586,13 @@ Section SectionFactory::createExternalControlsSection() {
             )
             .addSubSection(
                     Section("Volume")
-                            .addParameter(
-                                    SynthParameter("Aftertouch")
-                                            .number(212)
-                                            .type(CENTER_128)
-                            )
-                            .addParameter(
-                                    SynthParameter("Wheel")
-                                            .number(213)
-                                            .type(CENTER_128)
-                            )
-                            .addParameter(
-                                    SynthParameter("Breath")
-                                            .number(214)
-                                            .type(CENTER_128)
-                            )
-                            .addParameter(
-                                    SynthParameter("Foot")
-                                            .number(215)
-                                            .type(CENTER_128)
-                            )
-                            .addParameter(
-                                    SynthParameter("Temperature")
-                                            .number(228)
-                                            .type(CENTER_128)//
-                            )
-                            .addParameter(
-                                    SynthParameter("CV-1")
-                                            .number(230)
-                                            .type(CENTER_128)
-                            )
-                            .addParameter(
-                                    SynthParameter("CV-2")
-                                            .number(231)
-                                            .type(CENTER_128)
-                            )
+                            .addParameter(SynthParameter("Aftertouch").number(212))
+                            .addParameter(SynthParameter("Wheel").number(213))
+                            .addParameter(SynthParameter("Breath").number(214))
+                            .addParameter(SynthParameter("Foot").number(215))
+                            .addParameter(SynthParameter("Temperature").number(228))
+                            .addParameter(SynthParameter("CV-1").number(230))
+                            .addParameter(SynthParameter("CV-2").number(231))
             )
             .addSubSection(
                     Section("Pitch LFO")
@@ -561,7 +627,6 @@ Section SectionFactory::createExternalControlsSection() {
 
 Section SectionFactory::createPerformanceControlsSection() {
     return Section("Performance Ctrls")
-            .addParameter(SynthParameter("Midi CC 70").performanceControlType(400, 401))
             .addParameter(SynthParameter("Midi CC 70").performanceControlType(400, 401))
             .addParameter(SynthParameter("Midi CC 74").performanceControlType(408, 409))
             .addParameter(SynthParameter("Midi CC 71").performanceControlType(402, 403))

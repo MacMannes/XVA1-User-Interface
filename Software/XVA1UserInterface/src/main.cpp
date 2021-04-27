@@ -46,21 +46,21 @@ void initRotaryEncoders();
 void rtrim(std::string &s, char c);
 
 void setup() {
-    SerialUSB.begin(115200);
+    Serial.begin(115200);
 
     //while the serial stream is not open, do nothing:
-//    while (!SerialUSB);
+//    while (!Serial);
 
-    SerialUSB.println("\n");
-    SerialUSB.println("===================");
-    SerialUSB.println("XVA1 User Interface");
-    SerialUSB.println("===================\n");
+    Serial.println("\n");
+    Serial.println("===================");
+    Serial.println("XVA1 User Interface");
+    Serial.println("===================\n");
 
     mcp1.begin(0);
     mcp2.begin(1);
     mcp3.begin(2);
 
-    Serial1.begin(500000); // XVA1 Serial
+    synthesizer.begin();
 
     initMainScreen();
     clearMainScreen();
@@ -75,8 +75,8 @@ void setup() {
 
     mainRotaryEncoder.begin(true);
 
-    SerialUSB.print("freeMemory()=");
-    SerialUSB.println(freeMemory());
+    Serial.print("freeMemory()=");
+    Serial.println(freeMemory());
 }
 
 void loop() {
@@ -146,11 +146,11 @@ void initButtons() {
         button->begin();
     }
 
-    pinMode(3, INPUT_PULLUP);
+    pinMode(MAIN_ROTARY_BTN_PIN, INPUT_PULLUP);
 }
 
 void readButtons() {
-    bool mainRotaryButtonState = (digitalRead(3) == LOW);
+    bool mainRotaryButtonState = (digitalRead(MAIN_ROTARY_BTN_PIN) == LOW);
     if (mainRotaryButtonState != mainRotaryButtonPushed) {
         mainRotaryButtonPushed = mainRotaryButtonState;
         mainRotaryButtonChanged(!mainRotaryButtonPushed);
@@ -171,8 +171,8 @@ void handleMainEncoder(bool clockwise) {
         }
     }
 
-    SerialUSB.print("Selecting patch: ");
-    SerialUSB.println(currentPatchNumber);
+    Serial.print("Selecting patch: ");
+    Serial.println(currentPatchNumber);
 
     if (currentPatchNumber != oldValue) {
         synthesizer.selectPatch(currentPatchNumber);
@@ -264,10 +264,10 @@ void pollAllMCPs() {
 }
 
 void shortcutButtonChanged(Button *btn, bool released) {
-    SerialUSB.print("Shortcut-button #");
-    SerialUSB.print(btn->id);
-    SerialUSB.print(" ");
-    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+    Serial.print("Shortcut-button #");
+    Serial.print(btn->id);
+    Serial.print(" ");
+    Serial.println((released) ? "RELEASED" : "PRESSED");
 
     if (!released) {
         if (activeShortcut > 0) {
@@ -276,8 +276,8 @@ void shortcutButtonChanged(Button *btn, bool released) {
 
         activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
 
-        SerialUSB.print("Active Shortcut: ");
-        SerialUSB.println(activeShortcut);
+        Serial.print("Active Shortcut: ");
+        Serial.println(activeShortcut);
         for (auto &shortcutButton : shortcutButtons) {
             shortcutButton->setLED(shortcutButton->id == btn->id);
         }
@@ -289,10 +289,10 @@ void shortcutButtonChanged(Button *btn, bool released) {
 }
 
 void mainButtonChanged(Button *btn, bool released) {
-    SerialUSB.print("Main-button #");
-    SerialUSB.print(btn->id);
-    SerialUSB.print(" ");
-    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+    Serial.print("Main-button #");
+    Serial.print(btn->id);
+    Serial.print(" ");
+    Serial.println((released) ? "RELEASED" : "PRESSED");
 
     switch (btn->id) {
         case SHIFT_BUTTON:
@@ -318,17 +318,17 @@ void clearShortcut() {
 }
 
 void rotaryButtonChanged(Button *btn, bool released) {
-    SerialUSB.print("Rotary-button #");
-    SerialUSB.print(btn->id);
-    SerialUSB.print(" ");
-    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+    Serial.print("Rotary-button #");
+    Serial.print(btn->id);
+    Serial.print(" ");
+    Serial.println((released) ? "RELEASED" : "PRESSED");
 }
 
 void upOrDownButtonChanged(Button *btn, bool released) {
-    SerialUSB.print((btn->id == UP_BUTTON) ? "Up" : "Down");
-    SerialUSB.print("-button");
-    SerialUSB.print(" ");
-    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+    Serial.print((btn->id == UP_BUTTON) ? "Up" : "Down");
+    Serial.print("-button");
+    Serial.print(" ");
+    Serial.println((released) ? "RELEASED" : "PRESSED");
 
     if (!released) {
         if (btn->id == UP_BUTTON) {
@@ -340,7 +340,7 @@ void upOrDownButtonChanged(Button *btn, bool released) {
 }
 
 void mainRotaryButtonChanged(bool released) {
-    SerialUSB.print("MAIN-Rotary-button ");
-    SerialUSB.println((released) ? "RELEASED" : "PRESSED");
+    Serial.print("MAIN-Rotary-button ");
+    Serial.println((released) ? "RELEASED" : "PRESSED");
 
 }
