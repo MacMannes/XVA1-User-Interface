@@ -47,13 +47,8 @@ void ParameterController::setSection(int sectionNumber, bool showSubSections) {
     setActivePage(0);
 
     if (showSubSections) {
-        Serial.println("BEFORE displaySubSections");
-        Serial.print("freeMemory()=");
-        Serial.println(freeMemory());
-
         displaySubSections();
 
-        Serial.println("AFTER displaySubSections");
         Serial.print("freeMemory()=");
         Serial.println(freeMemory());
     }
@@ -418,6 +413,11 @@ void ParameterController::displaySubSections(bool paintItBlack) {
         tft->drawString(title.c_str(), 20, 40 + LINE_HEIGHT * lineNumber, 1);
         lineNumber++;
     }
+
+    if (lineNumber == 0) {
+        tft->drawString(">", 0, 40, 1);
+        tft->drawString("Main", 20, 40, 1);
+    }
 }
 
 void ParameterController::clearCurrentSubsection() {
@@ -431,6 +431,8 @@ void ParameterController::clearCurrentSubsection() {
 }
 
 void ParameterController::displayCurrentSubsection() {
+    if (section.getNumberOfSubSections() == 0) return;
+
     tft->setTextColor(TFT_WHITE);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
     tft->drawString(section.getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
