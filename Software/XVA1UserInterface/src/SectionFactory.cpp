@@ -206,7 +206,50 @@ Section SectionFactory::createEffectsSection() {
                                             .max(1)
                                             .descriptions({"Off", "2x Delay"})
                             )
-            );
+            )
+            .addSubSection(
+                    Section("Reverb")
+                            .addParameter(SynthParameter("DRY").number(390))
+                            .addParameter(SynthParameter("WET").number(291))
+                            .addParameter(
+                                    SynthParameter("Mode")
+                                            .number(392)
+                                            .max(1)
+                                            .descriptions({"Plate", "Hall"})
+                            )
+                            .addParameter(SynthParameter("Decay").number(393))
+                            .addParameter(SynthParameter("Damping").number(394))
+                            .addParameter(SynthParameter("HPF").number(397))
+                            .addParameter(SynthParameter("Modulation Speed").number(395))
+                            .addParameter(SynthParameter("Modulation Depth").number(396))
+
+            )
+            .addSubSection(
+                    Section("Gate")
+                            .addParameter(
+                                    SynthParameter("On or Off")
+                                            .number(385)
+                                            .max(1)
+                                            .descriptions({"OFF", "ON"})
+                            )
+                            .addParameter(
+                                    SynthParameter("Curve")
+                                            .number(386)
+                                            .max(1)
+                                            .descriptions({"S-Shape 1", "S-Shape 2"})
+                            )
+                            .addParameter(SynthParameter("Attack").number(387))
+                            .addParameter(SynthParameter("Release").number(388))
+            )
+//            .addSubSection(
+//                    Section("Early Reflections")
+//                            .addParameter(SynthParameter("DRY").number(294))
+//                            .addParameter(SynthParameter("WET").number(295))
+//                            .addParameter(SynthParameter("Room").number(296).max(31))
+//                            .addParameter(SynthParameter("Taps").number(293).max(32))
+//                            .addParameter(SynthParameter("Feedback").number(297))
+//            )
+            ;
 }
 
 Section SectionFactory::createArpSection() {
