@@ -62,6 +62,8 @@ public:
 
     SynthParameter &performanceControlType(int paramNumber1, int paramNumber2);
 
+    SynthParameter &asciiCharacterType(int paramNumber);
+
 };
 
 

@@ -56,22 +56,22 @@ void Synthesizer::loadPatchData() {
         }
     }
 
-    Serial.println();
+    Serial2.flush();
+    memcpy(currentPatchData, rxBuffer, 512);
 
+    setCurrentPatchName();
+}
+
+void Synthesizer::setCurrentPatchName() {
     string patchName = "";
 
-    for (int i = 480; i < 505; i++) {
-        patchName += (char) rxBuffer[i];
+    for (int i = 480; i <= 504; i++) {
+        patchName += (char) currentPatchData[i];
     }
+    currentPatchName = patchName;
 
     Serial.print("Patch name: ");
     Serial.println(patchName.c_str());
-    Serial.println();
-
-    Serial2.flush();
-
-    memcpy(currentPatchData, rxBuffer, 512);
-    currentPatchName = patchName;
 }
 
 int Synthesizer::getPatchNumber() const {
@@ -100,6 +100,10 @@ void Synthesizer::setParameter(int number, int value) {
     }
 
     currentPatchData[number] = value;
+
+    if (number >= 480 && number <= 504) {
+        setCurrentPatchName();
+    }
 }
 
 void Synthesizer::begin() {

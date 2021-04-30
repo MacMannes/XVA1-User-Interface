@@ -30,6 +30,8 @@ public:
     byte getParameter(int number) const;
 
     void setParameter(int number, int value);
+
+    void setCurrentPatchName();
 };
 
 

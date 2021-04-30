@@ -105,5 +105,13 @@ SynthParameter &SynthParameter::performanceControlType(const int paramNumber1, c
     return *this;
 }
 
+SynthParameter &SynthParameter::asciiCharacterType(int paramNumber) {
+    _type = ASCII_CHAR;
+    _numbers.push_back(paramNumber);
+    _min = 32;
+    _max = 254;
+    return *this;
+}
+
 
 

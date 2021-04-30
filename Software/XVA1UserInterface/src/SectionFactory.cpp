@@ -108,6 +108,18 @@ Section SectionFactory::createEffectsSection() {
                                             .descriptions({"Chor/Phas/AM/Gate/Dly", "Gate/Dly/Chor/Phas/AM",
                                                            "Bypass effects"})
                             )
+                            .addParameter(
+                                    SynthParameter("Bitcrusher depth").number(380)
+                            )
+                            .addParameter(
+                                    SynthParameter("Decimator depth").number(370)
+                            )
+                            .addParameter(
+                                    SynthParameter("Filter HI").number(320)
+                            )
+                            .addParameter(
+                                    SynthParameter("Filter LO").number(321)
+                            )
             )
             .addSubSection(
                     Section("Distortion")
@@ -241,15 +253,14 @@ Section SectionFactory::createEffectsSection() {
                             .addParameter(SynthParameter("Attack").number(387))
                             .addParameter(SynthParameter("Release").number(388))
             )
-//            .addSubSection(
-//                    Section("Early Reflections")
-//                            .addParameter(SynthParameter("DRY").number(294))
-//                            .addParameter(SynthParameter("WET").number(295))
-//                            .addParameter(SynthParameter("Room").number(296).max(31))
-//                            .addParameter(SynthParameter("Taps").number(293).max(32))
-//                            .addParameter(SynthParameter("Feedback").number(297))
-//            )
-            ;
+            .addSubSection(
+                    Section("Early Reflections")
+                            .addParameter(SynthParameter("DRY").number(294))
+                            .addParameter(SynthParameter("WET").number(295))
+                            .addParameter(SynthParameter("Room").number(296).max(31))
+                            .addParameter(SynthParameter("Taps").number(293).max(32))
+                            .addParameter(SynthParameter("Feedback").number(297))
+            );
 }
 
 Section SectionFactory::createArpSection() {
@@ -510,7 +521,43 @@ Section SectionFactory::createFilterSection() {
 
 Section SectionFactory::createPatchSection() {
     return Section("Patch")
-            .addParameter(SynthParameter(""));
+            .addParameter(SynthParameter("Name 1").asciiCharacterType(480))
+            .addParameter(SynthParameter("Name 5").asciiCharacterType(484))
+
+            .addParameter(SynthParameter("Name 2").asciiCharacterType(481))
+            .addParameter(SynthParameter("Name 6").asciiCharacterType(485))
+
+            .addParameter(SynthParameter("Name 3").asciiCharacterType(482))
+            .addParameter(SynthParameter("Name 7").asciiCharacterType(486))
+
+            .addParameter(SynthParameter("Name 4").asciiCharacterType(483))
+            .addParameter(SynthParameter("Name 8").asciiCharacterType(487))
+
+            .addParameter(SynthParameter("Name 9").asciiCharacterType(488))
+            .addParameter(SynthParameter("Name 13").asciiCharacterType(492))
+
+            .addParameter(SynthParameter("Name 10").asciiCharacterType(489))
+            .addParameter(SynthParameter("Name 14").asciiCharacterType(493))
+
+            .addParameter(SynthParameter("Name 11").asciiCharacterType(490))
+            .addParameter(SynthParameter("Name 15").asciiCharacterType(494))
+
+            .addParameter(SynthParameter("Name 12").asciiCharacterType(491))
+            .addParameter(SynthParameter("Name 16").asciiCharacterType(495))
+
+            .addParameter(SynthParameter("Name 17").asciiCharacterType(496))
+            .addParameter(SynthParameter("Name 21").asciiCharacterType(500))
+
+            .addParameter(SynthParameter("Name 18").asciiCharacterType(497))
+            .addParameter(SynthParameter("Name 22").asciiCharacterType(501))
+
+            .addParameter(SynthParameter("Name 19").asciiCharacterType(498))
+            .addParameter(SynthParameter("Name 23").asciiCharacterType(502))
+
+            .addParameter(SynthParameter("Name 20").asciiCharacterType(499))
+            .addParameter(SynthParameter("Name 24").asciiCharacterType(503))
+
+            .addParameter(SynthParameter("Name 25").asciiCharacterType(504));
 }
 
 Section SectionFactory::createExternalControlsSection() {

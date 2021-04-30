@@ -6,6 +6,7 @@
 #include "ParameterController.h"
 #include "Globals.h"
 #include "FreeMemory.h"
+#include "AllSynthParameters.h"
 
 ParameterController::ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft,
                                          Adafruit_SSD1306 *display, LEDButton *upButton, LEDButton *downButton)
@@ -353,6 +354,8 @@ string ParameterController::getDisplayValue(int parameterIndex) {
                 break;
             }
             case ASCII_CHAR:
+                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
+                printValue += value;
                 break;
             default: {
                 value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
@@ -445,34 +448,7 @@ void ParameterController::clearScreen() {
 }
 
 Section ParameterController::createSection(int sectionNumber) {
-    switch (sectionNumber) {
-        case 1:
-            return SectionFactory().createVoiceSection();
-        case 2:
-            return SectionFactory().createMixerSection();
-        case 3:
-            return SectionFactory().createEffectsSection();
-        case 4:
-            return SectionFactory().createArpSection();
-        case 5:
-            return SectionFactory().createOscillatorSection();
-        case 6:
-            return SectionFactory().createEnvelopeSection();
-        case 7:
-            return SectionFactory().createLFOSection();
-        case 8:
-            return SectionFactory().createFilterSection();
-        case 9:
-            return SectionFactory().createPatchSection();
-        case 10:
-            return SectionFactory().createExternalControlsSection();
-        case 11:
-            return SectionFactory().createPerformanceControlsSection();
-        case 12:
-            return SectionFactory().createSequencerSection();
-        default:
-            return SectionFactory().createDefaultSection();
-    }
+    return sections[sectionNumber];
 }
 
 string ParameterController::to_string(int value) {
