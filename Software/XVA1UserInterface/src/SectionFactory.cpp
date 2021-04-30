@@ -350,14 +350,7 @@ Section SectionFactory::createOscillatorSection() {
 Section SectionFactory::createEnvelopeSection() {
     return Section("Envelopes")
             .virtualSubSectionTitles({"AMP", "CUTOFF", "PITCH"})
-            .addParameter(SynthParameter("L0: Start").numbers({82, 81, 80}))
-            .addParameter(SynthParameter("L4: Release 1").numbers({102, 101, 100}))
-            .addParameter(SynthParameter("L1: Attack").numbers({88, 86, 85}))
-            .addParameter(SynthParameter("L5: Release 2").numbers({107, 106, 105}))
-            .addParameter(SynthParameter("L2: Decay").numbers({92, 91, 90}))
-            .addParameter(SynthParameter(""))
-            .addParameter(SynthParameter("L3: Sustain").numbers({97, 96, 95}))
-            .addParameter(SynthParameter("Delay").numbers({112, 111, 110}))
+
             .addParameter(SynthParameter("R1: Attack").numbers({117, 116, 115}))
             .addParameter(SynthParameter("R5: Release 2").numbers({137, 136, 135}))
             .addParameter(SynthParameter("R2: Decay").numbers({122, 121, 120}))
@@ -365,7 +358,17 @@ Section SectionFactory::createEnvelopeSection() {
             .addParameter(SynthParameter("R3: Sustain").numbers({127, 126, 125}))
             .addParameter(SynthParameter(""))
             .addParameter(SynthParameter("R4: Release 1").numbers({132, 131, 130}))
+            .addParameter(SynthParameter("Delay").numbers({112, 111, 110}))
+
+            .addParameter(SynthParameter("L0: Start").numbers({82, 81, 80}))
+            .addParameter(SynthParameter("L4: Release 1").numbers({102, 101, 100}))
+            .addParameter(SynthParameter("L1: Attack").numbers({88, 86, 85}))
+            .addParameter(SynthParameter("L5: Release 2").numbers({107, 106, 105}))
+            .addParameter(SynthParameter("L2: Decay").numbers({92, 91, 90}))
             .addParameter(SynthParameter(""))
+            .addParameter(SynthParameter("L3: Sustain").numbers({97, 96, 95}))
+            .addParameter(SynthParameter(""))
+
             .addParameter(
                     SynthParameter("EG Loop")
                             .type(BITWISE)

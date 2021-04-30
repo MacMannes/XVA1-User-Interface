@@ -203,7 +203,7 @@ void rtrim(std::string &s, char c) {
 void displayPatchInfo(bool paintItBlack) {
     int currentPatchNumber = synthesizer.getPatchNumber();
 
-    tft.setTextColor(paintItBlack ? MY_ORANGE : TFT_WHITE);
+    tft.setTextColor(paintItBlack ? MY_ORANGE : TFT_BLACK);
 
     tft.setTextSize(2);
     tft.setTextDatum(1);

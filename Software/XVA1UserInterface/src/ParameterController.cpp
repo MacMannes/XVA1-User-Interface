@@ -406,7 +406,7 @@ void ParameterController::displaySubSections(bool paintItBlack) {
     tft->setTextPadding(0);
     tft->setTextSize(2);
 
-    tft->setTextColor(paintItBlack ? MY_ORANGE : TFT_WHITE);
+    tft->setTextColor(paintItBlack ? MY_ORANGE : TFT_BLACK);
 
     tft->setTextDatum(1);
     tft->drawString(section.getName().c_str(), 119, 4, 1);
@@ -494,7 +494,7 @@ void ParameterController::displayEnvelopes() {
  */
 void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
     float envheight = 80;
-    float envpos = 130;
+    float envpos = 140;
     float envwidth = 239;
 
     float x1, x2, y1, y2, yd, yq, xq, r0, r1, r2, r3, r4, r5, l0, l1, l2, l3, l4, l5;
@@ -556,7 +556,7 @@ void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
 }
 
 void ParameterController::clearEnvelopes() {
-    tft->fillRect(0, 120, 238, 119, TFT_BLACK);
+    tft->fillRect(0, 120, 240, 120, TFT_BLACK);
 }
 
 
