@@ -38,6 +38,8 @@ void ParameterController::setSection(int sectionNumber) {
 }
 
 void ParameterController::setSection(int sectionNumber, bool showSubSections) {
+    shouldShowEnvelopes = (sectionNumber == 6);
+
     subSection = Section("empty");
 
     section = Section("empty"); // Ugly trick to release some memory
@@ -52,6 +54,10 @@ void ParameterController::setSection(int sectionNumber, bool showSubSections) {
 
         Serial.print("freeMemory()=");
         Serial.println(freeMemory());
+    }
+
+    if (shouldShowEnvelopes) {
+        displayEnvelopes();
     }
 }
 
@@ -134,6 +140,11 @@ bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed
             int displayNumber = (index1 / 2);
 
             displayTwinParameters(parameterIndices[index1], parameterIndices[index2], displayNumber);
+
+            if (shouldShowEnvelopes) {
+                displayEnvelopes();
+            }
+
             return true;
         }
     }
@@ -414,12 +425,22 @@ void ParameterController::displaySubSections(bool paintItBlack) {
         }
 
         tft->drawString(title.c_str(), 20, 40 + LINE_HEIGHT * lineNumber, 1);
+
+        if (shouldShowEnvelopes) {
+            tft->setTextColor(paintItBlack ? TFT_BLACK : envelopeColors[lineNumber]);
+            tft->drawString("*", 110, 40 + LINE_HEIGHT * lineNumber, 1);
+        }
+
         lineNumber++;
     }
 
     if (lineNumber == 0) {
         tft->drawString(">", 0, 40, 1);
         tft->drawString("Main", 20, 40, 1);
+    }
+
+    if (paintItBlack && shouldShowEnvelopes) {
+        clearEnvelopes();
     }
 }
 
@@ -445,6 +466,7 @@ void ParameterController::displayCurrentSubsection() {
 void ParameterController::clearScreen() {
     clearCurrentSubsection();
     displaySubSections(true);
+    clearEnvelopes();
 }
 
 Section ParameterController::createSection(int sectionNumber) {
@@ -453,8 +475,88 @@ Section ParameterController::createSection(int sectionNumber) {
 
 string ParameterController::to_string(int value) {
     stringstream temp;
-    temp<<value;
+    temp << value;
     return temp.str();
+}
+
+void ParameterController::displayEnvelopes() {
+    clearEnvelopes();
+
+    for (int i = 0; i < 3; ++i) {
+        displayEnvelope(synthesizer->getEnvelopeValues(envelopes[i]), envelopeColors[i]);
+    }
+}
+
+/**
+ * The code for displaying the envelopes is adopted from https://github.com/architolk/fm-synth
+ *
+ * Written by architolk
+ */
+void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
+    float envheight = 80;
+    float envpos = 130;
+    float envwidth = 239;
+
+    float x1, x2, y1, y2, yd, yq, xq, r0, r1, r2, r3, r4, r5, l0, l1, l2, l3, l4, l5;
+    //Getting envelope parameters
+    r0 = env.rate[0];
+    r1 = 255 - env.rate[1];
+    r2 = 255 - env.rate[2];
+    r3 = 255 - env.rate[3];
+    r4 = 255 - env.rate[4];
+    r5 = 255 - env.rate[5];
+    l0 = env.level[0];
+    l1 = env.level[1];
+    l2 = env.level[2];
+    l3 = env.level[3];
+    l4 = env.level[4];
+    l5 = env.level[5];
+    yq = envheight / 255.0; //Quotient bij maximale waarde van 63
+    xq = envwidth /
+         (255 + (r0 > 0 ? 255 : 0) + (r1 > 0 ? 255 : 0) + (r2 > 0 ? 255 : 0) + (r3 > 0 ? 255 : 0) + (r4 > 0 ? 255 : 0) +
+          (r5 > 0 ? 255 : 0));
+    yd = envpos;
+    x1 = 0.0;
+    x2 = x1 + xq * r0; //Delay
+    y1 = yq * (255 - l0) + yd;
+    y2 = yq * (255 - l0) + yd;
+    tft->drawLine(x1, y1, x2, y2, color);
+    x1 = x2;
+    y1 = y2;
+    x2 = x1 + xq * r1; //Attack
+    y2 = yq * (255 - l1) + yd;
+    tft->drawLine(x1, y1, x2, y2, color);
+    x1 = x2;
+    y1 = y2;
+    x2 = x1 + xq * r2; //Decay-1
+    y2 = yq * (255 - l2) + yd;
+    tft->drawLine(x1, y1, x2, y2, color);
+    x1 = x2;
+    y1 = y2;
+    x2 = x1 + xq * r3; //Decay-2
+    y2 = yq * (255 - l3) + yd;
+    tft->drawLine(x1, y1, x2, y2, color);
+    x1 = x2;
+    y1 = y2;
+    x2 = x1 + envwidth - xq * (r0 + r1 + r2 + r3 + r4 + r5); //Sustain
+    y2 = yq * (255 - l3) + yd;
+    tft->drawLine(x1, y1 - 1, x2, y2 - 1, color);
+    tft->drawLine(x1, y1, x2, y2, color);
+    tft->drawLine(x1, y1 + 1, x2, y2 + 1, color);
+    x1 = x2;
+    y1 = y2;
+    x2 = x1 + xq * r4; //Release-1
+    y2 = yq * (255 - l4) + yd;
+    tft->drawLine(x1, y1, x2, y2, color);
+    x1 = x2;
+    y1 = y2;
+    x2 = x1 + xq * r5; //Release-2
+    y2 = yq * (255 - l5) + yd;
+    tft->drawLine(x1, y1, x2, y2, color);
+}
+
+void ParameterController::clearEnvelopes() {
+    tft->fillRect(0, 120, 238, 119, TFT_BLACK);
 }
 
 

@@ -111,4 +111,15 @@ void Synthesizer::begin() {
 
 }
 
+Envelope Synthesizer::getEnvelopeValues(Envelope &envelope) {
+    Envelope returnEnvelope = Envelope();
+
+    for (int i = 0; i < 6; ++i) {
+        returnEnvelope.level[i] = getParameter(envelope.level[i]);
+        returnEnvelope.rate[i] = getParameter(envelope.rate[i]);
+    }
+
+    return returnEnvelope;
+}
+
 

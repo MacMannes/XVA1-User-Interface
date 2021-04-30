@@ -13,6 +13,7 @@
 #include "Section.h"
 #include "LEDButton.h"
 #include "SectionFactory.h"
+#include "Globals.h"
 
 class ParameterController {
 private:
@@ -31,6 +32,9 @@ private:
     int currentPageNumber = 0;
     int currentSubSectionNumber = 0;
     Section subSection = Section("empty");
+
+    bool shouldShowEnvelopes = false;
+    const uint16_t envelopeColors[3] = { TFT_BLUE, TFT_MAGENTA, TFT_YELLOW };
 
     void clearParameters();
 
@@ -60,6 +64,12 @@ private:
     void clearCurrentSubsection();
 
     void displayCurrentSubsection();
+
+    void clearEnvelopes();
+
+    void displayEnvelopes();
+
+    void displayEnvelope(const Envelope &envelope, uint16_t color);
 
 public:
     ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft, Adafruit_SSD1306 *display,

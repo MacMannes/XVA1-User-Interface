@@ -7,6 +7,12 @@
 
 #include "SectionFactory.h"
 
+Envelope envelopes[] = {
+        Envelope ({{82, 87, 92, 97, 102, 107}, {112, 117, 122, 127, 132, 137}}),
+        Envelope ({{81, 86, 91, 96, 101, 106}, {111, 116, 121, 126, 131, 136}}),
+        Envelope ({{80, 85, 90, 95, 100, 105}, {110, 115, 120, 125, 130, 135}})
+};
+
 Section sections[] = {
         SectionFactory().createDefaultSection(),
         SectionFactory().createVoiceSection(),

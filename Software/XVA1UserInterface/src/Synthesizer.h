@@ -7,6 +7,7 @@
 
 #include <string>
 #include <Arduino.h>
+#include "Envelope.h"
 
 using namespace std;
 
@@ -32,6 +33,8 @@ public:
     void setParameter(int number, int value);
 
     void setCurrentPatchName();
+
+    Envelope getEnvelopeValues(Envelope &envelope);
 };
 
 
