@@ -361,13 +361,13 @@ Section SectionFactory::createEnvelopeSection() {
             .addParameter(SynthParameter("R4: Release 1").numbers({132, 131, 130}))
             .addParameter(SynthParameter("Delay").numbers({112, 111, 110}))
 
-            .addParameter(SynthParameter("L0: Start").numbers({82, 81, 80}))
-            .addParameter(SynthParameter("L4: Release 1").numbers({102, 101, 100}))
-            .addParameter(SynthParameter("L1: Attack").numbers({88, 86, 85}))
-            .addParameter(SynthParameter("L5: Release 2").numbers({107, 106, 105}))
-            .addParameter(SynthParameter("L2: Decay").numbers({92, 91, 90}))
+            .addParameter(SynthParameter("L0: Start").numbers({82, 81, 80}).type(CENTER_128))
+            .addParameter(SynthParameter("L4: Release 1").numbers({102, 101, 100}).type(CENTER_128))
+            .addParameter(SynthParameter("L1: Attack").numbers({88, 86, 85}).type(CENTER_128))
+            .addParameter(SynthParameter("L5: Release 2").numbers({107, 106, 105}).type(CENTER_128))
+            .addParameter(SynthParameter("L2: Decay").numbers({92, 91, 90}).type(CENTER_128))
             .addParameter(SynthParameter(""))
-            .addParameter(SynthParameter("L3: Sustain").numbers({97, 96, 95}))
+            .addParameter(SynthParameter("L3: Sustain").numbers({97, 96, 95}).type(CENTER_128))
             .addParameter(SynthParameter(""))
 
             .addParameter(
