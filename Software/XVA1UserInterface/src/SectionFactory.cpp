@@ -343,6 +343,7 @@ Section SectionFactory::createOscillatorSection() {
             .addParameter(SynthParameter("Key R depth").numbers({51, 52, 53, 54}))
             .addParameter(SynthParameter("Key L curve").numbers({55, 56, 57, 58}))
             .addParameter(SynthParameter("Key R curve").numbers({59, 60, 61, 62}))
+            .addParameter(SynthParameter("Velocity sens.").numbers({39, 40, 41, 42}))
             .addParameter(SynthParameter("PMS").numbers({63, 64, 65, 66}))
             .addParameter(SynthParameter("AMS").numbers({67, 66, 67, 68}));
 }
