@@ -35,6 +35,7 @@ private:
 
     bool shouldShowEnvelopes = false;
     const uint16_t envelopeColors[3] = { TFT_BLUE, TFT_MAGENTA, TFT_YELLOW };
+    TaskHandle_t displayEnvelopesTaskHandle = nullptr;
 
     void clearParameters();
 
@@ -70,6 +71,8 @@ private:
     void displayEnvelopes();
 
     void displayEnvelope(const Envelope &envelope, uint16_t color);
+
+    static void displayEnvelopesTask(void *parameter);
 
 public:
     ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft, Adafruit_SSD1306 *display,

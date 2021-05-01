@@ -142,7 +142,14 @@ bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed
             displayTwinParameters(parameterIndices[index1], parameterIndices[index2], displayNumber);
 
             if (shouldShowEnvelopes) {
-                displayEnvelopes();
+                xTaskCreate(
+                        displayEnvelopesTask,
+                        "DisplayEnvelopesTask",
+                        1000,
+                        this,
+                        1,
+                        &displayEnvelopesTaskHandle
+                );
             }
 
             return true;
@@ -485,6 +492,7 @@ void ParameterController::displayEnvelopes() {
     for (int i = 0; i < 3; ++i) {
         displayEnvelope(synthesizer->getEnvelopeValues(envelopes[i]), envelopeColors[i]);
     }
+    displayEnvelopesTaskHandle = nullptr;
 }
 
 /**
@@ -493,9 +501,9 @@ void ParameterController::displayEnvelopes() {
  * Written by architolk
  */
 void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
-    float envheight = 80;
-    float envpos = 140;
-    float envwidth = 239;
+    const float ENVELOPE_HEIGHT = 80;
+    const float ENVELOPE_POSITION_Y = 140;
+    const float ENVELOPE_WIDTH = 239;
 
     float x1, x2, y1, y2, yd, yq, xq, r0, r1, r2, r3, r4, r5, l0, l1, l2, l3, l4, l5;
     //Getting envelope parameters
@@ -511,11 +519,11 @@ void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
     l3 = env.level[3];
     l4 = env.level[4];
     l5 = env.level[5];
-    yq = envheight / 255.0; //Quotient bij maximale waarde van 63
-    xq = envwidth /
+    yq = ENVELOPE_HEIGHT / 255.0; // Quotient for the envelope height
+    xq = ENVELOPE_WIDTH /
          (255 + (r0 > 0 ? 255 : 0) + (r1 > 0 ? 255 : 0) + (r2 > 0 ? 255 : 0) + (r3 > 0 ? 255 : 0) + (r4 > 0 ? 255 : 0) +
-          (r5 > 0 ? 255 : 0));
-    yd = envpos;
+          (r5 > 0 ? 255 : 0)); // Quotient for the envelope width
+    yd = ENVELOPE_POSITION_Y;
     x1 = 0.0;
     x2 = x1 + xq * r0; //Delay
     y1 = yq * (255 - l0) + yd;
@@ -538,7 +546,7 @@ void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
     tft->drawLine(x1, y1, x2, y2, color);
     x1 = x2;
     y1 = y2;
-    x2 = x1 + envwidth - xq * (r0 + r1 + r2 + r3 + r4 + r5); //Sustain
+    x2 = x1 + ENVELOPE_WIDTH - xq * (r0 + r1 + r2 + r3 + r4 + r5); //Sustain
     y2 = yq * (255 - l3) + yd;
     tft->drawLine(x1, y1 - 1, x2, y2 - 1, color);
     tft->drawLine(x1, y1, x2, y2, color);
@@ -557,6 +565,12 @@ void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
 
 void ParameterController::clearEnvelopes() {
     tft->fillRect(0, 120, 240, 120, TFT_BLACK);
+}
+
+void ParameterController::displayEnvelopesTask(void *parameter) {
+    auto *parameterController = reinterpret_cast<ParameterController*>(parameter); // Obtain the instance pointer
+    parameterController->displayEnvelopes(); // Dispatch to the member function, now that we have an instance pointer
+    vTaskDelete(nullptr);
 }
 
 
