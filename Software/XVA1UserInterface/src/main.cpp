@@ -11,8 +11,10 @@
 #include "Globals.h"
 #include "FreeMemory.h"
 
-unsigned long lastTransition;
-unsigned long revolutionTime = 0;
+// Variable to indicate that an interrupt has occurred
+boolean awokeByInterrupt = false;
+
+unsigned long lastTransition[9];
 
 int activeShortcut = 0;
 
@@ -21,13 +23,13 @@ bool mainRotaryButtonPushed = false;
 
 /* function prototypes */
 
-void handleMainEncoder(bool clockwise);
+void handleMainEncoder(bool clockwise, int speed);
 
 void initOLEDDisplays();
 
 void pollAllMCPs();
 
-void readButtons();
+void IRAM_ATTR interruptCallback();
 
 void displayPatchInfo();
 
@@ -44,6 +46,18 @@ void initMainScreen();
 void initRotaryEncoders();
 
 void rtrim(std::string &s, char c);
+
+void readMainRotaryButton();
+
+void readMainRotaryEncoder();
+
+void handleInterrupt();
+
+void attachInterrupts();
+
+void detachInterrupts();
+
+int getEncoderSpeed(int id);
 
 void setup() {
     Serial.begin(115200);
@@ -69,37 +83,61 @@ void setup() {
     initOLEDDisplays();
     initButtons();
 
+    attachInterrupts();
+
     synthesizer.selectPatch(1);
     parameterController.setDefaultSection();
     displayPatchInfo();
-
-    mainRotaryEncoder.begin(true);
 
     Serial.print("freeMemory()=");
     Serial.println(freeMemory());
 }
 
 void loop() {
+    pollAllMCPs();
+
+    if (awokeByInterrupt) {
+        handleInterrupt();
+    }
+}
+
+/**
+ * The interrupt callback will just signal that an interrupt has occurred.
+ * All work will be done from the main loop, to avoid watchdog errors
+ */
+void IRAM_ATTR interruptCallback() {
+    awokeByInterrupt = true;
+}
+
+void readMainRotaryEncoder() {
     unsigned char result = mainRotaryEncoder.process();
     if (result) {
+        int speed = getEncoderSpeed(0);
+
         bool clockwise = result == DIR_CW;
         if (activeShortcut != 0) {
             bool consumed = parameterController.rotaryEncoderChanged(0, clockwise, 1);
             if (!consumed) {
-                handleMainEncoder(clockwise);
+                handleMainEncoder(clockwise, speed);
             }
         } else {
-            handleMainEncoder(clockwise);
+            handleMainEncoder(clockwise, speed);
         }
     }
-
-    readButtons();
-    pollAllMCPs();
 }
 
 void rotaryEncoderChanged(bool clockwise, int id) {
+    int speed = getEncoderSpeed(id);
+
+    Serial.println("Encoder " + String(id) + ": "
+                   + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
+
+    parameterController.rotaryEncoderChanged(id, clockwise, speed);
+}
+
+int getEncoderSpeed(int id) {
     unsigned long now = millis();
-    revolutionTime = now - lastTransition;
+    unsigned long revolutionTime = now - lastTransition[id];
 
     int speed = 1;
     if (revolutionTime < 50) {
@@ -110,18 +148,16 @@ void rotaryEncoderChanged(bool clockwise, int id) {
         speed = 2;
     }
 
-    lastTransition = now;
-
-    Serial.println("Encoder " + String(id) + ": "
-                   + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
-
-    parameterController.rotaryEncoderChanged(id, clockwise, speed);
+    lastTransition[id] = now;
+    return speed;
 }
 
 void initRotaryEncoders() {
     for (auto &rotaryEncoder : rotaryEncoders) {
         rotaryEncoder.init();
     }
+
+    mainRotaryEncoder.begin(true);
 }
 
 void initMainScreen() {
@@ -149,25 +185,47 @@ void initButtons() {
     pinMode(MAIN_ROTARY_BTN_PIN, INPUT_PULLUP);
 }
 
-void readButtons() {
-    bool mainRotaryButtonState = (digitalRead(MAIN_ROTARY_BTN_PIN) == LOW);
-    if (mainRotaryButtonState != mainRotaryButtonPushed) {
-        mainRotaryButtonPushed = mainRotaryButtonState;
-        mainRotaryButtonChanged(!mainRotaryButtonPushed);
-    }
+void handleInterrupt() {
+    // Disable interrupts while handling them
+    detachInterrupts();
+
+    readMainRotaryButton();
+    readMainRotaryEncoder();
+
+    // Enable interrupts again
+    awokeByInterrupt = false;
+    attachInterrupts();
 }
 
-void handleMainEncoder(bool clockwise) {
+void attachInterrupts() {
+    attachInterrupt(MAIN_ROTARY_BTN_PIN, interruptCallback, CHANGE);
+    attachInterrupt(MAIN_ROTARY_ENCODER_PIN_A, interruptCallback, CHANGE);
+    attachInterrupt(MAIN_ROTARY_ENCODER_PIN_B, interruptCallback, CHANGE);
+}
+
+void detachInterrupts() {
+    detachInterrupt(MAIN_ROTARY_BTN_PIN);
+    detachInterrupt(MAIN_ROTARY_ENCODER_PIN_A);
+    detachInterrupt(MAIN_ROTARY_ENCODER_PIN_B);
+}
+
+void handleMainEncoder(bool clockwise, int speed) {
     int currentPatchNumber = synthesizer.getPatchNumber();
     int oldValue = currentPatchNumber;
 
     if (clockwise) {
         if (currentPatchNumber < 128) {
-            currentPatchNumber++;
+            currentPatchNumber += speed;
+            if (currentPatchNumber > 128) {
+                currentPatchNumber = 128;
+            }
         }
     } else {
         if (currentPatchNumber > 1) {
-            currentPatchNumber--;
+            currentPatchNumber -= speed;
+            if (currentPatchNumber < 1) {
+                currentPatchNumber = 1;
+            }
         }
     }
 
@@ -314,6 +372,14 @@ void clearShortcut() {
     activeShortcut = 0;
     for (auto &shortcutButton : shortcutButtons) {
         shortcutButton->setLED(false);
+    }
+}
+
+void readMainRotaryButton() {
+    bool mainRotaryButtonState = (digitalRead(MAIN_ROTARY_BTN_PIN) == LOW);
+    if (mainRotaryButtonState != mainRotaryButtonPushed) {
+        mainRotaryButtonPushed = mainRotaryButtonState;
+        mainRotaryButtonChanged(!mainRotaryButtonPushed);
     }
 }
 
