@@ -27,7 +27,7 @@
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     (-1) // Reset pin # (or -1 if sharing Arduino reset pin)
 
-#define MAIN_ROTARY_BTN_PIN 27
+#define MAIN_ROTARY_BTN_PIN D3
 
 // Pins for MCP23017
 #define GPA0 0
@@ -80,7 +80,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 TFT_eSPI tft = TFT_eSPI();  // Invoke library, pins defined in User_Setup.h
 
 
-Rotary mainRotaryEncoder = Rotary(25, 26);
+Rotary mainRotaryEncoder = Rotary(D1, D2);
 
 /* Array of all rotary encoders and their pins */
 RotaryEncOverMCP rotaryEncoders[] = {

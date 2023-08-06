@@ -69,7 +69,7 @@ void setup() {
     initOLEDDisplays();
     initButtons();
 
-    synthesizer.selectPatch(1);
+    synthesizer.selectPatch(4);
     parameterController.setDefaultSection();
     displayPatchInfo();
 

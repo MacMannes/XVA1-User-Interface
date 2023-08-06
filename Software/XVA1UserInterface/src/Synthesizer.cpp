@@ -3,24 +3,28 @@
 //
 
 #include "Synthesizer.h"
+#include <HardwareSerial.h>
+
+HardwareSerial SynthSerial(0);
 
 void Synthesizer::selectPatch(int number) {
+
     int synthPatchNumber = number - 1;
 
     Serial.print("Selecting patch #");
     Serial.print(synthPatchNumber);
     Serial.print(" on Synth...");
 
-    Serial2.write('r'); // 'r' = Read program
-    Serial2.write(synthPatchNumber);
+    SynthSerial.write('r'); // 'r' = Read program
+    SynthSerial.write(synthPatchNumber);
 
 
     int read_status;
     int bytesRead = 0;
     int retry = 0;
     while (bytesRead == 0 && retry != 100) {
-        if (Serial2.available()) {
-            read_status = Serial2.read();
+        if (SynthSerial.available()) {
+            read_status = SynthSerial.read();
             bytesRead++;
             retry = 0;
         } else {
@@ -37,7 +41,7 @@ void Synthesizer::selectPatch(int number) {
 }
 
 void Synthesizer::loadPatchData() {
-    Serial2.write('d'); // 'd' = Display program
+    SynthSerial.write('d'); // 'd' = Display program
 
     Serial.println("Reading patch data from Synth...");
 
@@ -45,8 +49,8 @@ void Synthesizer::loadPatchData() {
     int bytesRead = 0;
     int retry = 0;
     while (bytesRead != 512 && retry != 100) {
-        if (Serial2.available()) {
-            byte b = Serial2.read();
+        if (SynthSerial.available()) {
+            byte b = SynthSerial.read();
             rxBuffer[bytesRead] = b;
             bytesRead++;
             retry = 0;
@@ -56,7 +60,7 @@ void Synthesizer::loadPatchData() {
         }
     }
 
-    Serial2.flush();
+    SynthSerial.flush();
     memcpy(currentPatchData, rxBuffer, 512);
 
     setCurrentPatchName();
@@ -87,16 +91,16 @@ byte Synthesizer::getParameter(int number) const {
 }
 
 void Synthesizer::setParameter(int number, int value) {
-    Serial2.write('s'); // 's' = Set Parameter
+    SynthSerial.write('s'); // 's' = Set Parameter
 
     if (number > 255) {
         // Parameters above 255 have a two-byte format: b1 = 255, b2 = x-256
-        Serial2.write(255);
-        Serial2.write(number - 256);
-        Serial2.write(value);
+        SynthSerial.write(255);
+        SynthSerial.write(number - 256);
+        SynthSerial.write(value);
     } else {
-        Serial2.write(number);
-        Serial2.write(value);
+        SynthSerial.write(number);
+        SynthSerial.write(value);
     }
 
     currentPatchData[number] = value;
@@ -107,8 +111,8 @@ void Synthesizer::setParameter(int number, int value) {
 }
 
 void Synthesizer::begin() {
-    Serial2.begin(500000, SERIAL_8N1, 16, 17); // XVA1 Serial
-
+    // Configure SynthSerial on pins TX=D6 and RX=D7 (-1, -1 means use the default)
+    SynthSerial.begin(500000, SERIAL_8N1, -1, -1);
 }
 
 Envelope Synthesizer::getEnvelopeValues(Envelope &envelope) {
