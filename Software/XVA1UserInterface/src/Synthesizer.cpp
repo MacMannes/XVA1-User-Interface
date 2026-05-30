@@ -5,7 +5,7 @@
 #include "Synthesizer.h"
 #include <HardwareSerial.h>
 
-HardwareSerial SynthSerial(0);
+HardwareSerial SynthSerial(1);  // UART1 — keeps UART0 free for Serial (debug)
 
 void Synthesizer::selectPatch(int number) {
 
@@ -111,8 +111,9 @@ void Synthesizer::setParameter(int number, int value) {
 }
 
 void Synthesizer::begin() {
-    // Configure SynthSerial on pins TX=D6 and RX=D7 (-1, -1 means use the default)
-    SynthSerial.begin(500000, SERIAL_8N1, -1, -1);
+    // Configure SynthSerial on UART1, routed to physical pins D6 (GPIO43 = TX) and D7 (GPIO44 = RX)
+    // The ESP32-S3 GPIO matrix allows UART1 to be mapped to any pins, including GPIO43/44.
+    SynthSerial.begin(500000, SERIAL_8N1, 44, 43);  // RX=GPIO44(D7), TX=GPIO43(D6)
 }
 
 Envelope Synthesizer::getEnvelopeValues(Envelope &envelope) {

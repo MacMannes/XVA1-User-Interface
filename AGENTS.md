@@ -43,7 +43,7 @@ Verification = compile (`platformio run`) + flash + observe serial output at 115
 
 ## Key Quirks
 
-- **`SynthSerial` vs `Serial`:** Both use UART0 on ESP32-S3. Be careful adding serial debug near synth communication code — they share the same UART.
+- **`SynthSerial` vs `Serial`:** `SynthSerial` uses **UART1** (explicitly routed to D6=GPIO43/TX and D7=GPIO44/RX via the ESP32-S3 GPIO matrix). `Serial` uses UART0. They are now fully independent — no conflict.
 - **Patch indexing:** UI shows 1-indexed patch numbers; wire protocol is 0-indexed (`selectPatch(n)` sends `n - 1`).
 - **Parameters > 255:** Use two-byte format — send `255`, then `(param_index - 256)`.
 - **Envelope rendering** runs as a separate FreeRTOS task on the second ESP32 core (`displayEnvelopesTaskHandle`).
