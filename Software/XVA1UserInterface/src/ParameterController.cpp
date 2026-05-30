@@ -4,6 +4,7 @@
 
 #include <sstream>
 #include "ParameterController.h"
+#include "Debug.h"
 #include "Globals.h"
 #include "FreeMemory.h"
 #include "AllSynthParameters.h"
@@ -52,8 +53,8 @@ void ParameterController::setSection(int sectionNumber, bool showSubSections) {
     if (showSubSections) {
         displaySubSections();
 
-        Serial.print("freeMemory()=");
-        Serial.println(freeMemory());
+        LOG("freeMemory()=");
+        LOGLN(freeMemory());
     }
 
     if (shouldShowEnvelopes) {
@@ -71,8 +72,8 @@ void ParameterController::setActivePage(int pageNumber) {
     if (pageNumber < 0 && pageNumber > getSubSection()->getNumberOfPages()) return;
 
     if (pageNumber != currentPageNumber) {
-        Serial.print(F("Setting active page: "));
-        Serial.println(pageNumber);
+        LOG(F("Setting active page: "));
+        LOGLN(pageNumber);
     }
 
     clearParameters();
@@ -168,8 +169,8 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
     int currentValue;
 
     int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
-    Serial.print("subIndex: ");
-    Serial.println(subIndex);
+    LOG("subIndex: ");
+    LOGLN(subIndex);
 
     switch (parameter.getType()) {
         case PERFORMANCE_CTRL: {
@@ -183,12 +184,12 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
             int value = synthesizer->getParameter(parameter.getNumber());
             currentValue = bitRead(value, parameter.getBitNumber(subIndex));
 
-            Serial.print("Byte value: ");
-            Serial.println(value);
-            Serial.print("Bit-nr: ");
-            Serial.println(parameter.getBitNumber(subIndex));
-            Serial.print("Bit value: ");
-            Serial.println(currentValue);
+            LOG("Byte value: ");
+            LOGLN(value);
+            LOG("Bit-nr: ");
+            LOGLN(parameter.getBitNumber(subIndex));
+            LOG("Bit value: ");
+            LOGLN(currentValue);
 
             break;
         }
@@ -406,9 +407,9 @@ void ParameterController::displaySubSections() {
 }
 
 void ParameterController::displaySubSections(bool paintItBlack) {
-    Serial.print("displaySubSections(");
-    Serial.print((paintItBlack) ? "true" : "false");
-    Serial.println(")");
+    LOG("displaySubSections(");
+    LOG((paintItBlack) ? "true" : "false");
+    LOGLN(")");
 
     tft->setTextPadding(0);
     tft->setTextSize(2);

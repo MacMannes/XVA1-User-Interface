@@ -10,6 +10,7 @@
 #include "Hardware.h"
 #include "Globals.h"
 #include "FreeMemory.h"
+#include "Debug.h"
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
@@ -46,15 +47,12 @@ void initRotaryEncoders();
 void rtrim(std::string &s, char c);
 
 void setup() {
-    Serial.begin(115200);
+    LOG_BEGIN();
 
-    //while the serial stream is not open, do nothing:
-//    while (!Serial);
-
-    Serial.println("\n");
-    Serial.println("===================");
-    Serial.println("XVA1 User Interface");
-    Serial.println("===================\n");
+    LOGLN("\n");
+    LOGLN("===================");
+    LOGLN("XVA1 User Interface");
+    LOGLN("===================\n");
 
     mcp1.begin(0);
     mcp2.begin(1);
@@ -75,8 +73,8 @@ void setup() {
 
     mainRotaryEncoder.begin(true);
 
-    Serial.print("freeMemory()=");
-    Serial.println(freeMemory());
+    LOG("freeMemory()=");
+    LOGLN(freeMemory());
 }
 
 void loop() {
@@ -112,8 +110,8 @@ void rotaryEncoderChanged(bool clockwise, int id) {
 
     lastTransition = now;
 
-    Serial.println("Encoder " + String(id) + ": "
-                   + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
+    LOGLN("Encoder " + String(id) + ": "
+          + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
 
     parameterController.rotaryEncoderChanged(id, clockwise, speed);
 }
@@ -171,8 +169,8 @@ void handleMainEncoder(bool clockwise) {
         }
     }
 
-    Serial.print("Selecting patch: ");
-    Serial.println(currentPatchNumber);
+    LOG("Selecting patch: ");
+    LOGLN(currentPatchNumber);
 
     if (currentPatchNumber != oldValue) {
         synthesizer.selectPatch(currentPatchNumber);
@@ -264,10 +262,10 @@ void pollAllMCPs() {
 }
 
 void shortcutButtonChanged(Button *btn, bool released) {
-    Serial.print("Shortcut-button #");
-    Serial.print(btn->id);
-    Serial.print(" ");
-    Serial.println((released) ? "RELEASED" : "PRESSED");
+    LOG("Shortcut-button #");
+    LOG(btn->id);
+    LOG(" ");
+    LOGLN((released) ? "RELEASED" : "PRESSED");
 
     if (!released) {
         if (activeShortcut > 0) {
@@ -276,8 +274,8 @@ void shortcutButtonChanged(Button *btn, bool released) {
 
         activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
 
-        Serial.print("Active Shortcut: ");
-        Serial.println(activeShortcut);
+        LOG("Active Shortcut: ");
+        LOGLN(activeShortcut);
         for (auto &shortcutButton : shortcutButtons) {
             shortcutButton->setLED(shortcutButton->id == btn->id);
         }
@@ -289,10 +287,10 @@ void shortcutButtonChanged(Button *btn, bool released) {
 }
 
 void mainButtonChanged(Button *btn, bool released) {
-    Serial.print("Main-button #");
-    Serial.print(btn->id);
-    Serial.print(" ");
-    Serial.println((released) ? "RELEASED" : "PRESSED");
+    LOG("Main-button #");
+    LOG(btn->id);
+    LOG(" ");
+    LOGLN((released) ? "RELEASED" : "PRESSED");
 
     switch (btn->id) {
         case SHIFT_BUTTON:
@@ -318,17 +316,17 @@ void clearShortcut() {
 }
 
 void rotaryButtonChanged(Button *btn, bool released) {
-    Serial.print("Rotary-button #");
-    Serial.print(btn->id);
-    Serial.print(" ");
-    Serial.println((released) ? "RELEASED" : "PRESSED");
+    LOG("Rotary-button #");
+    LOG(btn->id);
+    LOG(" ");
+    LOGLN((released) ? "RELEASED" : "PRESSED");
 }
 
 void upOrDownButtonChanged(Button *btn, bool released) {
-    Serial.print((btn->id == UP_BUTTON) ? "Up" : "Down");
-    Serial.print("-button");
-    Serial.print(" ");
-    Serial.println((released) ? "RELEASED" : "PRESSED");
+    LOG((btn->id == UP_BUTTON) ? "Up" : "Down");
+    LOG("-button");
+    LOG(" ");
+    LOGLN((released) ? "RELEASED" : "PRESSED");
 
     if (!released) {
         if (btn->id == UP_BUTTON) {
@@ -340,7 +338,7 @@ void upOrDownButtonChanged(Button *btn, bool released) {
 }
 
 void mainRotaryButtonChanged(bool released) {
-    Serial.print("MAIN-Rotary-button ");
-    Serial.println((released) ? "RELEASED" : "PRESSED");
+    LOG("MAIN-Rotary-button ");
+    LOGLN((released) ? "RELEASED" : "PRESSED");
 
 }

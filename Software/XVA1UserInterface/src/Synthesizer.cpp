@@ -3,6 +3,7 @@
 //
 
 #include "Synthesizer.h"
+#include "Debug.h"
 #include <HardwareSerial.h>
 
 HardwareSerial SynthSerial(1);  // UART1 — keeps UART0 free for Serial (debug)
@@ -11,9 +12,9 @@ void Synthesizer::selectPatch(int number) {
 
     int synthPatchNumber = number - 1;
 
-    Serial.print("Selecting patch #");
-    Serial.print(synthPatchNumber);
-    Serial.print(" on Synth...");
+    LOG("Selecting patch #");
+    LOG(synthPatchNumber);
+    LOG(" on Synth...");
 
     SynthSerial.write('r'); // 'r' = Read program
     SynthSerial.write(synthPatchNumber);
@@ -33,8 +34,8 @@ void Synthesizer::selectPatch(int number) {
         }
     }
 
-    Serial.print("Status=");
-    Serial.println(read_status, DEC);
+    LOG("Status=");
+    LOGLN(read_status, DEC);
 
     loadPatchData();
     currentPatchNumber = number;
@@ -43,7 +44,7 @@ void Synthesizer::selectPatch(int number) {
 void Synthesizer::loadPatchData() {
     SynthSerial.write('d'); // 'd' = Display program
 
-    Serial.println("Reading patch data from Synth...");
+    LOGLN("Reading patch data from Synth...");
 
     byte rxBuffer[512];
     int bytesRead = 0;
@@ -74,8 +75,8 @@ void Synthesizer::setCurrentPatchName() {
     }
     currentPatchName = patchName;
 
-    Serial.print("Patch name: ");
-    Serial.println(patchName.c_str());
+    LOG("Patch name: ");
+    LOGLN(patchName.c_str());
 }
 
 int Synthesizer::getPatchNumber() const {
