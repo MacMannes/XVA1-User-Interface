@@ -33,11 +33,46 @@ First run after a fresh clone downloads the ESP32 toolchain and libraries — ca
 
 ---
 
-## Testing
+## Dependency Management
 
-No automated tests exist. `test/` is a PlatformIO placeholder only.
+### PlatformIO Version
+**Updating is safe.** The `platformio` CLI tool itself is independent of board support packages.
 
-Verification = compile (`platformio run`) + flash + observe serial output at 115200 baud. Serial debug output is extensive throughout the code.
+```bash
+pip install --upgrade platformio
+```
+
+After updating, test a clean build to confirm no breakage:
+```bash
+cd Software/XVA1UserInterface
+platformio run -t clean
+platformio run
+```
+
+### Platform Version (espressif32)
+**DO NOT AUTO-UPDATE.** The `platformio.ini` pins `platform = espressif32@6.3.2` (Arduino ESP32 2.x) intentionally.
+
+**Why?** Arduino ESP32 3.x (platform 6.10.0+) is incompatible with TFT_eSPI 2.5.43 on ESP32-S3—causes SPI initialization panic at boot (see "Known Issues & Fixes" below).
+
+**To safely test a platform upgrade:**
+1. Temporarily change `platform = espressif32` (removes version pin)
+2. Run `platformio run` to download the new platform
+3. Test TFT initialization on hardware
+4. If successful, update AGENTS.md and pin the new version
+5. If failure, revert: `platform = espressif32@6.3.2`
+
+Alternatively, watch for **TFT_eSPI updates** (>2.5.43) that add Arduino ESP32 3.x support, then upgrade both together.
+
+### Library Versions
+All library versions are managed in `lib_deps` in `platformio.ini`. Update format:
+
+```ini
+lib_deps =
+    adafruit/Adafruit GFX Library@^1.10.6      # ^ = allow patch/minor upgrades
+    bodmer/TFT_eSPI@^2.5.43                    # Pin to 2.5.43 until 3.x support exists
+```
+
+---
 
 ---
 
