@@ -104,6 +104,14 @@ void Synthesizer::setParameter(int number, int value) {
         SynthSerial.write(value);
     }
 
+    // Wait until all bytes are physically transmitted before returning.
+    // Several parameter numbers (e.g. 116 = 't', 86 = 'V') coincide with
+    // destructive synth commands. If the UART TX buffer overflows and the
+    // leading 's' byte is dropped, the synth interprets the parameter number
+    // as a command, potentially triggering a flash erase/write.
+    // flush() costs ~60 µs at 500 kbps — imperceptible to the user.
+    SynthSerial.flush();
+
     currentPatchData[number] = value;
 
     if (number >= 480 && number <= 504) {
