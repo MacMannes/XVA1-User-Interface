@@ -49,19 +49,56 @@ platformio run -t clean
 platformio run
 ```
 
-### Platform Version (espressif32)
-**DO NOT AUTO-UPDATE.** The `platformio.ini` pins `platform = espressif32@6.3.2` (Arduino ESP32 2.x) intentionally.
+### Platform Version (espressif32) — Upgrade Path
+**Current:** Pinned to `espressif32@6.3.2` (Arduino ESP32 2.x + IDF 4.x)
 
-**Why?** Arduino ESP32 3.x (platform 6.10.0+) is incompatible with TFT_eSPI 2.5.43 on ESP32-S3—causes SPI initialization panic at boot (see "Known Issues & Fixes" below).
+**Problem with 6.10.0+:** Arduino ESP32 3.x breaks SPI initialization with TFT_eSPI 2.5.43 → kernel panic at boot.
 
-**To safely test a platform upgrade:**
-1. Temporarily change `platform = espressif32` (removes version pin)
-2. Run `platformio run` to download the new platform
-3. Test TFT initialization on hardware
-4. If successful, update AGENTS.md and pin the new version
-5. If failure, revert: `platform = espressif32@6.3.2`
+**Safe Upgrade Path:**
 
-Alternatively, watch for **TFT_eSPI updates** (>2.5.43) that add Arduino ESP32 3.x support, then upgrade both together.
+1. **Check for TFT_eSPI updates** (watch GitHub releases):
+   - Version >2.5.43 with ESP32 3.x support? → Go to step 3
+   - Not yet? → Stay on 6.3.2 for now
+
+2. **Alternatively, use a newer TFT library** with 3.x support:
+   - `lovyan03/LovyanGFX` — actively maintained, supports ESP32-S3 + IDF 5.x
+   - Would require refactoring `ParameterController` display code
+   - Not recommended unless TFT_eSPI remains unsupported
+
+3. **To upgrade both together** (when ready):
+   ```ini
+   ; platformio.ini
+   platform = espressif32@6.10.0        # or latest
+   lib_deps =
+       bodmer/TFT_eSPI@>=2.6.0          # once available
+   ```
+   Then:
+   ```bash
+   cd Software/XVA1UserInterface
+   platformio run -t clean
+   platformio run                       # compile + test for errors
+   # If successful:
+   platformio run -t upload             # flash (BOOT+RESET as needed)
+   # Verify TFT displays correctly, no boot panics
+   ```
+
+4. **If upgrade fails:**
+   ```bash
+   # Revert in platformio.ini
+   platform = espressif32@6.3.2
+   lib_deps = bodmer/TFT_eSPI@^2.5.43
+   
+   platformio run -t clean
+   platformio run                       # back to known-good state
+   ```
+
+**Monitoring for updates:**
+- Watch [TFT_eSPI releases](https://github.com/Bodmer/TFT_eSPI/releases) for ESP32-S3 fixes
+- Check [Arduino ESP32 changelog](https://github.com/espressif/arduino-esp32/releases) for SPI-related fixes
+- Test in a separate branch before merging to main
+
+**Current Status:**
+As of May 2026, TFT_eSPI 2.5.43 + Arduino ESP32 2.x (platform 6.3.2) is the stable, tested combination for this board. Upgrades require verification.
 
 ### Library Versions
 All library versions are managed in `lib_deps` in `platformio.ini`. Update format:
