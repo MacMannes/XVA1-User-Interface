@@ -36,6 +36,8 @@ The project started in early 2021 on a breadboard with a Seeeduino XIAO (SAMD21)
 
 ## Software
 
+### UI Board Firmware
+
 Firmware source is in `Software/XVA1UserInterface/` and built with [PlatformIO](https://platformio.org/).
 
 ```bash
@@ -47,6 +49,10 @@ platformio run -t monitor       # open serial monitor (115200 baud)
 ```
 
 See `AGENTS.md` for a full architecture breakdown and development notes.
+
+### Synth Management
+
+To manage the XVA1 (or XFM/XFM2) synthesizer's own firmware and programs, use [**xload-macos**](https://github.com/MacMannes/xload-macos) — a macOS tool for managing flash memory on XFM/XFM2/XVA1 synthesizers.
 
 ## Project Structure
 
