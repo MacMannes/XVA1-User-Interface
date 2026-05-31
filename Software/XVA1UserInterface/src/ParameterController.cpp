@@ -142,11 +142,11 @@ bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed
 
             displayTwinParameters(parameterIndices[index1], parameterIndices[index2], displayNumber);
 
-            if (shouldShowEnvelopes) {
+            if (shouldShowEnvelopes && displayEnvelopesTaskHandle == nullptr) {
                 xTaskCreate(
                         displayEnvelopesTask,
                         "DisplayEnvelopesTask",
-                        1000,
+                        4096,
                         this,
                         1,
                         &displayEnvelopesTaskHandle
