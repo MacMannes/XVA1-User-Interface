@@ -198,22 +198,25 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
     }
     int newValue = -1;
 
+    int effectiveMin = (parameter.getType() == PERFORMANCE_CTRL) ? 0   : parameter.getMin();
+    int effectiveMax = (parameter.getType() == PERFORMANCE_CTRL) ? 511 : parameter.getMax();
+
     if (clockwise) {
-        if (currentValue < parameter.getMax()) {
+        if (currentValue < effectiveMax) {
             newValue = currentValue + speed;
-            if (newValue > parameter.getMax()) {
-                newValue = parameter.getMax();
+            if (newValue > effectiveMax) {
+                newValue = effectiveMax;
             }
-        } else if (parameter.getMax() == 1) {
+        } else if (effectiveMax == 1) {
             newValue = 0;
         }
     } else {
-        if (currentValue > parameter.getMin()) {
+        if (currentValue > effectiveMin) {
             newValue = currentValue - speed;
-            if (newValue < parameter.getMin()) {
-                newValue = parameter.getMin();
+            if (newValue < effectiveMin) {
+                newValue = effectiveMin;
             }
-        } else if (parameter.getMax() == 1) {
+        } else if (effectiveMax == 1) {
             newValue = 1;
         }
     }
