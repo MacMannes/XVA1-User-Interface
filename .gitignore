@@ -50,3 +50,4 @@ Hardware/xva1-ui/_autosave-xva1-ui.kicad_pcb
 .idea
 .pio
 cmake-build*
+/Software/XVA1UserInterface/.cache/clangd/index

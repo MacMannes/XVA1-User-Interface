@@ -50,6 +50,15 @@ platformio run -t monitor       # open serial monitor (115200 baud)
 
 See `AGENTS.md` for a full architecture breakdown and development notes.
 
+### Use in Neovim
+
+In order to use this project in Neovim, you will have to create the file `compile_commands.json`
+file by running the following command:
+
+```bash
+pio run -t compiledb
+```
+
 ### Synth Management
 
 To manage the XVA1 (or XFM/XFM2) synthesizer's own firmware and programs, use [**xload-macos**](https://github.com/MacMannes/xload-macos) — a macOS tool for managing flash memory on XFM/XFM2/XVA1 synthesizers.
