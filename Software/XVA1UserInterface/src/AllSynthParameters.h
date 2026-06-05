@@ -7,26 +7,33 @@
 
 #include "SectionFactory.h"
 
-Envelope envelopes[] = {
-        Envelope ({{82, 87, 92, 97, 102, 107}, {112, 117, 122, 127, 132, 137}}),
-        Envelope ({{81, 86, 91, 96, 101, 106}, {111, 116, 121, 126, 131, 136}}),
-        Envelope ({{80, 85, 90, 95, 100, 105}, {110, 115, 120, 125, 130, 135}})
+Envelope envelopes [] = {
+    Envelope(
+        { { 82, 87, 92, 97, 102, 107 }, { 112, 117, 122, 127, 132, 137 } }
+    ),
+    Envelope(
+        { { 81, 86, 91, 96, 101, 106 }, { 111, 116, 121, 126, 131, 136 } }
+    ),
+    Envelope({ { 80, 85, 90, 95, 100, 105 }, { 110, 115, 120, 125, 130, 135 } }
+        )
 };
 
+// clang-format off
 Section sections[] = {
-        SectionFactory().createDefaultSection(),
-        SectionFactory().createVoiceSection(),
-        SectionFactory().createMixerSection(),
-        SectionFactory().createEffectsSection(),
-        SectionFactory().createArpSection(),
-        SectionFactory().createOscillatorSection(),
-        SectionFactory().createEnvelopeSection(),
-        SectionFactory().createLFOSection(),
-        SectionFactory().createFilterSection(),
-        SectionFactory().createPatchSection(),
-        SectionFactory().createExternalControlsSection(),
-        SectionFactory().createPerformanceControlsSection(),
-        SectionFactory().createSequencerSection()
+    SectionFactory().createDefaultSection(),
+    SectionFactory().createVoiceSection(),
+    SectionFactory().createMixerSection(),
+    SectionFactory().createEffectsSection(),
+    SectionFactory().createArpSection(),
+    SectionFactory().createOscillatorSection(),
+    SectionFactory().createEnvelopeSection(),
+    SectionFactory().createLFOSection(),
+    SectionFactory().createFilterSection(),
+    SectionFactory().createPatchSection(),
+    SectionFactory().createExternalControlsSection(),
+    SectionFactory().createPerformanceControlsSection(),
+    SectionFactory().createSequencerSection()
 };
+// clang-format on
 
-#endif //XVA1USERINTERFACE_ALLSYNTHPARAMETERS_H
+#endif  // XVA1USERINTERFACE_ALLSYNTHPARAMETERS_H

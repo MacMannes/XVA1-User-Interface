@@ -5,7 +5,6 @@
 #ifndef XVA1USERINTERFACE_MULTIPLEXER_H
 #define XVA1USERINTERFACE_MULTIPLEXER_H
 
-
 #include <cstdint>
 
 class Multiplexer {
@@ -18,5 +17,4 @@ public:
     void selectChannel(uint8_t i2c_bus);
 };
 
-
-#endif //XVA1USERINTERFACE_MULTIPLEXER_H
+#endif  // XVA1USERINTERFACE_MULTIPLEXER_H

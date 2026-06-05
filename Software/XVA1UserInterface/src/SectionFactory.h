@@ -5,7 +5,6 @@
 #ifndef XVA1USERINTERFACE_SECTIONFACTORY_H
 #define XVA1USERINTERFACE_SECTIONFACTORY_H
 
-
 #include "Section.h"
 
 class SectionFactory {
@@ -37,5 +36,4 @@ public:
     Section createSequencerSection();
 };
 
-
-#endif //XVA1USERINTERFACE_SECTIONFACTORY_H
+#endif  // XVA1USERINTERFACE_SECTIONFACTORY_H

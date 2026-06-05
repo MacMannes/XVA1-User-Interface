@@ -6,8 +6,9 @@
 #define XVA1USERINTERFACE_SECTION_H
 
 #include <string>
-#include "SynthParameter.h"
 #include <vector>
+
+#include "SynthParameter.h"
 
 using namespace std;
 
@@ -23,13 +24,13 @@ public:
 
     virtual ~Section();
 
-    const string &getName() const;
+    const string& getName() const;
 
-    const vector<string> &getSubSectionTitles();
+    const vector<string>& getSubSectionTitles();
 
-    const vector<Section> &getSubSections() const;
+    const vector<Section>& getSubSections() const;
 
-    const vector<SynthParameter> &getParameters() const;
+    const vector<SynthParameter>& getParameters() const;
 
     int getNumberOfSubSections();
 
@@ -37,13 +38,13 @@ public:
 
     bool hasVirtualSubSections();
 
-    Section &virtualSubSectionTitles(std::initializer_list<const std::string> titles);
+    Section& virtualSubSectionTitles(
+        std::initializer_list<const std::string> titles
+    );
 
-    Section &addSubSection(const Section &section);
+    Section& addSubSection(const Section& section);
 
-    Section &addParameter(const SynthParameter &parameter);
-
+    Section& addParameter(const SynthParameter& parameter);
 };
 
-
-#endif //XVA1USERINTERFACE_SECTION_H
+#endif  // XVA1USERINTERFACE_SECTION_H

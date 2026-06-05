@@ -7,7 +7,10 @@
 /*
  * Constructor
  */
-Button::Button(Adafruit_MCP23017 *mcp, uint8_t buttonPin, int id, onActionFunction actionFunc) {
+Button::Button(
+    Adafruit_MCP23017* mcp, uint8_t buttonPin, int id,
+    onActionFunction actionFunc
+) {
     this->mcp = mcp;
     this->buttonPin = buttonPin;
     this->id = id;
@@ -18,7 +21,7 @@ Button::Button(Adafruit_MCP23017 *mcp, uint8_t buttonPin, int id, onActionFuncti
 
 void Button::begin() {
     mcp->pinMode(buttonPin, INPUT);
-    mcp->pullUp(buttonPin, HIGH);     // Pulled high ~100k
+    mcp->pullUp(buttonPin, HIGH);  // Pulled high ~100k
 
     currentState = mcp->digitalRead(buttonPin);
 }
@@ -37,8 +40,8 @@ void Button::process(int pinState) {
     unsigned long time = millis() - lastDebounceTime;
 
     if (time > debounceDelay) {
-        // whatever the reading is at, it's been there for longer than the debounce
-        // delay, so take it as the actual current state
+        // whatever the reading is at, it's been there for longer than the
+        // debounce delay, so take it as the actual current state
 
         if (pinState != currentState) {
             // The button state has been changed:
@@ -50,15 +53,11 @@ void Button::process(int pinState) {
                 actionFunc(this, released);
             }
         }
-
     }
 
     lastButtonState = pinState;
 }
 
-Adafruit_MCP23017 *Button::getMcp() const {
+Adafruit_MCP23017* Button::getMcp() const {
     return mcp;
 }
-
-
-

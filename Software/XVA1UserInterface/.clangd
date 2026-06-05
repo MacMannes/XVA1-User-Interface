@@ -1,6 +1,7 @@
 CompileFlags:
   Add:
     - -ferror-limit=0
+    - -D_LDBL_EQ_DBL
   Remove: 
     - -fipa-pta
     - -mlongcalls

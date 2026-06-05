@@ -7,4 +7,4 @@
 
 uint32_t freeMemory();
 
-#endif //XVA1USERINTERFACE_FREEMEMORY_H
+#endif  // XVA1USERINTERFACE_FREEMEMORY_H

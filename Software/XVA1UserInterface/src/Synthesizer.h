@@ -5,8 +5,10 @@
 #ifndef XVA1USERINTERFACE_SYNTHESIZER_H
 #define XVA1USERINTERFACE_SYNTHESIZER_H
 
-#include <string>
 #include <Arduino.h>
+
+#include <string>
+
 #include "Envelope.h"
 
 using namespace std;
@@ -15,7 +17,7 @@ class Synthesizer {
 private:
     int currentPatchNumber = 1;
     string currentPatchName = "";
-    byte currentPatchData[512] = {};
+    byte currentPatchData [512] = {};
 
 public:
     void begin();
@@ -26,7 +28,7 @@ public:
 
     int getPatchNumber() const;
 
-    const string &getPatchName() const;
+    const string& getPatchName() const;
 
     byte getParameter(int number) const;
 
@@ -34,8 +36,7 @@ public:
 
     void setCurrentPatchName();
 
-    Envelope getEnvelopeValues(Envelope &envelope);
+    Envelope getEnvelopeValues(Envelope& envelope);
 };
 
-
-#endif //XVA1USERINTERFACE_SYNTHESIZER_H
+#endif  // XVA1USERINTERFACE_SYNTHESIZER_H

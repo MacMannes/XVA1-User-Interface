@@ -2,8 +2,9 @@
 // Created by André Mathlener on 08/04/2021.
 //
 
-#include <Wire.h>
 #include "Multiplexer.h"
+
+#include <Wire.h>
 
 void Multiplexer::selectChannel(uint8_t i2c_bus) {
     if (i2c_bus > 7) return;
@@ -12,4 +13,5 @@ void Multiplexer::selectChannel(uint8_t i2c_bus) {
     Wire.endTransmission();
 }
 
-Multiplexer::Multiplexer(uint8_t address) : address(address) {}
+Multiplexer::Multiplexer(uint8_t address) : address(address) {
+}

@@ -3,22 +3,22 @@
 //
 
 #include "Synthesizer.h"
-#include "Debug.h"
+
 #include <HardwareSerial.h>
+
+#include "Debug.h"
 
 HardwareSerial SynthSerial(1);  // UART1 — keeps UART0 free for Serial (debug)
 
 void Synthesizer::selectPatch(int number) {
-
     int synthPatchNumber = number - 1;
 
     LOG("Selecting patch #");
     LOG(synthPatchNumber);
     LOG(" on Synth...");
 
-    SynthSerial.write('r'); // 'r' = Read program
+    SynthSerial.write('r');  // 'r' = Read program
     SynthSerial.write(synthPatchNumber);
-
 
     int read_status;
     int bytesRead = 0;
@@ -42,17 +42,17 @@ void Synthesizer::selectPatch(int number) {
 }
 
 void Synthesizer::loadPatchData() {
-    SynthSerial.write('d'); // 'd' = Display program
+    SynthSerial.write('d');  // 'd' = Display program
 
     LOGLN("Reading patch data from Synth...");
 
-    byte rxBuffer[512];
+    byte rxBuffer [512];
     int bytesRead = 0;
     int retry = 0;
     while (bytesRead != 512 && retry != 100) {
         if (SynthSerial.available()) {
             byte b = SynthSerial.read();
-            rxBuffer[bytesRead] = b;
+            rxBuffer [bytesRead] = b;
             bytesRead++;
             retry = 0;
         } else {
@@ -71,7 +71,7 @@ void Synthesizer::setCurrentPatchName() {
     string patchName = "";
 
     for (int i = 480; i <= 504; i++) {
-        patchName += (char) currentPatchData[i];
+        patchName += (char)currentPatchData [i];
     }
     currentPatchName = patchName;
 
@@ -83,16 +83,16 @@ int Synthesizer::getPatchNumber() const {
     return currentPatchNumber;
 }
 
-const string &Synthesizer::getPatchName() const {
+const string& Synthesizer::getPatchName() const {
     return currentPatchName;
 }
 
 byte Synthesizer::getParameter(int number) const {
-    return currentPatchData[number];
+    return currentPatchData [number];
 }
 
 void Synthesizer::setParameter(int number, int value) {
-    SynthSerial.write('s'); // 's' = Set Parameter
+    SynthSerial.write('s');  // 's' = Set Parameter
 
     if (number > 255) {
         // Parameters above 255 have a two-byte format: b1 = 255, b2 = x-256
@@ -112,7 +112,7 @@ void Synthesizer::setParameter(int number, int value) {
     // flush() costs ~60 µs at 500 kbps — imperceptible to the user.
     SynthSerial.flush();
 
-    currentPatchData[number] = value;
+    currentPatchData [number] = value;
 
     if (number >= 480 && number <= 504) {
         setCurrentPatchName();
@@ -120,20 +120,21 @@ void Synthesizer::setParameter(int number, int value) {
 }
 
 void Synthesizer::begin() {
-    // Configure SynthSerial on UART1, routed to physical pins D6 (GPIO43 = TX) and D7 (GPIO44 = RX)
-    // The ESP32-S3 GPIO matrix allows UART1 to be mapped to any pins, including GPIO43/44.
-    SynthSerial.begin(500000, SERIAL_8N1, 44, 43);  // RX=GPIO44(D7), TX=GPIO43(D6)
+    // Configure SynthSerial on UART1, routed to physical pins D6 (GPIO43 = TX)
+    // and D7 (GPIO44 = RX) The ESP32-S3 GPIO matrix allows UART1 to be mapped
+    // to any pins, including GPIO43/44.
+    SynthSerial.begin(
+        500000, SERIAL_8N1, 44, 43
+    );  // RX=GPIO44(D7), TX=GPIO43(D6)
 }
 
-Envelope Synthesizer::getEnvelopeValues(Envelope &envelope) {
+Envelope Synthesizer::getEnvelopeValues(Envelope& envelope) {
     Envelope returnEnvelope = Envelope();
 
     for (int i = 0; i < 6; ++i) {
-        returnEnvelope.level[i] = getParameter(envelope.level[i]);
-        returnEnvelope.rate[i] = getParameter(envelope.rate[i]);
+        returnEnvelope.level [i] = getParameter(envelope.level [i]);
+        returnEnvelope.rate [i] = getParameter(envelope.rate [i]);
     }
 
     return returnEnvelope;
 }
-
-

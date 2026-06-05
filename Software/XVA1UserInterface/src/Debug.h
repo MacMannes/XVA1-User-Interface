@@ -11,11 +11,11 @@
 #pragma once
 
 #ifdef DEBUG
-    #define LOG_BEGIN()    Serial.begin(115200)
-    #define LOG(...)       Serial.print(__VA_ARGS__)
-    #define LOGLN(...)     Serial.println(__VA_ARGS__)
+#define LOG_BEGIN() Serial.begin(115200)
+#define LOG(...)    Serial.print(__VA_ARGS__)
+#define LOGLN(...)  Serial.println(__VA_ARGS__)
 #else
-    #define LOG_BEGIN()
-    #define LOG(...)
-    #define LOGLN(...)
+#define LOG_BEGIN()
+#define LOG(...)
+#define LOGLN(...)
 #endif

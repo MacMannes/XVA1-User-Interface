@@ -2,17 +2,25 @@
 // Created by André Mathlener on 08/04/2021.
 //
 
-#include <sstream>
 #include "ParameterController.h"
-#include "Debug.h"
-#include "Globals.h"
-#include "FreeMemory.h"
-#include "AllSynthParameters.h"
 
-ParameterController::ParameterController(Synthesizer *synthesizer, Multiplexer *multiplexer, TFT_eSPI *tft,
-                                         Adafruit_SSD1306 *display, LEDButton *upButton, LEDButton *downButton)
-        : synthesizer(synthesizer), multiplexer(multiplexer), tft(tft), display(display),
-          upButton(upButton), downButton(downButton) {
+#include <sstream>
+
+#include "AllSynthParameters.h"
+#include "Debug.h"
+#include "FreeMemory.h"
+#include "Globals.h"
+
+ParameterController::ParameterController(
+    Synthesizer* synthesizer, Multiplexer* multiplexer, TFT_eSPI* tft,
+    Adafruit_SSD1306* display, LEDButton* upButton, LEDButton* downButton
+)
+    : synthesizer(synthesizer),
+      multiplexer(multiplexer),
+      tft(tft),
+      display(display),
+      upButton(upButton),
+      downButton(downButton) {
     clearParameters();
 }
 
@@ -43,7 +51,7 @@ void ParameterController::setSection(int sectionNumber, bool showSubSections) {
 
     subSection = Section("empty");
 
-    section = Section("empty"); // Ugly trick to release some memory
+    section = Section("empty");  // Ugly trick to release some memory
     section = createSection(sectionNumber);
     currentSubSectionNumber = 0;
 
@@ -63,13 +71,14 @@ void ParameterController::setSection(int sectionNumber, bool showSubSections) {
 }
 
 void ParameterController::clearParameters() {
-    for (auto &parameter : parameterIndices) {
+    for (auto& parameter : parameterIndices) {
         parameter = -1;
     }
 }
 
 void ParameterController::setActivePage(int pageNumber) {
-    if (pageNumber < 0 && pageNumber > getSubSection()->getNumberOfPages()) return;
+    if (pageNumber < 0 && pageNumber > getSubSection()->getNumberOfPages())
+        return;
 
     if (pageNumber != currentPageNumber) {
         LOG(F("Setting active page: "));
@@ -86,8 +95,12 @@ void ParameterController::setActivePage(int pageNumber) {
     }
 
     int i = start;
-    for (int &parameterIndex : parameterIndices) {
-        parameterIndex = (i <= end && !getSubSection()->getParameters().at(i).getName().empty()) ? i : -1;
+    for (int& parameterIndex : parameterIndices) {
+        parameterIndex =
+            (i <= end &&
+             !getSubSection()->getParameters().at(i).getName().empty())
+                ? i
+                : -1;
         i++;
     }
 
@@ -98,23 +111,28 @@ void ParameterController::setActivePage(int pageNumber) {
 void ParameterController::setActiveSubSection(int subSectionNumber) {
     clearCurrentSubsection();
 
-    if (section.getSubSections().size() > 0 && !section.hasVirtualSubSections()) {
+    if (section.getSubSections().size() > 0 &&
+        !section.hasVirtualSubSections()) {
         subSection = section.getSubSections().at(subSectionNumber);
     }
     currentSubSectionNumber = subSectionNumber;
     currentPageNumber = 0;
 
     displayCurrentSubsection();
-    setActivePage(currentPageNumber); // This redraws all parameters
+    setActivePage(currentPageNumber);  // This redraws all parameters
 }
 
 void ParameterController::displayActivePage() {
     int numberOfPages = getSubSection()->getNumberOfPages();
     upButton->setLED(numberOfPages > 1 && currentPageNumber > 0);
-    downButton->setLED(numberOfPages > 1 && currentPageNumber < numberOfPages - 1);
+    downButton->setLED(
+        numberOfPages > 1 && currentPageNumber < numberOfPages - 1
+    );
 }
 
-bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed) {
+bool ParameterController::rotaryEncoderChanged(
+    int id, bool clockwise, int speed
+) {
     if (id == 0) {
         int numberOfSubSections = section.getNumberOfSubSections();
         if (numberOfSubSections > 0) {
@@ -132,7 +150,7 @@ bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed
         return true;
     } else {
         id--;
-        int index = parameterIndices[id];
+        int index = parameterIndices [id];
         if (index >= 0) {
             handleParameterChange(index, clockwise, speed);
 
@@ -140,16 +158,15 @@ bool ParameterController::rotaryEncoderChanged(int id, bool clockwise, int speed
             int index2 = index1 + 1;
             int displayNumber = (index1 / 2);
 
-            displayTwinParameters(parameterIndices[index1], parameterIndices[index2], displayNumber);
+            displayTwinParameters(
+                parameterIndices [index1], parameterIndices [index2],
+                displayNumber
+            );
 
             if (shouldShowEnvelopes && displayEnvelopesTaskHandle == nullptr) {
                 xTaskCreate(
-                        displayEnvelopesTask,
-                        "DisplayEnvelopesTask",
-                        4096,
-                        this,
-                        1,
-                        &displayEnvelopesTaskHandle
+                    displayEnvelopesTask, "DisplayEnvelopesTask", 4096, this, 1,
+                    &displayEnvelopesTaskHandle
                 );
             }
 
@@ -164,11 +181,14 @@ bool ParameterController::rotaryEncoderButtonChanged(int id, bool released) {
     return false;
 }
 
-void ParameterController::handleParameterChange(int index, bool clockwise, int speed) {
-    SynthParameter parameter = getSubSection()->getParameters()[index];
+void ParameterController::handleParameterChange(
+    int index, bool clockwise, int speed
+) {
+    SynthParameter parameter = getSubSection()->getParameters() [index];
     int currentValue;
 
-    int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+    int subIndex =
+        (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
     LOG("subIndex: ");
     LOGLN(subIndex);
 
@@ -194,12 +214,15 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
             break;
         }
         default:
-            currentValue = synthesizer->getParameter(parameter.getNumber(subIndex));
+            currentValue =
+                synthesizer->getParameter(parameter.getNumber(subIndex));
     }
     int newValue = -1;
 
-    int effectiveMin = (parameter.getType() == PERFORMANCE_CTRL) ? 0   : parameter.getMin();
-    int effectiveMax = (parameter.getType() == PERFORMANCE_CTRL) ? 511 : parameter.getMax();
+    int effectiveMin =
+        (parameter.getType() == PERFORMANCE_CTRL) ? 0 : parameter.getMin();
+    int effectiveMax =
+        (parameter.getType() == PERFORMANCE_CTRL) ? 511 : parameter.getMax();
 
     if (clockwise) {
         if (currentValue < effectiveMax) {
@@ -221,7 +244,8 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
         }
     }
 
-    // Besides values 0 through 127, MIDI_NOTE can also have values 200, 201 and 255
+    // Besides values 0 through 127, MIDI_NOTE can also have values 200, 201 and
+    // 255
     if (parameter.getType() == MIDI_NOTE && newValue > 127) {
         if (newValue != 200 && newValue != 201 && newValue != 255) {
             if (clockwise) {
@@ -258,25 +282,40 @@ void ParameterController::handleParameterChange(int index, bool clockwise, int s
                 break;
             }
             default:
-                synthesizer->setParameter(parameter.getNumber(subIndex), newValue);
+                synthesizer->setParameter(
+                    parameter.getNumber(subIndex), newValue
+                );
         }
     }
 }
 
-void ParameterController::displayTwinParameters(int index1, int index2, int displayNumber) {
-    int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+void ParameterController::displayTwinParameters(
+    int index1, int index2, int displayNumber
+) {
+    int subIndex =
+        (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
 
-    string name1 = (index1 >= 0 && getSubSection()->getParameters()[index1].getNumber(subIndex) > 0)
-                   ? getSubSection()->getParameters()[index1].getName() : "";
-    string name2 = (index2 >= 0 && getSubSection()->getParameters()[index2].getNumber(subIndex) > 0)
-                   ? getSubSection()->getParameters()[index2].getName() : "";
+    string name1 =
+        (index1 >= 0 &&
+         getSubSection()->getParameters() [index1].getNumber(subIndex) > 0)
+            ? getSubSection()->getParameters() [index1].getName()
+            : "";
+    string name2 =
+        (index2 >= 0 &&
+         getSubSection()->getParameters() [index2].getNumber(subIndex) > 0)
+            ? getSubSection()->getParameters() [index2].getName()
+            : "";
 
-    displayTwinParameters(name1, getDisplayValue(index1), name2, getDisplayValue(index2), displayNumber);
-
+    displayTwinParameters(
+        name1, getDisplayValue(index1), name2, getDisplayValue(index2),
+        displayNumber
+    );
 }
 
-void ParameterController::displayTwinParameters(string title1, string value1, string title2, string value2,
-                                                int displayNumber) {
+void ParameterController::displayTwinParameters(
+    string title1, string value1, string title2, string value2,
+    int displayNumber
+) {
     multiplexer->selectChannel(displayNumber);
 
     display->clearDisplay();
@@ -288,7 +327,8 @@ void ParameterController::displayTwinParameters(string title1, string value1, st
     display->setTextSize(2);
     drawCenteredText(value1, 64, 12);
 
-    if (!title1.empty() || !value1.empty() || !title2.empty() || !value2.empty()) {
+    if (!title1.empty() || !value1.empty() || !title2.empty() ||
+        !value2.empty()) {
         display->drawLine(0, 30, display->width() - 1, 30, WHITE);
     }
 
@@ -305,14 +345,18 @@ void ParameterController::displayParameters() {
     for (int i = 0; i < 4; ++i) {
         int index1 = i * 2;
         int index2 = index1 + 1;
-        displayTwinParameters(parameterIndices[index1], parameterIndices[index2], i);
+        displayTwinParameters(
+            parameterIndices [index1], parameterIndices [index2], i
+        );
     }
 }
 
 void ParameterController::drawCenteredText(string buf, int x, int y) {
     int16_t x1, y1;
     uint16_t w, h;
-    display->getTextBounds(buf.c_str(), 0, y, &x1, &y1, &w, &h); //calc width of new string
+    display->getTextBounds(
+        buf.c_str(), 0, y, &x1, &y1, &w, &h
+    );  // calc width of new string
     if (x - w / 2 <= 0) {
         // Text won't fit. Set smallest text size and recompute
         display->setTextSize(1);
@@ -328,9 +372,11 @@ string ParameterController::getDisplayValue(int parameterIndex) {
     string printValue = "";
 
     if (parameterIndex >= 0) {
-        SynthParameter parameter = getSubSection()->getParameters()[parameterIndex];
+        SynthParameter parameter =
+            getSubSection()->getParameters() [parameterIndex];
 
-        int subIndex = (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
+        int subIndex =
+            (section.hasVirtualSubSections()) ? currentSubSectionNumber : 0;
         if (parameter.getNumber(subIndex) < 0) return printValue;
 
         int value;
@@ -340,7 +386,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
                 byte lsb = synthesizer->getParameter(parameter.getNumber(1));
                 int combined = (msb << 7) + lsb;
 
-                value = (int) combined;
+                value = (int)combined;
 
                 break;
             }
@@ -351,7 +397,10 @@ string ParameterController::getDisplayValue(int parameterIndex) {
                 break;
             }
             case CENTER_128: {
-                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex)) - 128;
+                value = (int)synthesizer->getParameter(
+                            parameter.getNumber(subIndex)
+                        ) -
+                        128;
                 if (value > 0) {
                     printValue = "+" + to_string(value);
                 }
@@ -359,13 +408,18 @@ string ParameterController::getDisplayValue(int parameterIndex) {
                 break;
             }
             case MIDI_NOTE: {
-                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
+                value = (int)synthesizer->getParameter(
+                    parameter.getNumber(subIndex)
+                );
                 if (value <= 127) {
-                    string MIDI_NOTES[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+                    string MIDI_NOTES [] = {
+                        "C",  "C#", "D",  "D#", "E",  "F",
+                        "F#", "G",  "G#", "A",  "A#", "B"
+                    };
 
                     int octave = (value / 12) - 1;
                     int noteIndex = (value % 12);
-                    printValue = MIDI_NOTES[noteIndex] + to_string(octave);
+                    printValue = MIDI_NOTES [noteIndex] + to_string(octave);
                 } else if (value == 200) {
                     printValue = "Gate ON";
                 } else if (value == 201) {
@@ -376,17 +430,21 @@ string ParameterController::getDisplayValue(int parameterIndex) {
                 break;
             }
             case ASCII_CHAR:
-                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
+                value = (int)synthesizer->getParameter(
+                    parameter.getNumber(subIndex)
+                );
                 printValue += value;
                 break;
             default: {
-                value = (int) synthesizer->getParameter(parameter.getNumber(subIndex));
+                value = (int)synthesizer->getParameter(
+                    parameter.getNumber(subIndex)
+                );
             }
         };
 
         if (printValue.empty()) {
             if (value < parameter.getDescriptions().size()) {
-                printValue = parameter.getDescriptions()[value];
+                printValue = parameter.getDescriptions() [value];
             } else {
                 printValue = to_string(value);
             }
@@ -396,7 +454,7 @@ string ParameterController::getDisplayValue(int parameterIndex) {
     return printValue;
 }
 
-Section *ParameterController::getSubSection() {
+Section* ParameterController::getSubSection() {
     if (section.getSubSections().size() > 0) {
         subSection = section.getSubSections().at(currentSubSectionNumber);
         return &subSection;
@@ -427,18 +485,24 @@ void ParameterController::displaySubSections(bool paintItBlack) {
 
     tft->setTextColor(paintItBlack ? TFT_BLACK : TFT_WHITE);
 
-    for (auto &title : section.getSubSectionTitles()) {
+    for (auto& title : section.getSubSectionTitles()) {
         if (!paintItBlack) {
-            tft->setTextColor((lineNumber == currentSubSectionNumber) ? TFT_WHITE : TFT_GREY);
+            tft->setTextColor(
+                (lineNumber == currentSubSectionNumber) ? TFT_WHITE : TFT_GREY
+            );
         }
         if (lineNumber == currentSubSectionNumber) {
-            tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+            tft->drawString(
+                ">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1
+            );
         }
 
         tft->drawString(title.c_str(), 20, 40 + LINE_HEIGHT * lineNumber, 1);
 
         if (shouldShowEnvelopes) {
-            tft->setTextColor(paintItBlack ? TFT_BLACK : envelopeColors[lineNumber]);
+            tft->setTextColor(
+                paintItBlack ? TFT_BLACK : envelopeColors [lineNumber]
+            );
             tft->drawString("*", 110, 40 + LINE_HEIGHT * lineNumber, 1);
         }
 
@@ -461,8 +525,10 @@ void ParameterController::clearCurrentSubsection() {
     tft->setTextColor(TFT_BLACK);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
     tft->setTextColor(TFT_GREY);
-    tft->drawString(section.getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
-                    40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->drawString(
+        section.getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
+        40 + LINE_HEIGHT * currentSubSectionNumber, 1
+    );
 }
 
 void ParameterController::displayCurrentSubsection() {
@@ -470,8 +536,10 @@ void ParameterController::displayCurrentSubsection() {
 
     tft->setTextColor(TFT_WHITE);
     tft->drawString(">", 0, 40 + LINE_HEIGHT * currentSubSectionNumber, 1);
-    tft->drawString(section.getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
-                    40 + LINE_HEIGHT * currentSubSectionNumber, 1);
+    tft->drawString(
+        section.getSubSectionTitles().at(currentSubSectionNumber).c_str(), 20,
+        40 + LINE_HEIGHT * currentSubSectionNumber, 1
+    );
 }
 
 void ParameterController::clearScreen() {
@@ -481,7 +549,7 @@ void ParameterController::clearScreen() {
 }
 
 Section ParameterController::createSection(int sectionNumber) {
-    return sections[sectionNumber];
+    return sections [sectionNumber];
 }
 
 string ParameterController::to_string(int value) {
@@ -494,75 +562,80 @@ void ParameterController::displayEnvelopes() {
     clearEnvelopes();
 
     for (int i = 0; i < 3; ++i) {
-        displayEnvelope(synthesizer->getEnvelopeValues(envelopes[i]), envelopeColors[i]);
+        displayEnvelope(
+            synthesizer->getEnvelopeValues(envelopes [i]), envelopeColors [i]
+        );
     }
     displayEnvelopesTaskHandle = nullptr;
 }
 
 /**
- * The code for displaying the envelopes is adopted from https://github.com/architolk/fm-synth
+ * The code for displaying the envelopes is adopted from
+ * https://github.com/architolk/fm-synth
  *
  * Written by architolk
  */
-void ParameterController::displayEnvelope(const Envelope &env, uint16_t color) {
+void ParameterController::displayEnvelope(const Envelope& env, uint16_t color) {
     const float ENVELOPE_HEIGHT = 80;
     const float ENVELOPE_POSITION_Y = 140;
     const float ENVELOPE_WIDTH = 239;
 
-    float x1, x2, y1, y2, yd, yq, xq, r0, r1, r2, r3, r4, r5, l0, l1, l2, l3, l4, l5;
-    //Getting envelope parameters
-    r0 = env.rate[0];
-    r1 = 255 - env.rate[1];
-    r2 = 255 - env.rate[2];
-    r3 = 255 - env.rate[3];
-    r4 = 255 - env.rate[4];
-    r5 = 255 - env.rate[5];
-    l0 = env.level[0];
-    l1 = env.level[1];
-    l2 = env.level[2];
-    l3 = env.level[3];
-    l4 = env.level[4];
-    l5 = env.level[5];
-    yq = ENVELOPE_HEIGHT / 255.0; // Quotient for the envelope height
+    float x1, x2, y1, y2, yd, yq, xq, r0, r1, r2, r3, r4, r5, l0, l1, l2, l3,
+        l4, l5;
+    // Getting envelope parameters
+    r0 = env.rate [0];
+    r1 = 255 - env.rate [1];
+    r2 = 255 - env.rate [2];
+    r3 = 255 - env.rate [3];
+    r4 = 255 - env.rate [4];
+    r5 = 255 - env.rate [5];
+    l0 = env.level [0];
+    l1 = env.level [1];
+    l2 = env.level [2];
+    l3 = env.level [3];
+    l4 = env.level [4];
+    l5 = env.level [5];
+    yq = ENVELOPE_HEIGHT / 255.0;  // Quotient for the envelope height
     xq = ENVELOPE_WIDTH /
-         (255 + (r0 > 0 ? 255 : 0) + (r1 > 0 ? 255 : 0) + (r2 > 0 ? 255 : 0) + (r3 > 0 ? 255 : 0) + (r4 > 0 ? 255 : 0) +
-          (r5 > 0 ? 255 : 0)); // Quotient for the envelope width
+         (255 + (r0 > 0 ? 255 : 0) + (r1 > 0 ? 255 : 0) + (r2 > 0 ? 255 : 0) +
+          (r3 > 0 ? 255 : 0) + (r4 > 0 ? 255 : 0) +
+          (r5 > 0 ? 255 : 0));  // Quotient for the envelope width
     yd = ENVELOPE_POSITION_Y;
     x1 = 0.0;
-    x2 = x1 + xq * r0; //Delay
+    x2 = x1 + xq * r0;  // Delay
     y1 = yq * (255 - l0) + yd;
     y2 = yq * (255 - l0) + yd;
     tft->drawLine(x1, y1, x2, y2, color);
     x1 = x2;
     y1 = y2;
-    x2 = x1 + xq * r1; //Attack
+    x2 = x1 + xq * r1;  // Attack
     y2 = yq * (255 - l1) + yd;
     tft->drawLine(x1, y1, x2, y2, color);
     x1 = x2;
     y1 = y2;
-    x2 = x1 + xq * r2; //Decay-1
+    x2 = x1 + xq * r2;  // Decay-1
     y2 = yq * (255 - l2) + yd;
     tft->drawLine(x1, y1, x2, y2, color);
     x1 = x2;
     y1 = y2;
-    x2 = x1 + xq * r3; //Decay-2
+    x2 = x1 + xq * r3;  // Decay-2
     y2 = yq * (255 - l3) + yd;
     tft->drawLine(x1, y1, x2, y2, color);
     x1 = x2;
     y1 = y2;
-    x2 = x1 + ENVELOPE_WIDTH - xq * (r0 + r1 + r2 + r3 + r4 + r5); //Sustain
+    x2 = x1 + ENVELOPE_WIDTH - xq * (r0 + r1 + r2 + r3 + r4 + r5);  // Sustain
     y2 = yq * (255 - l3) + yd;
     tft->drawLine(x1, y1 - 1, x2, y2 - 1, color);
     tft->drawLine(x1, y1, x2, y2, color);
     tft->drawLine(x1, y1 + 1, x2, y2 + 1, color);
     x1 = x2;
     y1 = y2;
-    x2 = x1 + xq * r4; //Release-1
+    x2 = x1 + xq * r4;  // Release-1
     y2 = yq * (255 - l4) + yd;
     tft->drawLine(x1, y1, x2, y2, color);
     x1 = x2;
     y1 = y2;
-    x2 = x1 + xq * r5; //Release-2
+    x2 = x1 + xq * r5;  // Release-2
     y2 = yq * (255 - l5) + yd;
     tft->drawLine(x1, y1, x2, y2, color);
 }
@@ -571,13 +644,12 @@ void ParameterController::clearEnvelopes() {
     tft->fillRect(0, 120, 240, 120, TFT_BLACK);
 }
 
-void ParameterController::displayEnvelopesTask(void *parameter) {
-    auto *parameterController = reinterpret_cast<ParameterController*>(parameter); // Obtain the instance pointer
-    parameterController->displayEnvelopes(); // Dispatch to the member function, now that we have an instance pointer
+void ParameterController::displayEnvelopesTask(void* parameter) {
+    auto* parameterController = reinterpret_cast<ParameterController*>(
+        parameter
+    );  // Obtain the instance pointer
+    parameterController
+        ->displayEnvelopes();  // Dispatch to the member function, now that we
+                               // have an instance pointer
     vTaskDelete(nullptr);
 }
-
-
-
-
-

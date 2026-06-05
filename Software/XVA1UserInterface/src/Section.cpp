@@ -4,15 +4,16 @@
 
 #include "Section.h"
 
-Section::Section(string name) : _name(name) {}
+Section::Section(string name) : _name(name) {
+}
 
-const string &Section::getName() const {
+const string& Section::getName() const {
     return _name;
 }
 
-const vector<string> &Section::getSubSectionTitles() {
+const vector<string>& Section::getSubSectionTitles() {
     if (_virtualSubSectionTitles.size() == 0 && _subSections.size() > 0) {
-        for (auto &section : _subSections) {
+        for (auto& section : _subSections) {
             _virtualSubSectionTitles.push_back(section.getName());
         }
     }
@@ -20,7 +21,7 @@ const vector<string> &Section::getSubSectionTitles() {
     return _virtualSubSectionTitles;
 }
 
-const vector<SynthParameter> &Section::getParameters() const {
+const vector<SynthParameter>& Section::getParameters() const {
     return _parameters;
 }
 
@@ -35,10 +36,10 @@ int Section::getNumberOfSubSections() {
 }
 
 int Section::getNumberOfPages() {
-    return (_parameters.size() + 8 - 1) / 8;;
+    return (_parameters.size() + 8 - 1) / 8;
 }
 
-const vector<Section> &Section::getSubSections() const {
+const vector<Section>& Section::getSubSections() const {
     return _subSections;
 }
 
@@ -52,19 +53,21 @@ Section::~Section() {
     _subSections.clear();
 }
 
-Section &Section::virtualSubSectionTitles(const std::initializer_list<const std::string> titles) {
-    for (const auto &title : titles) {
+Section& Section::virtualSubSectionTitles(
+    const std::initializer_list<const std::string> titles
+) {
+    for (const auto& title : titles) {
         _virtualSubSectionTitles.push_back(title);
     }
     return *this;
 }
 
-Section &Section::addSubSection(const Section &section) {
+Section& Section::addSubSection(const Section& section) {
     _subSections.push_back(section);
     return *this;
 }
 
-Section &Section::addParameter(const SynthParameter &parameter) {
+Section& Section::addParameter(const SynthParameter& parameter) {
     _parameters.push_back(parameter);
     return *this;
 }

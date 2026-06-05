@@ -1,16 +1,15 @@
+#include <Adafruit_I2CDevice.h>
+#include <Adafruit_SSD1306.h>
 #include <Arduino.h>
-
 #include <TFT_eSPI.h>
 #include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include <Adafruit_I2CDevice.h>
 
-#include "SynthParameter.h"
 #include "Button.h"
-#include "Hardware.h"
-#include "Globals.h"
-#include "FreeMemory.h"
 #include "Debug.h"
+#include "FreeMemory.h"
+#include "Globals.h"
+#include "Hardware.h"
+#include "SynthParameter.h"
 
 unsigned long lastTransition;
 unsigned long revolutionTime = 0;
@@ -44,7 +43,7 @@ void initMainScreen();
 
 void initRotaryEncoders();
 
-void rtrim(std::string &s, char c);
+void rtrim(std::string& s, char c);
 
 void setup() {
     LOG_BEGIN();
@@ -82,7 +81,8 @@ void loop() {
     if (result) {
         bool clockwise = result == DIR_CW;
         if (activeShortcut != 0) {
-            bool consumed = parameterController.rotaryEncoderChanged(0, clockwise, 1);
+            bool consumed =
+                parameterController.rotaryEncoderChanged(0, clockwise, 1);
             if (!consumed) {
                 handleMainEncoder(clockwise);
             }
@@ -110,14 +110,17 @@ void rotaryEncoderChanged(bool clockwise, int id) {
 
     lastTransition = now;
 
-    LOGLN("Encoder " + String(id) + ": "
-          + (clockwise ? String("clockwise") : String("counter-clock-wise")) + ", Speed: " + String(speed));
+    LOGLN(
+        "Encoder " + String(id) + ": " +
+        (clockwise ? String("clockwise") : String("counter-clock-wise")) +
+        ", Speed: " + String(speed)
+    );
 
     parameterController.rotaryEncoderChanged(id, clockwise, speed);
 }
 
 void initRotaryEncoders() {
-    for (auto &rotaryEncoder : rotaryEncoders) {
+    for (auto& rotaryEncoder : rotaryEncoders) {
         rotaryEncoder.init();
     }
 }
@@ -140,7 +143,7 @@ void initOLEDDisplays() {
 }
 
 void initButtons() {
-    for (auto &button : allButtons) {
+    for (auto& button : allButtons) {
         button->begin();
     }
 
@@ -184,16 +187,13 @@ void displayPatchInfo() {
     displayPatchInfo(false);
 }
 
-void rtrim(std::string &s, char c) {
-
-    if (s.empty())
-        return;
+void rtrim(std::string& s, char c) {
+    if (s.empty()) return;
 
     std::string::iterator p;
     for (p = s.end(); p != s.begin() && *--p == c;);
 
-    if (*p != c)
-        p++;
+    if (*p != c) p++;
 
     s.erase(p, s.end());
 }
@@ -214,8 +214,8 @@ void displayPatchInfo(bool paintItBlack) {
         tft.setTextColor(MY_ORANGE, TFT_BLACK);
     }
 
-    // Set the padding to the maximum width that the digits could occupy in font 4
-    // This ensures small numbers obliterate large ones on the screen
+    // Set the padding to the maximum width that the digits could occupy in font
+    // 4 This ensures small numbers obliterate large ones on the screen
     tft.setTextPadding(tft.textWidth("999", 4));
     // Draw the patch number in font 4
     tft.drawNumber(currentPatchNumber, 119, 65, 4);
@@ -230,7 +230,8 @@ void displayPatchInfo(bool paintItBlack) {
     rtrim(name, ' ');
     tft.drawString(name.c_str(), 119, 120, 1);
 
-    // Reset text padding and datum to 0 otherwise all future rendered strings will use it!
+    // Reset text padding and datum to 0 otherwise all future rendered strings
+    // will use it!
     tft.setTextPadding(0);
     tft.setTextDatum(0);
 }
@@ -243,17 +244,18 @@ void clearMainScreen() {
 void pollAllMCPs() {
     // Read all MCPs and feed the input to each encoder and shortcut button.
     // This is more efficient than reading one pin state at a time
-    for (auto &mcp : allMCPs) {
+    for (auto& mcp : allMCPs) {
         uint16_t gpioAB = mcp->readGPIOAB();
 
-        for (auto &rotaryEncoder : rotaryEncoders) {
-            // Only feed this in the encoder if this is coming from the correct MCP
+        for (auto& rotaryEncoder : rotaryEncoders) {
+            // Only feed this in the encoder if this is coming from the correct
+            // MCP
             if (rotaryEncoder.getMCP() == mcp) {
                 rotaryEncoder.feedInput(gpioAB);
             }
         }
 
-        for (auto &button : allButtons) {
+        for (auto& button : allButtons) {
             if (button->getMcp() == mcp) {
                 button->feedInput(gpioAB);
             }
@@ -261,7 +263,7 @@ void pollAllMCPs() {
     }
 }
 
-void shortcutButtonChanged(Button *btn, bool released) {
+void shortcutButtonChanged(Button* btn, bool released) {
     LOG("Shortcut-button #");
     LOG(btn->id);
     LOG(" ");
@@ -272,11 +274,12 @@ void shortcutButtonChanged(Button *btn, bool released) {
             parameterController.clearScreen();
         }
 
-        activeShortcut = (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
+        activeShortcut =
+            (shiftButtonPushed && btn->id <= 4) ? btn->id + 8 : btn->id;
 
         LOG("Active Shortcut: ");
         LOGLN(activeShortcut);
-        for (auto &shortcutButton : shortcutButtons) {
+        for (auto& shortcutButton : shortcutButtons) {
             shortcutButton->setLED(shortcutButton->id == btn->id);
         }
 
@@ -286,7 +289,7 @@ void shortcutButtonChanged(Button *btn, bool released) {
     }
 }
 
-void mainButtonChanged(Button *btn, bool released) {
+void mainButtonChanged(Button* btn, bool released) {
     LOG("Main-button #");
     LOG(btn->id);
     LOG(" ");
@@ -310,19 +313,19 @@ void mainButtonChanged(Button *btn, bool released) {
 
 void clearShortcut() {
     activeShortcut = 0;
-    for (auto &shortcutButton : shortcutButtons) {
+    for (auto& shortcutButton : shortcutButtons) {
         shortcutButton->setLED(false);
     }
 }
 
-void rotaryButtonChanged(Button *btn, bool released) {
+void rotaryButtonChanged(Button* btn, bool released) {
     LOG("Rotary-button #");
     LOG(btn->id);
     LOG(" ");
     LOGLN((released) ? "RELEASED" : "PRESSED");
 }
 
-void upOrDownButtonChanged(Button *btn, bool released) {
+void upOrDownButtonChanged(Button* btn, bool released) {
     LOG((btn->id == UP_BUTTON) ? "Up" : "Down");
     LOG("-button");
     LOG(" ");
@@ -340,5 +343,4 @@ void upOrDownButtonChanged(Button *btn, bool released) {
 void mainRotaryButtonChanged(bool released) {
     LOG("MAIN-Rotary-button ");
     LOGLN((released) ? "RELEASED" : "PRESSED");
-
 }
