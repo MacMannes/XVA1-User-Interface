@@ -5,6 +5,8 @@
 #ifndef XVA1USERINTERFACE_ENVELOPE_H
 #define XVA1USERINTERFACE_ENVELOPE_H
 
+#include <cstdint>
+
 // Typedef for envelope
 // l0 = level at start of the envelope
 // l1 = level after the attack phase

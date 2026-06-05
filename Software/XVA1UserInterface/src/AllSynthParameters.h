@@ -5,6 +5,7 @@
 #ifndef XVA1USERINTERFACE_ALLSYNTHPARAMETERS_H
 #define XVA1USERINTERFACE_ALLSYNTHPARAMETERS_H
 
+#include "Envelope.h"
 #include "SectionFactory.h"
 
 Envelope envelopes [] = {
